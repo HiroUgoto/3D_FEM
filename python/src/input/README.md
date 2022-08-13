@@ -16,18 +16,7 @@ nnode nelem nmaterial dof
 **nelem** : Number of elements  
 **nmaterial** : Number of materials  
 **dof** : Degrees of freedom
-- 2D-SH (anti-plane) problem : dof = 1
-- 2D-PSV (in-plane) problem : dof = 2
-- 2D-SH,PSV problem : dof = 3
-
-
-### Example
-
-```
-121 100 2 2
-```
-FEM model consists 121 nodes and 100 elements. 2 materials are given.
-The problem targets 2D in-plane deformation.
+- 3D problem : dof = 3
 
 ---
 ## Node block
@@ -35,24 +24,16 @@ The problem targets 2D in-plane deformation.
 Node block defines locations of nodes and its degree of freedom (constrains).
 
 ```
-id x y dof0 [dof1] [dof2]
+id x y z dof0 dof1 dof2
 ```
 
 **id** : Node ID. Prefer to define it by sequential order.  
-**x** : x coordinate [m]  
+**x** : x coordinate [m]
 **y** : y coordinate [m]  
+**z** : z coordinate [m]  
 **dof0** : 1st degree of freedom [fix: 0, no fix: 1]  
-**dof1** : 2nd degree of freedom (if dof >= 2)  
-**dof2** : 3rd degree of freedom (if dof =3)
-
-### Example
-
-```
-0 0.0 0.0 0 0
-1 1.0 0.0 1 1
-2 2.0 0.0 0 0
-```
-3 Nodes are defined at (x,y) = (0.0,0.0), (1.0,0.0), (2.0,0.0). Node ID 0 and 2 are fixed both x and y components.  
+**dof1** : 2nd degree of freedom [fix: 0, no fix: 1]
+**dof2** : 3rd degree of freedom [fix: 0, no fix: 1]
 
 ---
 ## Element block
@@ -65,43 +46,15 @@ id style material_id node_id
 
 **id** : Element ID. Prefer to define it by sequential order.  
 **style** : Element style as listed below.
-- 2d4solid : 4-node isoparametric solid element (2D)
-- 2d8solid : 8-node serendipity solid element (2D)
-- 2d9solid : 9-node isoparametric solid element (2D)
-- 1d2line : 2-node line element (1D)
-- 1d3line : 3-node line element (1D)
-- 1d2input : 2-node line input boundary element
+- 3d8solid : 8-node isoparametric solid element (3D)
+<!-- - 1d2input : 2-node line input boundary element
 - 1d3input : 3-node line input boundary element  
 - 1d2visco : 2-node viscous boundary
 - 1d3visco : 3-node viscous boundary  
-- connect : connecting two nodes with dimensionless rigid bar  
+- connect : connecting two nodes with dimensionless rigid bar   -->
 
 **material_id** : Material ID defined in material block.  
 **node_id** : Node ID list in the order corresponding to the element style.
-
-### Example
-
-```
-0 2d4solid 0 0 1 3 2
-```
-
-2D 4-node isoparametric element is defined.
-Material parameters are given in ID 0.
-The element consists of node ID 0, 1, 3, 2 in the order.
-
-```
-1 1d2input 1 0 1
-```
-
-Input wave boundary is defined on the boundary consisting of node ID 0 and 1.
-
-```
-1 connect -1 0 10
-```
-
-Connection between node ID 0 and 10 is defined.
-This is useful to define periodic boundary condition.
-Material id must be -1 (undefined).
 
 
 ---
@@ -120,14 +73,6 @@ id style param
   + S-wave velocity [m/s], P-wave velocity [m/s], and density [kg/m^3]
 - nu_vp_rho : Linear elastic material. Parameters are given in the order of
   + Poisson's ratio, P-wave velocity [m/s], and density [kg/m^3]
-
-### Example
-
-```
-0 vs_vp_rho 250. 1500. 1750.
-```
-
-Linear elastic material is defined. The parameters are defined in the order of S-wave velocity (250m/s), P-wave velocity (1500m/s), and density (1750kg/m^3).
 
 
 ---
@@ -151,16 +96,3 @@ Node block defines ID of output nodes.
 ## Element block
 
 Element block defines ID of output elements.
-
-
-### Example
-
-```
-2 1
-0
-1
-0
-```
-
-Results of 2 nodes and 1 element are outputted.
-IDs of the output nodes are 0 and 1, and ID of the output element is 0.
