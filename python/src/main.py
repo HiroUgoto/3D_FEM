@@ -23,17 +23,17 @@ fem.set_output(outputs)
 # exit()
 
 ## --- Define EQ source --- ##
-fsamp = 1000
+fsamp = 100
 
-fp = 1.0
-duration = 4
+fp = 0.5
+duration = 6
 
 tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
 slip_rate = input_wave.ricker(tim,fp,tp=1.0/fp,amp=1.0)
 ntim = len(tim)
 
 
-dip = 0.0  # degree
+dip = 30.0  # degree
 width = 1000.0   # m
 sources = source.set_source(fem.elements,dip,width,2500,2500,2500,n=10)
 
@@ -71,7 +71,7 @@ for it in range(len(tim)):
     output_accx[it,:] = [node.a[0] for node in fem.output_nodes]
     output_accz[it,:] = [node.a[1] for node in fem.output_nodes]
 
-    if it%50 == 0:
+    if it%40 == 0:
         plot_model.plot_mesh_update(ax,fem,10000.)
         print(it,"t=",it*dt,output_dispx[it,int(fem.output_nnode//2)])
 

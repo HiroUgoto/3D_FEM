@@ -11,7 +11,7 @@ def plot_element(ax,nodes,fc):
             [nodes[2].xyz,nodes[3].xyz,nodes[7].xyz,nodes[6].xyz],
             [nodes[3].xyz,nodes[0].xyz,nodes[4].xyz,nodes[7].xyz]]
 
-    ax.add_collection3d(art3d.Poly3DCollection(poly,ec="k",fc=fc,alpha=0.5))
+    ax.add_collection3d(art3d.Poly3DCollection(poly,ec="k",fc=fc,alpha=0.2))
 
 def plot_element_disp(ax,nodes,amp,fc):
     poly = [[nodes[0].xyz+nodes[0].u*amp,nodes[1].xyz+nodes[1].u*amp,nodes[2].xyz+nodes[2].u*amp,nodes[3].xyz+nodes[3].u*amp],
@@ -21,7 +21,7 @@ def plot_element_disp(ax,nodes,amp,fc):
             [nodes[2].xyz+nodes[2].u*amp,nodes[3].xyz+nodes[3].u*amp,nodes[7].xyz+nodes[7].u*amp,nodes[6].xyz+nodes[6].u*amp],
             [nodes[3].xyz+nodes[3].u*amp,nodes[0].xyz+nodes[0].u*amp,nodes[4].xyz+nodes[4].u*amp,nodes[7].xyz+nodes[7].u*amp]]
 
-    ax.add_collection3d(art3d.Poly3DCollection(poly,ec="k",fc=fc,alpha=0.5))
+    ax.add_collection3d(art3d.Poly3DCollection(poly,ec="k",fc=fc,alpha=0.2))
 
 #--------------------------------------------------------#
 def plot_mesh(fem):
