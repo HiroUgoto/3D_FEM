@@ -18,10 +18,12 @@ def set_style(style):
         return Input_1d_2Node()
     elif style == "1d3input":
         return Input_1d_3Node()
+    elif style == "2d4visco":
+        return Visco_2d_4Node()
     elif style == "1d2visco":
-        return Input_1d_2Visco()
+        return Visco_1d_2Node()
     elif style == "1d3visco":
-        return Input_1d_3Visco()
+        return Visco_1d_3Node()
     elif style == "connect":
         return Connect()
     elif style == "slip_joint_node":
@@ -29,11 +31,11 @@ def set_style(style):
 
 # =================== Element style classes ============================ #
 class Gauss_Points:
-    def __init__(self,xi,eta,zeta,w):
+    def __init__(self,w,xi,eta=0.0,zeta=0.0):
+        self.w = w
         self.xi = xi
         self.eta = eta
         self.zeta = zeta
-        self.w = w
 
 # =================== Element style classes ============================ #
 class Solid_3d_8Node:
@@ -304,7 +306,10 @@ class Input_1d_3Node(Line_1d_3Node):
     pass
 
 # ---------------------------------------------------------------------- #
-class Input_1d_2Visco(Line_1d_2Node):
+class Visco_2d_4Node(Solid_2d_4Node):
     pass
-class Input_1d_3Visco(Line_1d_3Node):
+
+class Visco_1d_2Node(Line_1d_2Node):
+    pass
+class Visco_1d_3Node(Line_1d_3Node):
     pass

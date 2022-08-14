@@ -75,7 +75,7 @@ class Element:
             for xi,wx in zip(self.xi,self.w):
                 for eta,wy in zip(self.xi,self.w):
                     for zeta,wz in zip(self.xi,self.w):
-                        gp = element_style.Gauss_Points(xi,eta,zeta,wx*wy*wz)
+                        gp = element_style.Gauss_Points(wx*wy*wz,xi,eta,zeta)
                         self.gauss_points += [gp]
 
                         dn = self.estyle.shape_function_dn(xi,eta,zeta)
@@ -85,18 +85,15 @@ class Element:
 
             self.mass = self.rho*V
 
-        # elif self.dim == 1:
-        #     self.gauss_points = set()
-        #     self.imp = self.material.mk_imp(self.dof)
-        #
-        #     for xi,wx in zip(self.xi,self.w):
-        #         dn = self.estyle.shape_function_dn(xi,0.0)
-        #         N = mk_n(self.dof,self.estyle,self.nnode,xi,0.0)
-        #         w = wx
-        #
-        #         gp = element_style.Gauss_Points(dn,wx,N)
-        #         self.gauss_points.add(gp)
-        #
+        elif self.dim == 2:
+            self.gauss_points = []
+            self.imp = self.material.mk_imp(self.dof)
+
+            for eta,wy in zip(self.xi,self.w):
+                for xi,wx in zip(self.xi,self.w):
+                    gp = element_style.Gauss_Points(wx*wy,xi,eta)
+                    self.gauss_points += [gp]
+
         # elif self.dim == 0 and "slip" in self.style:
         #     self.R = self.material.R
 
@@ -137,19 +134,23 @@ class Element:
             self.C_diag = np.diag(self.C)
             self.C_off_diag = self.C - np.diag(self.C_diag)
 
-        # elif self.dim == 1:
-        #     if "input" or "visco" in self.style:
-        #         self.C = np.zeros([self.ndof,self.ndof], dtype=np.float64)
-        #
-        #         for gp in self.gauss_points:
-        #             det,q = mk_q(self.dof,self.xnT,gp.dn)
-        #             detJ = gp.w*det
-        #
-        #             NqN = mk_nqn(self.dof,gp.N,q,self.imp)
-        #             self.C += NqN*detJ
-        #
-        #         self.C_diag = np.diag(self.C)
-        #         self.C_off_diag = self.C - np.diag(self.C_diag)
+        elif self.dim == 2:
+            if "input" or "visco" in self.style:
+                self.C = np.zeros([self.ndof,self.ndof], dtype=np.float64)
+
+                for gp in self.gauss_points:
+                    n = self.estyle.shape_function_n(gp.xi,gp.eta)
+                    dn = self.estyle.shape_function_dn(gp.xi,gp.eta)
+
+                    det,q = mk_q(self.dof,self.xnT,dn)
+                    N = mk_n(self.dof,self.nnode,n)
+                    NqN = mk_nqn(N,q,self.imp)
+
+                    detJ = gp.w*det
+                    self.C += NqN*detJ
+
+                self.C_diag = np.diag(self.C)
+                self.C_off_diag = self.C - np.diag(self.C_diag)
 
     # ---------------------------------------------------------
     def mk_local_vector(self):
@@ -280,24 +281,19 @@ def mk_n(dof,nnode,n):
     return N
 
 # ---------------------------------------------------------
-def mk_nqn(dof,n,q,imp):
+def mk_nqn(n,q,imp):
     nqn = np.linalg.multi_dot([n.T,q.T,imp,q,n])
     return nqn
 
 def mk_q(dof,xnT,dn):
     t = xnT @ dn
-    n = np.cross(t,[0.0,0.0,1.0])
-    det = np.linalg.norm(t)
+    n = np.cross(t[:,0],t[:,1])
+    det = np.linalg.norm(n)
 
-    if dof == 1:
-        q = np.array([1.0])
-    elif dof == 2:
-        q = np.array([[n[0],n[1]],
-                      [t[0],t[1]]]) / det
-    elif dof == 3:
-        q = np.array([[n[0],n[1],0.0],
-                      [t[0],t[1],0.0],
-                      [0.0 ,0.0 ,1.0]]) / det
+    t0 = t[:,0] / np.linalg.norm(t[:,0])
+    t1 = t[:,1] / np.linalg.norm(t[:,1])
+
+    q = np.vstack([n/det,t0,t1])
 
     return det, q
 

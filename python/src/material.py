@@ -70,11 +70,6 @@ class Material:
         vs = np.sqrt(self.rmu/self.rho)
         vp = np.sqrt((self.rlambda +2*self.rmu)/self.rho)
 
-        if dof == 1:
-            imp = np.diag([self.rho*vs])
-        elif dof == 2:
-            imp = np.diag([self.rho*vp,self.rho*vs])
-        elif dof == 3:
-            imp = np.diag([self.rho*vp,self.rho*vs,self.rho*vs])
+        imp = np.diag([self.rho*vp,self.rho*vs,self.rho*vs])
 
         return imp

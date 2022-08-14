@@ -33,9 +33,9 @@ slip_rate = input_wave.ricker(tim,fp,tp=1.0/fp,amp=1.0)
 ntim = len(tim)
 
 
-dip = 30.0  # degree
+dip = 0.0  # degree
 width = 1000.0   # m
-sources = source.set_source(fem.elements,dip,width,2500,2500,2500,n=2)
+sources = source.set_source(fem.elements,dip,width,2500,2500,2500,n=10)
 
 # plt.figure()
 # plt.plot(tim,slip)
@@ -71,7 +71,7 @@ for it in range(len(tim)):
     output_accx[it,:] = [node.a[0] for node in fem.output_nodes]
     output_accz[it,:] = [node.a[1] for node in fem.output_nodes]
 
-    if it%20 == 0:
+    if it%50 == 0:
         plot_model.plot_mesh_update(ax,fem,10000.)
         print(it,"t=",it*dt,output_dispx[it,int(fem.output_nnode//2)])
 
