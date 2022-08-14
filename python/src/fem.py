@@ -21,7 +21,6 @@ class Fem():
     def set_init(self):
         self._set_mesh()
         self._set_initial_condition()
-        self._set_set()
         self._set_initial_matrix()
 
     # ---------------------------------------
@@ -71,18 +70,8 @@ class Fem():
             element.set_pointer_list()
 
     # ---------------------------------------
-    def _set_set(self):
-        self.node_set = set(self.nodes)
-        self.free_node_set = set(self.free_nodes)
-        self.fixed_node_set = set(self.fixed_nodes)
-
-        self.element_set = set(self.elements)
-        self.input_element_set = set(self.input_elements)
-        self.connected_element_set = set(self.connected_elements)
-
-    # ---------------------------------------
     def _set_initial_matrix(self):
-        for element in self.element_set:
+        for element in self.elements:
             element.set_xn()
             element.mk_local_matrix_init(self.dof)
             element.mk_local_matrix()
@@ -110,9 +99,6 @@ class Fem():
         self.output_elements = [None] * self.output_nelem
         for id,ielem in enumerate(output_element_list):
             self.output_elements[id] = self.elements[ielem]
-
-        self.output_node_set = set(self.output_nodes)
-        self.output_element_set = set(self.output_elements)
 
     # ======================================================================= #
     def self_gravity(self):
@@ -229,7 +215,7 @@ class Fem():
 
     # ======================================================================= #
     def update_init(self,dt):
-        for node in self.node_set:
+        for node in self.nodes:
             node.inv_mc = 1.0 / (node.mass[:] + 0.5*dt*node.c[:])
             node.mass_inv_mc = node.mass[:]*node.inv_mc[:]
             node.c_inv_mc = node.c[:]*node.inv_mc[:]*0.5*dt
@@ -271,14 +257,9 @@ class Fem():
         node.dtdt_inv_mc = self.dt*self.dt*node.inv_mc[:]
 
     # ======================================================================= #
-    def update_time(self,acc0,vel0=None,input_wave=False,FD=False):
-        if FD:
-            self.update_matrix()
-        else:
-            for node in self.node_set:
-                node.dynamic_force = np.zeros(self.dof,dtype=np.float64)
-
+    def update_time(self,acc0,vel0=None,input_wave=False):
         for node in self.node_set:
+            node.dynamic_force = np.zeros(self.dof,dtype=np.float64)
             self._update_time_node_init(node)
 
         if input_wave:
@@ -288,13 +269,8 @@ class Fem():
             for element in self.element_set:
                 self._update_bodyforce(element,acc0)
 
-        if FD:
-            for element in self.element_set:
-                element.mk_B_stress()
-                element.mk_cv()
-        else:
-            for element in self.element_set:
-                element.mk_ku_cv()
+        for element in self.element_set:
+            element.mk_ku_cv()
 
         for node in self.free_node_set:
             self._update_time_set_free_nodes(node)
@@ -334,27 +310,27 @@ class Fem():
 
     # ======================================================================= #
     def update_time_source(self,sources,slip0):
-        for node in self.node_set:
+        for node in self.nodes:
             node.dynamic_force = np.zeros(self.dof,dtype=np.float64)
 
-        for node in self.node_set:
+        for node in self.nodes:
             self._update_time_node_init(node)
 
         for source in sources:
             self._update_time_source(source,slip0)
 
-        for element in self.element_set:
+        for element in self.elements:
             element.mk_ku_cv()
 
-        for node in self.free_node_set:
+        for node in self.free_nodes:
             self._update_time_set_free_nodes(node)
-        for node in self.fixed_node_set:
+        for node in self.fixed_nodes:
             self._update_time_set_fixed_nodes(node)
 
-        for element in self.connected_element_set:
+        for element in self.connected_elements:
             self._update_time_set_connected_elements_(element)
 
-        for element in self.output_element_set:
+        for element in self.output_elements:
             element.calc_stress()
 
 

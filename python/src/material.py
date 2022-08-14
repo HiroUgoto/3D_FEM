@@ -44,24 +44,13 @@ class Material:
 
     # ---------------------------------------------------------
     def mk_d(self,dof):
-        if dof == 1:
-            D = np.zeros([2,2],dtype=np.float64)
-            D[0,0] = self.rmu
-            D[1,1] = self.rmu
-
-        elif dof == 2:
-            D = np.zeros([3,3],dtype=np.float64)
-            D[0,0],D[0,1] = self.rlambda + 2*self.rmu, self.rlambda
-            D[1,0],D[1,1] = self.rlambda, self.rlambda + 2*self.rmu
-            D[2,2] = self.rmu
-
-        elif dof == 3:
-            D = np.zeros([5,5],dtype=np.float64)
-            D[0,0],D[0,1] = self.rlambda + 2*self.rmu, self.rlambda
-            D[1,0],D[1,1] = self.rlambda, self.rlambda + 2*self.rmu
-            D[2,2] = self.rmu
-            D[3,3] = self.rmu
-            D[4,4] = self.rmu
+        D = np.zeros([6,6],dtype=np.float64)
+        D[0,0],D[0,1],D[0,2] = self.rlambda + 2*self.rmu, self.rlambda, self.rlambda
+        D[1,0],D[1,1],D[1,2] = self.rlambda, self.rlambda + 2*self.rmu, self.rlambda
+        D[2,0],D[2,1],D[2,2] = self.rlambda, self.rlambda, self.rlambda + 2*self.rmu
+        D[3,3] = self.rmu
+        D[4,4] = self.rmu
+        D[5,5] = self.rmu
 
         return D
 
@@ -69,20 +58,10 @@ class Material:
     def mk_visco(self,dof):
         mu = 0.001 # [Pa s]
 
-        if dof == 1:
-            D = np.zeros([2,2],dtype=np.float64)
-            D[0,0] = mu
-            D[1,1] = mu
-
-        elif dof == 2:
-            D = np.zeros([3,3],dtype=np.float64)
-            D[2,2] = mu
-
-        elif dof == 3:
-            D = np.zeros([5,5],dtype=np.float64)
-            D[2,2] = mu
-            D[3,3] = mu
-            D[4,4] = mu
+        D = np.zeros([6,6],dtype=np.float64)
+        D[3,3] = mu
+        D[4,4] = mu
+        D[5,5] = mu
 
         return D
 

@@ -2,7 +2,9 @@ from functools import lru_cache
 import numpy as np
 
 def set_style(style):
-    if style == "2d4solid":
+    if style == "3d8solid":
+        return Solid_3d_8Node()
+    elif style == "2d4solid":
         return Solid_2d_4Node()
     elif style == "2d8solid":
         return Solid_2d_8Node()
@@ -27,13 +29,73 @@ def set_style(style):
 
 # =================== Element style classes ============================ #
 class Gauss_Points:
-    def __init__(self,dn,w,N,M=None):
-        self.dn = dn
+    def __init__(self,xi,eta,zeta,w):
+        self.xi = xi
+        self.eta = eta
+        self.zeta = zeta
         self.w = w
-        self.N = N
-        self.M = M
 
 # =================== Element style classes ============================ #
+class Solid_3d_8Node:
+    def __init__(self):
+        self.dim = 3
+        self.gauss = np.polynomial.legendre.leggauss(3)
+
+    def init_dn(self,n):
+        return np.zeros([n,n,8,3])
+
+    @lru_cache()
+    def shape_function_n(self,xi,eta,zeta):
+        n = np.zeros(8)
+        n[0] = (1.0 - xi)*(1.0 - eta)*(1.0 - zeta) / 8.0
+        n[1] = (1.0 + xi)*(1.0 - eta)*(1.0 - zeta) / 8.0
+        n[2] = (1.0 + xi)*(1.0 + eta)*(1.0 - zeta) / 8.0
+        n[3] = (1.0 - xi)*(1.0 + eta)*(1.0 - zeta) / 8.0
+
+        n[4] = (1.0 - xi)*(1.0 - eta)*(1.0 + zeta) / 8.0
+        n[5] = (1.0 + xi)*(1.0 - eta)*(1.0 + zeta) / 8.0
+        n[6] = (1.0 + xi)*(1.0 + eta)*(1.0 + zeta) / 8.0
+        n[7] = (1.0 - xi)*(1.0 + eta)*(1.0 + zeta) / 8.0
+        return n
+
+    @lru_cache()
+    def shape_function_dn(style,xi,eta,zeta):
+        dn = np.zeros([8,3])
+        dn[0,0] = -(1.0 - eta)*(1.0 - zeta) / 8.0
+        dn[0,1] = -(1.0 -  xi)*(1.0 - zeta) / 8.0
+        dn[0,2] = -(1.0 -  xi)*(1.0 -  eta) / 8.0
+
+        dn[1,0] =  (1.0 - eta)*(1.0 - zeta) / 8.0
+        dn[1,1] = -(1.0 +  xi)*(1.0 - zeta) / 8.0
+        dn[1,2] = -(1.0 +  xi)*(1.0 -  eta) / 8.0
+
+        dn[2,0] =  (1.0 + eta)*(1.0 - zeta) / 8.0
+        dn[2,1] =  (1.0 +  xi)*(1.0 - zeta) / 8.0
+        dn[2,2] = -(1.0 +  xi)*(1.0 +  eta) / 8.0
+
+        dn[3,0] = -(1.0 + eta)*(1.0 - zeta) / 8.0
+        dn[3,1] =  (1.0 -  xi)*(1.0 - zeta) / 8.0
+        dn[3,2] = -(1.0 -  xi)*(1.0 +  eta) / 8.0
+
+        dn[4,0] = -(1.0 - eta)*(1.0 + zeta) / 8.0
+        dn[4,1] = -(1.0 -  xi)*(1.0 + zeta) / 8.0
+        dn[4,2] =  (1.0 -  xi)*(1.0 -  eta) / 8.0
+
+        dn[5,0] =  (1.0 - eta)*(1.0 + zeta) / 8.0
+        dn[5,1] = -(1.0 +  xi)*(1.0 + zeta) / 8.0
+        dn[5,2] =  (1.0 +  xi)*(1.0 -  eta) / 8.0
+
+        dn[6,0] =  (1.0 + eta)*(1.0 + zeta) / 8.0
+        dn[6,1] =  (1.0 +  xi)*(1.0 + zeta) / 8.0
+        dn[6,2] =  (1.0 +  xi)*(1.0 +  eta) / 8.0
+
+        dn[7,0] = -(1.0 + eta)*(1.0 + zeta) / 8.0
+        dn[7,1] =  (1.0 -  xi)*(1.0 + zeta) / 8.0
+        dn[7,2] =  (1.0 -  xi)*(1.0 +  eta) / 8.0
+
+        return dn
+
+# ---------------------------------------------------------------------- #
 class Solid_2d_4Node:
     def __init__(self):
         self.dim = 2

@@ -5,9 +5,9 @@ area_x = 5000.0
 area_y = 5000.0
 area_z = 5000.0
 
-nx = 1
-ny = 1
-nz = 1
+nx = 2
+ny = 2
+nz = 2
 dof = 3
 
 xg = np.linspace(0,area_x,nx+1,endpoint=True)
