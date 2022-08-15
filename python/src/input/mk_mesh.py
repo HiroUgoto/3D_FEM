@@ -5,9 +5,9 @@ area_x = 5000.0
 area_y = 5000.0
 area_z = 5000.0
 
-nx = 10
-ny = 10
-nz = 10
+nx = 1
+ny = 1
+nz = 1
 dof = 3
 
 xg = np.linspace(0,area_x,nx+1,endpoint=True)
@@ -47,50 +47,50 @@ for k in range(nz):
             element_lines += [param_line + style_line + "\n"]
             ielem += 1
 
-for j in range(ny):
-    for i in range(nx):
-        im = 0
-        style = "2d4visco"
-
-        param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[i,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node[i,j+1,-1])
-
-        element_lines += [param_line + style_line + "\n"]
-        ielem += 1
-
-for k in range(nz):
-    for j in range(ny):
-        im = 0
-        style = "2d4visco"
-
-        param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[0,j,k],node[0,j,k+1],node[0,j+1,k+1],node[0,j+1,k])
-
-        element_lines += [param_line + style_line + "\n"]
-        ielem += 1
-
-        param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[-1,j,k],node[-1,j+1,k],node[-1,j+1,k+1],node[-1,j,k+1])
-
-        element_lines += [param_line + style_line + "\n"]
-        ielem += 1
-
-for k in range(nz):
-    for i in range(nx):
-        im = 0
-        style = "2d4visco"
-
-        param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[i,0,k],node[i+1,0,k],node[i+1,0,k+1],node[i,0,k+1])
-
-        element_lines += [param_line + style_line + "\n"]
-        ielem += 1
-
-        param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[i,-1,k],node[i,-1,k+1],node[i+1,-1,k+1],node[i+1,-1,k])
-
-        element_lines += [param_line + style_line + "\n"]
-        ielem += 1
+# for j in range(ny):
+#     for i in range(nx):
+#         im = 0
+#         style = "2d4visco"
+#
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[i,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node[i,j+1,-1])
+#
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
+#
+# for k in range(nz):
+#     for j in range(ny):
+#         im = 0
+#         style = "2d4visco"
+#
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[0,j,k],node[0,j,k+1],node[0,j+1,k+1],node[0,j+1,k])
+#
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
+#
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[-1,j,k],node[-1,j+1,k],node[-1,j+1,k+1],node[-1,j,k+1])
+#
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
+#
+# for k in range(nz):
+#     for i in range(nx):
+#         im = 0
+#         style = "2d4visco"
+#
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[i,0,k],node[i+1,0,k],node[i+1,0,k+1],node[i,0,k+1])
+#
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
+#
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[i,-1,k],node[i,-1,k+1],node[i+1,-1,k+1],node[i+1,-1,k])
+#
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
 
 
 nnode = inode       #number of nodes
