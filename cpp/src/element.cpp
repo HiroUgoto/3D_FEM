@@ -6,6 +6,7 @@
 #include "element.h"
 
 using EV = Eigen::VectorXd ;
+using EV3 = Eigen::Vector3d ;
 using EM = Eigen::MatrixXd ;
 using EM2 = Eigen::Matrix2d ;
 using EM3 = Eigen::Matrix3d ;
@@ -447,29 +448,24 @@ EM mk_nqn(const EM N, const EM q, const EM imp) {
 
 std::tuple<double, EM>
   mk_q(const size_t dof, const EM xnT, const EM dn) {
-    EM q;
-    EV n(2), t(2);
+    EM q, t;
+    EV3 t0, t1, n;
     double det;
 
     t = xnT * dn;
-    n(0) = t(1); n(1) = -t(0);
+
+    t0 = t.col(0); t1 = t.col(1);
+    n = t0.cross(t1);
     det = n.norm();
 
-    if (dof == 1){
-      q = EM::Zero(1,1);
-      q(0,0) = 1.0;
+    t0 /= t0.norm();
+    t1 /= t1.norm();
+    n /= det;
 
-    } else if (dof == 2){
-      q = EM::Zero(2,2);
-      q(0,0) = n(0)/det; q(0,1) = n(1)/det;
-      q(1,0) = t(0)/det; q(1,1) = t(1)/det;
-
-    } else if (dof == 3){
-      q = EM::Zero(3,3);
-      q(0,0) = n(0)/det; q(0,1) = n(1)/det;
-      q(1,0) = t(0)/det; q(1,1) = t(1)/det;
-      q(2,2) = 1.0/det;
-    }
+    q = EM::Zero(3,3);
+    q(0,0) =  n(0); q(0,1) =  n(1); q(0,2) =  n(2);
+    q(1,0) = t0(0); q(1,1) = t0(1); q(1,2) = t0(2);
+    q(2,0) = t1(0); q(2,1) = t1(1); q(2,2) = t1(2);
 
     return {det, q};
   }

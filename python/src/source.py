@@ -20,8 +20,11 @@ def set_source(elements,dip,width,sx,sy,sz,n=1):
                 is_inside,xi = element.check_inside(x)
                 if is_inside:
                     source = Source(i,dip,dw,element.id,xi[0],xi[1],xi[2])
+                    print(element.id,xi)
                     source_list += [source]
 
+
+    exit()
     return source_list
 
 

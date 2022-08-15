@@ -24,6 +24,7 @@ int main() {
   // ----- FEM Set up ----- //
   fem.set_init();
   fem.set_output(outputs);
+  // exit(1);
 
   // ----- Define input wave ----- //
   size_t fsamp = 100;

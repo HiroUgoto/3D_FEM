@@ -183,26 +183,26 @@ Solid_2d_4Node::Solid_2d_4Node () {
 
 EV Solid_2d_4Node::shape_function_n (double xi, double eta, double zeta) {
     EV n = EV::Zero(4);
-    n(0) = (1.0 - xi)*(1.0 - zeta) / 4.0;
-    n(1) = (1.0 + xi)*(1.0 - zeta) / 4.0;
-    n(2) = (1.0 + xi)*(1.0 + zeta) / 4.0;
-    n(3) = (1.0 - xi)*(1.0 + zeta) / 4.0;
+    n(0) = (1.0 - xi)*(1.0 - eta) / 4.0;
+    n(1) = (1.0 + xi)*(1.0 - eta) / 4.0;
+    n(2) = (1.0 + xi)*(1.0 + eta) / 4.0;
+    n(3) = (1.0 - xi)*(1.0 + eta) / 4.0;
     return n;
   }
 
 EM Solid_2d_4Node::shape_function_dn (double xi, double eta, double zeta) {
     EM dn = EM::Zero(4,2);
-    dn(0,0) = -(1.0 - zeta) / 4.0;
-    dn(0,1) = -(1.0 -   xi) / 4.0;
+    dn(0,0) = -(1.0 - eta) / 4.0;
+    dn(0,1) = -(1.0 -  xi) / 4.0;
 
-    dn(1,0) =  (1.0 - zeta) / 4.0;
-    dn(1,1) = -(1.0 +   xi) / 4.0;
+    dn(1,0) =  (1.0 - eta) / 4.0;
+    dn(1,1) = -(1.0 +  xi) / 4.0;
 
-    dn(2,0) =  (1.0 + zeta) / 4.0;
-    dn(2,1) =  (1.0 +   xi) / 4.0;
+    dn(2,0) =  (1.0 + eta) / 4.0;
+    dn(2,1) =  (1.0 +  xi) / 4.0;
 
-    dn(3,0) = -(1.0 + zeta) / 4.0;
-    dn(3,1) =  (1.0 -   xi) / 4.0;
+    dn(3,0) = -(1.0 + eta) / 4.0;
+    dn(3,1) =  (1.0 -  xi) / 4.0;
     return dn;
   }
 
@@ -233,43 +233,43 @@ Solid_2d_8Node::Solid_2d_8Node () {
 
 EV Solid_2d_8Node::shape_function_n (double xi, double eta, double zeta) {
     EV n = EV::Zero(8);
-    n(0) = (1.0 - xi)*(1.0 - zeta)*(-1.0-xi-zeta) / 4.0;
-    n(1) = (1.0 + xi)*(1.0 - zeta)*(-1.0+xi-zeta) / 4.0;
-    n(2) = (1.0 + xi)*(1.0 + zeta)*(-1.0+xi+zeta) / 4.0;
-    n(3) = (1.0 - xi)*(1.0 + zeta)*(-1.0-xi+zeta) / 4.0;
+    n(0) = (1.0 - xi)*(1.0 - eta)*(-1.0-xi-eta) / 4.0;
+    n(1) = (1.0 + xi)*(1.0 - eta)*(-1.0+xi-eta) / 4.0;
+    n(2) = (1.0 + xi)*(1.0 + eta)*(-1.0+xi+eta) / 4.0;
+    n(3) = (1.0 - xi)*(1.0 + eta)*(-1.0-xi+eta) / 4.0;
 
-    n(4) = (1.0 - xi*xi)*(1.0 - zeta) / 2.0;
-    n(5) = (1.0 + xi)*(1.0 - zeta*zeta) / 2.0;
-    n(6) = (1.0 - xi*xi)*(1.0 + zeta) / 2.0;
-    n(7) = (1.0 - xi)*(1.0 - zeta*zeta) / 2.0;
+    n(4) = (1.0 - xi*xi)*(1.0 - eta) / 2.0;
+    n(5) = (1.0 + xi)*(1.0 - eta*eta) / 2.0;
+    n(6) = (1.0 - xi*xi)*(1.0 + eta) / 2.0;
+    n(7) = (1.0 - xi)*(1.0 - eta*eta) / 2.0;
     return n;
   }
 
 EM Solid_2d_8Node::shape_function_dn (double xi, double eta, double zeta) {
     EM dn = EM::Zero(8,2);
-    dn(0,0) = (1.0 - zeta)*(2.0*xi+zeta) / 4.0;
-    dn(0,1) = (1.0 -   xi)*(xi+2.0*zeta) / 4.0;
+    dn(0,0) = (1.0 - eta)*(2.0*xi+eta) / 4.0;
+    dn(0,1) = (1.0 -  xi)*(xi+2.0*eta) / 4.0;
 
-    dn(1,0) = (1.0 - zeta)*(2.0*xi-zeta) / 4.0;
-    dn(1,1) = -(1.0 +  xi)*(xi-2.0*zeta) / 4.0;
+    dn(1,0) =  (1.0 - eta)*(2.0*xi-eta) / 4.0;
+    dn(1,1) = -(1.0 +  xi)*(xi-2.0*eta) / 4.0;
 
-    dn(2,0) = (1.0 + zeta)*(2.0*xi+zeta) / 4.0;
-    dn(2,1) = (1.0 +   xi)*(xi+2.0*zeta) / 4.0;
+    dn(2,0) = (1.0 + eta)*(2.0*xi+eta) / 4.0;
+    dn(2,1) = (1.0 +  xi)*(xi+2.0*eta) / 4.0;
 
-    dn(3,0) = (1.0 + zeta)*(2.0*xi-zeta) / 4.0;
-    dn(3,1) = -(1.0 -  xi)*(xi-2.0*zeta) / 4.0;
+    dn(3,0) =  (1.0 + eta)*(2.0*xi-eta) / 4.0;
+    dn(3,1) = -(1.0 -  xi)*(xi-2.0*eta) / 4.0;
 
-    dn(4,0) = -xi*(1.0 - zeta);
+    dn(4,0) = -xi*(1.0 - eta);
     dn(4,1) = (xi*xi-1.0) / 2.0;
 
-    dn(5,0) = (1.0 - zeta*zeta) / 2.0;
-    dn(5,1) = -(1.0 + xi)*zeta;
+    dn(5,0) =  (1.0 - eta*eta) / 2.0;
+    dn(5,1) = -(1.0 + xi)*eta;
 
-    dn(6,0) = -xi*(1.0 + zeta);
+    dn(6,0) = -xi*(1.0 + eta);
     dn(6,1) = (1.0 - xi*xi) / 2.0;
 
-    dn(7,0) = -(1.0 - zeta*zeta) / 2.0;
-    dn(7,1) = -(1.0 - xi)*zeta;
+    dn(7,0) = -(1.0 - eta*eta) / 2.0;
+    dn(7,1) = -(1.0 - xi)*eta;
     return dn;
   }
 
@@ -299,48 +299,48 @@ Solid_2d_9Node::Solid_2d_9Node () {
 
 EV Solid_2d_9Node::shape_function_n (double xi, double eta, double zeta) {
     EV n = EV::Zero(9);
-    n(0) =  (1.0 - xi)*(1.0 - zeta)*xi*zeta / 4.0;
-    n(1) = -(1.0 + xi)*(1.0 - zeta)*xi*zeta / 4.0;
-    n(2) =  (1.0 + xi)*(1.0 + zeta)*xi*zeta / 4.0;
-    n(3) = -(1.0 - xi)*(1.0 + zeta)*xi*zeta / 4.0;
+    n(0) =  (1.0 - xi)*(1.0 - eta)*xi*eta / 4.0;
+    n(1) = -(1.0 + xi)*(1.0 - eta)*xi*eta / 4.0;
+    n(2) =  (1.0 + xi)*(1.0 + eta)*xi*eta / 4.0;
+    n(3) = -(1.0 - xi)*(1.0 + eta)*xi*eta / 4.0;
 
-    n(4) = -(1.0 - xi*xi)*zeta*(1.0 - zeta) / 2.0;
-    n(5) =  (1.0 + xi)*xi*(1.0 - zeta*zeta) / 2.0;
-    n(6) =  (1.0 - xi*xi)*zeta*(1.0 + zeta) / 2.0;
-    n(7) = -(1.0 - xi)*xi*(1.0 - zeta*zeta) / 2.0;
+    n(4) = -(1.0 - xi*xi)*eta*(1.0 - eta) / 2.0;
+    n(5) =  (1.0 + xi)*xi*(1.0 - eta*eta) / 2.0;
+    n(6) =  (1.0 - xi*xi)*eta*(1.0 + eta) / 2.0;
+    n(7) = -(1.0 - xi)*xi*(1.0 - eta*eta) / 2.0;
 
-    n(8) = (1.0-xi*xi)*(1.0-zeta*zeta);
+    n(8) = (1.0-xi*xi)*(1.0-eta*eta);
     return n;
   }
 
 EM Solid_2d_9Node::shape_function_dn (double xi, double eta, double zeta) {
     EM dn = EM::Zero(9,2);
-    dn(0,0) =  (2.0*xi-1.0)*(zeta-1.0)*zeta / 4.0;
-    dn(0,1) =  (xi-1.0)*xi*(2.0*zeta-1.0) / 4.0;
+    dn(0,0) =  (2.0*xi-1.0)*(eta-1.0)*eta / 4.0;
+    dn(0,1) =  (xi-1.0)*xi*(2.0*eta-1.0) / 4.0;
 
-    dn(1,0) =  (2.0*xi+1.0)*(zeta-1.0)*zeta / 4.0;
-    dn(1,1) =  (xi+1.0)*xi*(2.0*zeta-1.0) / 4.0;
+    dn(1,0) =  (2.0*xi+1.0)*(eta-1.0)*eta / 4.0;
+    dn(1,1) =  (xi+1.0)*xi*(2.0*eta-1.0) / 4.0;
 
-    dn(2,0) =  (2.0*xi+1.0)*(zeta+1.0)*zeta / 4.0;
-    dn(2,1) =  (xi+1.0)*xi*(2.0*zeta+1.0) / 4.0;
+    dn(2,0) =  (2.0*xi+1.0)*(eta+1.0)*eta / 4.0;
+    dn(2,1) =  (xi+1.0)*xi*(2.0*eta+1.0) / 4.0;
 
-    dn(3,0) =  (2.0*xi-1.0)*(zeta+1.0)*zeta / 4.0;
-    dn(3,1) =  (xi-1.0)*xi*(2.0*zeta+1.0) / 4.0;
+    dn(3,0) =  (2.0*xi-1.0)*(eta+1.0)*eta / 4.0;
+    dn(3,1) =  (xi-1.0)*xi*(2.0*eta+1.0) / 4.0;
 
-    dn(4,0) =  xi*(1.0-zeta)*zeta;
-    dn(4,1) =  (1.0-xi*xi)*(2.0*zeta-1.0) / 2.0;
+    dn(4,0) =  xi*(1.0-eta)*eta;
+    dn(4,1) =  (1.0-xi*xi)*(2.0*eta-1.0) / 2.0;
 
-    dn(5,0) =  (2.0*xi+1.0)*(1.0-zeta*zeta) / 2.0;
-    dn(5,1) =  -xi*(1.0+xi)*zeta;
+    dn(5,0) =  (2.0*xi+1.0)*(1.0-eta*eta) / 2.0;
+    dn(5,1) =  -xi*(1.0+xi)*eta;
 
-    dn(6,0) =  -xi*(1.0+zeta)*zeta;
-    dn(6,1) =  (1.0-xi*xi)*(2.0*zeta+1.0) / 2.0;
+    dn(6,0) =  -xi*(1.0+eta)*eta;
+    dn(6,1) =  (1.0-xi*xi)*(2.0*eta+1.0) / 2.0;
 
-    dn(7,0) =  (2.0*xi-1.0)*(1.0-zeta*zeta) / 2.0;
-    dn(7,1) =  xi*(1.0-xi)*zeta;
+    dn(7,0) =  (2.0*xi-1.0)*(1.0-eta*eta) / 2.0;
+    dn(7,1) =  xi*(1.0-xi)*eta;
 
-    dn(8,0) =  -2.0*xi*(1.0-zeta*zeta);
-    dn(8,1) =  -2.0*(1.0-xi*xi)*zeta;
+    dn(8,0) =  -2.0*xi*(1.0-eta*eta);
+    dn(8,1) =  -2.0*(1.0-xi*xi)*eta;
     return dn;
   }
 

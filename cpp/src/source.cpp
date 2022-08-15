@@ -13,7 +13,8 @@ using EM = Eigen::MatrixXd ;
 std::vector<Source> set_source(const std::vector<Element> elements, const double dip, const double width, const double sx, const double sy, const double sz) {
   std::vector<Source> source_list;
 
-  size_t element_id = 0;
+  // size_t element_id = 0;
+  size_t element_id = 364;
   double xi, eta, zeta;
   xi = 0.0; eta = 0.0; zeta = 0.0;
 
