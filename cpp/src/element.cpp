@@ -398,6 +398,34 @@ void Element::calc_stress() {
     this->stress = this->De * this->strain;
   }
 
+// ------------------------------------------------------------------- //
+std::tuple<bool, EV>
+  Element::check_inside(const EV x) {
+    EV xi = EV::Zero(3);
+    bool is_inside = false;
+    ElementStyle* estyle_p = set_element_style(this->style);
+
+    for (size_t itr=0; itr<20; itr++) {
+      EV n = estyle_p->shape_function_n(xi[0],xi[1],xi[2]);
+      EM dn = estyle_p->shape_function_dn(xi[0],xi[1],xi[2]);
+
+      EV J_func = this->xnT*n - x;
+      auto [det,dJ_func] = mk_jacobi(this->xnT, dn);
+
+      EV r = dJ_func.partialPivLu().solve(J_func);
+      if (r.norm() < 1e-8) break;
+
+      xi -= r;
+    }
+
+    if ( (-1.0 <= xi[0]) && (xi[0] < 1.0) &&
+         (-1.0 <= xi[1]) && (xi[1] < 1.0) &&
+         (-1.0 <= xi[2]) && (xi[2] < 1.0) ) {
+      is_inside = true;
+    }
+
+    return {is_inside, xi};
+  }
 
 // ------------------------------------------------------------------- //
 // ------------------------------------------------------------------- //

@@ -63,6 +63,7 @@ class Element {
     void update_inputwave(const EV vel0);
     void mk_source(const EM dn, const EV strain_tensor, const double slip0);
     void calc_stress();
+    std::tuple<bool, EV> check_inside(const EV x);
 };
 
 EM mk_m(const EM N);

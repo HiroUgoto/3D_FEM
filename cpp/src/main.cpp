@@ -44,10 +44,7 @@ int main() {
   double sy = 2500.0;
   double sz = 2500.0;
 
-  auto sources = set_source(fem.elements,dip,width,sx,sy,sz);
-
-  // Source source(0,dip,width,0,0.0,0.0,0.0);
-  // sources.push_back(source);
+  auto sources = set_source(fem.elements,dip,width,sx,sy,sz,10);
 
   // std::ofstream f0(output_dir + "input.acc");
   // for (size_t it = 0 ; it < ntim ; it++) {

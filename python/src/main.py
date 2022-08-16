@@ -35,7 +35,7 @@ ntim = len(tim)
 
 dip = 30.0  # degree
 width = 1000.0   # m
-sources = source.set_source(fem.elements,dip,width,2500,2500,2500,n=1)
+sources = source.set_source(fem.elements,dip,width,2500,2500,2500,n=10)
 
 # plt.figure()
 # plt.plot(tim,slip)

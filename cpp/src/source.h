@@ -17,4 +17,4 @@ class Source {
     void set_strain_tensor();
 };
 
-std::vector<Source> set_source(const std::vector<Element> elements, const double dip, const double width, const double sx, const double sy, const double sz);
+std::vector<Source> set_source(std::vector<Element> elements, double dip, double width, double sx, double sy, double sz, size_t n);
