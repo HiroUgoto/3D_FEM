@@ -39,6 +39,7 @@ std::vector<Source> set_source(std::vector<Element> elements, double dip, double
 
           Source source(i,dip,dw,element.id,dn);
           source_list.push_back(source);
+          break;
         }
       }
     }
