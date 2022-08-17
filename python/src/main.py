@@ -44,7 +44,7 @@ sources = source.set_source(fem.elements,strike,dip,rake,length,width,2500,2500,
 # exit()
 
 # plt.figure()
-# plt.plot(tim,slip)
+# plt.plot(tim,slip_rate)
 # plt.show()
 # exit()
 
@@ -54,12 +54,15 @@ fem.update_init(dt)
 
 ## Iteration ##
 output_dispx = np.zeros((ntim,fem.output_nnode))
+output_dispy = np.zeros((ntim,fem.output_nnode))
 output_dispz = np.zeros((ntim,fem.output_nnode))
 
 output_velx = np.zeros((ntim,fem.output_nnode))
+output_vely = np.zeros((ntim,fem.output_nnode))
 output_velz = np.zeros((ntim,fem.output_nnode))
 
 output_accx = np.zeros((ntim,fem.output_nnode))
+output_accy = np.zeros((ntim,fem.output_nnode))
 output_accz = np.zeros((ntim,fem.output_nnode))
 
 slip0 = 0.0
@@ -69,13 +72,16 @@ for it in range(len(tim)):
     fem.update_time_source(sources,slip0)
 
     output_dispx[it,:] = [node.u[0] for node in fem.output_nodes]
-    output_dispz[it,:] = [node.u[1] for node in fem.output_nodes]
+    output_dispy[it,:] = [node.u[1] for node in fem.output_nodes]
+    output_dispz[it,:] = [node.u[2] for node in fem.output_nodes]
 
     output_velx[it,:] = [node.v[0] for node in fem.output_nodes]
-    output_velz[it,:] = [node.v[1] for node in fem.output_nodes]
+    output_vely[it,:] = [node.v[1] for node in fem.output_nodes]
+    output_velz[it,:] = [node.v[2] for node in fem.output_nodes]
 
     output_accx[it,:] = [node.a[0] for node in fem.output_nodes]
-    output_accz[it,:] = [node.a[1] for node in fem.output_nodes]
+    output_accy[it,:] = [node.a[1] for node in fem.output_nodes]
+    output_accz[it,:] = [node.a[2] for node in fem.output_nodes]
 
     if it%40 == 0:
         plot_model.plot_mesh_update(ax,fem,10000.)
@@ -89,15 +95,21 @@ print ("elapsed_time: {0}".format(elapsed_time) + "[sec]")
 ## --- Write output file --- ##
 output_line = np.vstack([tim,output_dispx[:,0],output_dispx[:,int(fem.output_nnode//2)]]).T
 np.savetxt(output_dir+"output_x.disp",output_line)
+output_line = np.vstack([tim,output_dispy[:,0],output_dispy[:,int(fem.output_nnode//2)]]).T
+np.savetxt(output_dir+"output_y.disp",output_line)
 
 output_line = np.vstack([tim,output_velx[:,0],output_velx[:,int(fem.output_nnode//2)]]).T
 np.savetxt(output_dir+"output_x.vel",output_line)
+output_line = np.vstack([tim,output_vely[:,0],output_vely[:,int(fem.output_nnode//2)]]).T
+np.savetxt(output_dir+"output_y.vel",output_line)
 
 output_line = np.vstack([tim,output_accx[:,0],output_accx[:,int(fem.output_nnode//2)]]).T
 np.savetxt(output_dir+"output_x.acc",output_line)
+output_line = np.vstack([tim,output_accy[:,0],output_accy[:,int(fem.output_nnode//2)]]).T
+np.savetxt(output_dir+"output_y.acc",output_line)
 
 ## Output result ##
 plt.figure()
 # plt.plot(tim,slip_rate,c='k')
-plt.plot(tim,output_velx[:,int(fem.output_nnode//2)],c='r')
+plt.plot(tim,output_velx[:,0],c='r')
 plt.show()

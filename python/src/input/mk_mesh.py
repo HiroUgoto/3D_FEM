@@ -5,9 +5,9 @@ area_x = 5000.0
 area_y = 5000.0
 area_z = 5000.0
 
-nx = 9
-ny = 9
-nz = 9
+nx = 10
+ny = 10
+nz = 10
 dof = 3
 
 xg = np.linspace(0,area_x,nx+1,endpoint=True)
@@ -105,13 +105,14 @@ nmaterial = len(material_lines)
 
 ### Set output ###
 output_node_lines = []
-for i in range(len(xg)):
-    j = len(zg)//2
-    k = 0
-    output_node_lines += ["{}\n".format(node[i,j,k])]        #define output nodes
+output_node_lines += ["{}\n".format(node[len(xg)//2,len(yg)//2,0])]
+# for i in range(len(xg)):
+#     j = len(zg)//2
+#     k = 0
+#     output_node_lines += ["{}\n".format(node[i,j,k])]
 
 output_element_lines = []
-# for i in range(0,nelem-nx-len(zg)):        #define output elements
+# for i in range(0,nelem-nx-len(zg)):
 #     output_element_lines += ["{} \n".format(i)]
 
 output_nnode = len(output_node_lines)
