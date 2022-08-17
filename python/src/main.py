@@ -33,9 +33,15 @@ slip_rate = input_wave.ricker(tim,fp,tp=1.0/fp,amp=1.0)
 ntim = len(tim)
 
 
-dip = 30.0  # degree
-width = 1000.0   # m
-sources = source.set_source(fem.elements,dip,width,2500,2500,2500,n=10)
+strike = 270.0   # degree
+dip = 30.0      # degree
+rake = 90.0     # degree
+
+width = 1000.0      # m
+length = 1000.0     # m
+nl,nw = 5,5
+sources = source.set_source(fem.elements,strike,dip,rake,length,width,2500,2500,2500,nl,nw)
+# exit()
 
 # plt.figure()
 # plt.plot(tim,slip)

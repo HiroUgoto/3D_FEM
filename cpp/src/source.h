@@ -6,15 +6,15 @@ class Source {
   public:
     size_t id;
     size_t element_id;
-    double dip, width;
+    double strike, dip, rake, length, width;
 
     EM dn;
     EV strain_tensor;
 
-    Source(size_t id, double dip, double width, size_t element_id, EM dn);
+    Source(size_t id, double strike, double dip, double rake, double length, double width, size_t element_id, EM dn);
 
   private:
     void set_strain_tensor();
 };
 
-std::vector<Source> set_source(std::vector<Element> elements, double dip, double width, double sx, double sy, double sz, size_t n);
+std::vector<Source> set_source(std::vector<Element> elements, double strike, double dip, double rake, double length, double width, double sx, double sy, double sz, size_t nl, size_t nw);

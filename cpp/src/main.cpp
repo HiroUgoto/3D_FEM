@@ -38,13 +38,17 @@ int main() {
   size_t ntim = tim.size();
 
 
+  double strike = 270.0;
   double dip = 30.0;
+  double rake = 90.0;
+
+  double length = 1000.0;
   double width = 1000.0;
   double sx = 2500.0;
   double sy = 2500.0;
   double sz = 2500.0;
 
-  auto sources = set_source(fem.elements,dip,width,sx,sy,sz,10);
+  auto sources = set_source(fem.elements,strike,dip,rake,length,width,sx,sy,sz,5,5);
 
   // std::ofstream f0(output_dir + "input.acc");
   // for (size_t it = 0 ; it < ntim ; it++) {
