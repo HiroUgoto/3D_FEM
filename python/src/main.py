@@ -39,7 +39,7 @@ rake = 90.0     # degree
 
 width = 1000.0      # m
 length = 1000.0     # m
-nl,nw = 5,5
+nl,nw = 2,2
 sources = source.set_source(fem.elements,strike,dip,rake,length,width,2500,2500,2500,nl,nw)
 # exit()
 
@@ -85,7 +85,7 @@ for it in range(len(tim)):
 
     if it%40 == 0:
         plot_model.plot_mesh_update(ax,fem,10000.)
-        print(it,"t=",it*dt,output_dispx[it,int(fem.output_nnode//2)])
+        print(it,"t=",it*dt,output_dispx[it,0])
 
 elapsed_time = time.time() - start
 print ("elapsed_time: {0}".format(elapsed_time) + "[sec]")
@@ -93,19 +93,19 @@ print ("elapsed_time: {0}".format(elapsed_time) + "[sec]")
 # plot_model.plot_mesh_update(ax,fem,10.,fin=True)
 
 ## --- Write output file --- ##
-output_line = np.vstack([tim,output_dispx[:,0],output_dispx[:,int(fem.output_nnode//2)]]).T
+output_line = np.vstack([tim,output_dispx.T]).T
 np.savetxt(output_dir+"output_x.disp",output_line)
-output_line = np.vstack([tim,output_dispy[:,0],output_dispy[:,int(fem.output_nnode//2)]]).T
+output_line = np.vstack([tim,output_dispy.T]).T
 np.savetxt(output_dir+"output_y.disp",output_line)
 
-output_line = np.vstack([tim,output_velx[:,0],output_velx[:,int(fem.output_nnode//2)]]).T
+output_line = np.vstack([tim,output_velx.T]).T
 np.savetxt(output_dir+"output_x.vel",output_line)
-output_line = np.vstack([tim,output_vely[:,0],output_vely[:,int(fem.output_nnode//2)]]).T
+output_line = np.vstack([tim,output_vely.T]).T
 np.savetxt(output_dir+"output_y.vel",output_line)
 
-output_line = np.vstack([tim,output_accx[:,0],output_accx[:,int(fem.output_nnode//2)]]).T
+output_line = np.vstack([tim,output_accx.T]).T
 np.savetxt(output_dir+"output_x.acc",output_line)
-output_line = np.vstack([tim,output_accy[:,0],output_accy[:,int(fem.output_nnode//2)]]).T
+output_line = np.vstack([tim,output_accy.T]).T
 np.savetxt(output_dir+"output_y.acc",output_line)
 
 ## Output result ##

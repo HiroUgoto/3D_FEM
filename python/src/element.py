@@ -246,25 +246,25 @@ class Element:
 
     # ---------------------------------------------------------
     def check_inside(self,x):
-        def J_func(xi,x,xnT,shape_function_n,shape_function_dn):
-            n = shape_function_n(xi[0],xi[1],xi[2])
-            return xnT@n - x
+        xi = np.zeros(3)
+        for itr in range(20):
+            n = self.estyle.shape_function_n(xi[0],xi[1],xi[2])
+            dn = self.estyle.shape_function_dn(xi[0],xi[1],xi[2])
 
-        def dJ_func(xi,x,xnT,shape_function_n,shape_function_dn):
-            dn = shape_function_dn(xi[0],xi[1],xi[2])
-            _,dJ = mk_jacobi(xnT,dn)
-            return dJ
+            J = self.xnT@n - x
+            _,dJ = mk_jacobi(self.xnT,dn)
 
-        args = (x, self.xnT,
-                self.estyle.shape_function_n,
-                self.estyle.shape_function_dn)
-        solve = scipy.optimize.root(J_func,[0,0,0],args=args,jac=dJ_func)
-        xi = solve.x
+            r = np.linalg.solve(dJ,J)
+            if np.linalg.norm(r) < 1e-8:
+                break
+
+            xi -= r
 
         if (-1.0 <= xi[0] < 1.0) and (-1.0 <= xi[1] < 1.0) and (-1.0 <= xi[2] < 1.0):
             is_inside = True
         else:
             is_inside = False
+
 
         return is_inside,xi
 

@@ -48,7 +48,7 @@ int main() {
   double sy = 2500.0;
   double sz = 2500.0;
 
-  auto sources = set_source(fem.elements,strike,dip,rake,length,width,sx,sy,sz,5,5);
+  auto sources = set_source(fem.elements,strike,dip,rake,length,width,sx,sy,sz,2,2);
 
   // std::ofstream f0(output_dir + "slip_rate.dat");
   // for (size_t it = 0 ; it < ntim ; it++) {

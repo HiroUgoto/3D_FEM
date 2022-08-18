@@ -31,6 +31,7 @@ def set_source(elements,strike,dip,rake,length,width,sx,sy,sz,nl=1,nw=1):
                         id += 1
                         break
 
+
     return source_list
 
 
