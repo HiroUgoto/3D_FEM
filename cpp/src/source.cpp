@@ -8,9 +8,12 @@
 
 using EV = Eigen::VectorXd ;
 using EM = Eigen::MatrixXd ;
+using EV3 = Eigen::Vector3d ;
 
 // ------------------------------------------------------------------- //
-std::vector<Source> set_source(std::vector<Element> elements, double strike, double dip, double rake, double length, double width, double sx, double sy, double sz, size_t nl, size_t nw) {
+std::vector<Source> set_source(std::vector<Element> elements,
+    double strike, double dip, double rake, double length, double width,
+    double sx, double sy, double sz, size_t nl, size_t nw) {
   std::vector<Source> source_list;
   std::vector<double> l(nl), w(nw);
 
@@ -33,7 +36,7 @@ std::vector<Source> set_source(std::vector<Element> elements, double strike, dou
   double dl = length/nl;
   double dw = width/nw;
 
-  EV x = EV::Zero(3);
+  EV3 x = EV::Zero(3);
   size_t id = 0;
   for (size_t i=0; i<nl; i++) {
     for (size_t j=0; j<nw; j++) {

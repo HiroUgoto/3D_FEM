@@ -39,17 +39,8 @@ void Element::print() {
 
 void Element::set_style() {
     ElementStyle* estyle_p = set_element_style(this->style);
-
     this->dim = estyle_p->dim;
-    this->ng = estyle_p->ng;
-    this->xi = estyle_p->xi;
-    this->w  = estyle_p->w;
-
     this->ng_all = estyle_p->ng_all;
-    this->n_list  = estyle_p->n_list;
-    this->dn_list = estyle_p->dn_list;
-    this->w_list = estyle_p->w_list;
-
     this->dn_center = estyle_p->dn_center;
   }
 
@@ -90,20 +81,21 @@ void Element::mk_local_matrix_init(const size_t dof){
     this->M_diag = EV::Zero(this->ndof);
 
     this->K = EM::Zero(this->ndof,this->ndof);
-    this->K_diag = EV::Zero(this->ndof);
-    this->K_off_diag = EM::Zero(this->ndof,this->ndof);
 
-    this->C = EM::Zero(this->ndof,this->ndof);
     this->C_diag = EV::Zero(this->ndof);
     this->C_off_diag = EM::Zero(this->ndof,this->ndof);
 
     this->force = EV::Zero(this->ndof);
 
     if (this->dim == 3) {
+      ElementStyle* estyle_p = set_element_style(this->style);
+      std::vector<EM> dn_list = estyle_p->dn_list;
+      std::vector<double> w_list = estyle_p->w_list;
+
       double V = 0.0;
       for (size_t i = 0 ; i < this->ng_all ; i++){
-        auto [det, jacobi] = mk_jacobi(this->xnT, this->dn_list[i]);
-        V += det * this->w_list[i];
+        auto [det, jacobi] = mk_jacobi(this->xnT, dn_list[i]);
+        V += det * w_list[i];
       }
       this->mass = this->rho * V;
 
@@ -115,66 +107,73 @@ void Element::mk_local_matrix_init(const size_t dof){
 // ------------------------------------------------------------------- //
 void Element::mk_local_matrix() {
     if (this->dim == 3) {
-      EM M = EM::Zero(this->ndof,this->ndof);
+      ElementStyle* estyle_p = set_element_style(this->style);
+      std::vector<EV> n_list = estyle_p->n_list;
+      std::vector<EM> dn_list = estyle_p->dn_list;
+      std::vector<double> w_list = estyle_p->w_list;
 
-      this->C = EM::Zero(this->ndof,this->ndof);
-      this->K = EM::Zero(this->ndof,this->ndof);
+      EM M(this->ndof,this->ndof);
+      EM C(this->ndof,this->ndof);
+      M = EM::Zero(this->ndof,this->ndof);
+      C = EM::Zero(this->ndof,this->ndof);
 
       this->De = this->material.mk_d(this->dof);
       this->Dv = this->material.mk_visco(this->dof);
 
       for (size_t i = 0 ; i < this->ng_all ; i++){
         double detJ;
-        EM N, Me, B, K, C;
+        EM N, B;
+        EM Me(this->ndof,this->ndof), K(this->ndof,this->ndof), Ce(this->ndof,this->ndof);
 
-        auto [det, dnj] = mk_dnj(this->xnT, this->dn_list[i]);
+        auto [det, dnj] = mk_dnj(this->xnT, dn_list[i]);
 
-        N = mk_n(this->dof, this->nnode, this->n_list[i]);
+        N = mk_n(this->dof, this->nnode, n_list[i]);
         Me = mk_m(N);
 
         B = mk_b(this->dof, this->nnode, dnj);
         K = mk_k(B, this->De);
-        C = mk_k(B, this->Dv);
+        Ce = mk_k(B, this->Dv);
 
-        detJ = det * this->w_list[i];
+        detJ = det * w_list[i];
 
         M += Me * detJ;
-        this->C += C * detJ;
         this->K += K * detJ;
+        C += Ce * detJ;
       }
 
       double tr_M = M.trace() / this->dof;
       this->M_diag = M.diagonal() * this->mass/tr_M;
 
-      this->K_diag = this->K.diagonal();
-      this->K_off_diag = this->K_diag.asDiagonal();
-      this->K_off_diag = (this->K) - (this->K_off_diag);
-
-      this->C_diag = this->C.diagonal();
+      this->C_diag = C.diagonal();
       this->C_off_diag = this->C_diag.asDiagonal();
-      this->C_off_diag = (this->C) - (this->C_off_diag);
+      this->C_off_diag = C - (this->C_off_diag);
 
     } else if (this->dim == 2) {
       if (this->style.find("input") != std::string::npos ||
           this->style.find("visco") != std::string::npos) {
-        this->C = EM::Zero(this->ndof,this->ndof);
+        ElementStyle* estyle_p = set_element_style(this->style);
+        std::vector<EV> n_list = estyle_p->n_list;
+        std::vector<EM> dn_list = estyle_p->dn_list;
+        std::vector<double> w_list = estyle_p->w_list;
 
+        EM C(this->ndof,this->ndof);
+        C = EM::Zero(this->ndof,this->ndof);
         for (size_t i = 0 ; i < this->ng_all ; i++){
           double detJ;
           EM N, NqN;
 
-          auto [det, q] = mk_q(this->dof, this->xnT, this->dn_list[i]);
+          auto [det, q] = mk_q(this->dof, this->xnT, dn_list[i]);
 
-          N = mk_n(this->dof, this->nnode, this->n_list[i]);
+          N = mk_n(this->dof, this->nnode, n_list[i]);
           NqN = mk_nqn(N, q, this->imp);
 
-          detJ = det * this->w_list[i];
-          this->C += NqN * detJ;
+          detJ = det * w_list[i];
+          C += NqN * detJ;
         }
 
-        this->C_diag = this->C.diagonal();
+        this->C_diag = C.diagonal();
         this->C_off_diag = this->C_diag.asDiagonal();
-        this->C_off_diag = (this->C) - (this->C_off_diag);
+        this->C_off_diag = C - (this->C_off_diag);
       }
     }
   }
@@ -182,6 +181,11 @@ void Element::mk_local_matrix() {
 // ------------------------------------------------------------------- //
 void Element::mk_local_vector() {
     if (this->dim == 3) {
+      ElementStyle* estyle_p = set_element_style(this->style);
+      std::vector<EV> n_list = estyle_p->n_list;
+      std::vector<EM> dn_list = estyle_p->dn_list;
+      std::vector<double> w_list = estyle_p->w_list;
+
       this->force = EV::Zero(this->ndof);
 
       double V = 0.0;
@@ -189,10 +193,10 @@ void Element::mk_local_vector() {
         double detJ;
         EM N;
 
-        auto [det, jacobi] = mk_jacobi(this->xnT, this->dn_list[i]);
-        N = mk_n(this->dof, this->nnode, this->n_list[i]);
+        auto [det, jacobi] = mk_jacobi(this->xnT, dn_list[i]);
+        N = mk_n(this->dof, this->nnode, n_list[i]);
 
-        detJ = det * this->w_list[i];
+        detJ = det * w_list[i];
 
         V += detJ;
         this->force += N.row(2)*detJ * this->gravity;
@@ -204,7 +208,7 @@ void Element::mk_local_vector() {
 
 // ------------------------------------------------------------------- //
 void Element::mk_ku() {
-    EV u, ku;
+    EV u(this->ndof), ku(this->ndof);
 
     u = this->mk_u_hstack();
     ku = this->K * u;
@@ -217,23 +221,8 @@ void Element::mk_ku() {
     }
   }
 
-void Element::mk_ku_up() {
-    EV u, ku;
-
-    u = this->mk_u_hstack_up();
-    ku = this->K * u;
-
-    for (size_t inode = 0 ; inode < this->nnode ; inode++){
-      size_t i0 = inode*this->dof;
-      for (size_t i = 0 ; i < this->dof ; i++) {
-        this->nodes_p[inode]->force(i) += ku(i0+i);
-      }
-    }
-
-  }
-
 void Element::mk_cv() {
-    EV v, cv;
+    EV v(this->ndof), cv(this->ndof);
 
     v = this->mk_v_hstack();
     cv = this->C_off_diag * v;
@@ -247,8 +236,8 @@ void Element::mk_cv() {
   }
 
 void Element::mk_ku_cv() {
-    EV u, ku;
-    EV v, cv;
+    EV u(this->ndof), ku(this->ndof);
+    EV v(this->ndof), cv(this->ndof);
 
     u = this->mk_u_hstack();
     v = this->mk_v_hstack();
@@ -291,19 +280,6 @@ EV Element::mk_v_hstack() {
     return v;
   }
 
-EV Element::mk_u_hstack_up() {
-    EV up(this->ndof);
-
-    for (size_t inode = 0 ; inode < this->nnode ; inode++){
-      size_t i0 = inode*this->dof;
-      Node* node = this->nodes_p[inode];
-      for (size_t i = 0 ; i < this->dof ; i++) {
-        up(i0+i) = node->_up[i];
-      }
-    }
-    return up;
-  }
-
 EM Element::mk_u_vstack() {
     EM u(this->nnode,this->dof);
 
@@ -327,7 +303,9 @@ void Element::update_inputwave(const EV vel0) {
         v(i0+i) = vel0(i);
       }
     }
-    cv = this->C * v;
+
+    cv = this->C_diag.array() * v.array();
+    cv += this->C_off_diag * v;
 
     for (size_t inode = 0 ; inode < this->nnode ; inode++){
       size_t i0 = inode*this->dof;
@@ -338,45 +316,10 @@ void Element::update_inputwave(const EV vel0) {
   }
 
 // ------------------------------------------------------------------- //
-void Element::update_bodyforce(const EV acc0) {
-    this->mk_bodyforce(acc0);
-
-    for (size_t inode = 0 ; inode < this->nnode ; inode++){
-      size_t i0 = inode*this->dof;
-      for (size_t i = 0 ; i < this->dof ; i++) {
-        this->nodes_p[inode]->force(i) -= this->force(i0+i);
-      }
-    }
-  }
-
-void Element::mk_bodyforce(const EV acc0) {
-    if (this->dim == 2) {
-      this->force = EV::Zero(this->ndof);
-
-      double V = 0.0;
-      for (size_t i = 0 ; i < this->ng_all ; i++){
-        double detJ;
-        EM N;
-
-        auto [det, jacobi] = mk_jacobi(this->xnT, this->dn_list[i]);
-        N = mk_n(this->dof, this->nnode, this->n_list[i]);
-
-        detJ = det * this->w_list[i];
-
-        V += detJ;
-        this->force += (N.row(0)*acc0[0] + N.row(1)*acc0[1]) *detJ;
-      }
-
-      this->force *= this->mass / V;
-    }
-
-  }
-
-// ------------------------------------------------------------------- //
 void Element::mk_source(const EM dn, const EV strain_tensor, const double slip0) {
   if (this->dim == 3) {
     EM BT;
-    EV moment;
+    EV moment(6);
 
     auto [det, dnj] = mk_dnj(this->xnT, dn);
     BT = mk_b_T(this->dof, this->nnode, dnj);
@@ -399,9 +342,9 @@ void Element::calc_stress() {
   }
 
 // ------------------------------------------------------------------- //
-std::tuple<bool, EV>
-  Element::check_inside(const EV x) {
-    EV xi = EV::Zero(3);
+std::tuple<bool, EV3>
+  Element::check_inside(const EV3 x) {
+    EV3 xi = EV::Zero(3);
     bool is_inside = false;
     ElementStyle* estyle_p = set_element_style(this->style);
 
@@ -409,10 +352,10 @@ std::tuple<bool, EV>
       EV n = estyle_p->shape_function_n(xi[0],xi[1],xi[2]);
       EM dn = estyle_p->shape_function_dn(xi[0],xi[1],xi[2]);
 
-      EV J_func = this->xnT*n - x;
+      EV3 J_func = this->xnT*n - x;
       auto [det,dJ_func] = mk_jacobi(this->xnT, dn);
 
-      EV r = dJ_func.partialPivLu().solve(J_func);
+      EV3 r = dJ_func.partialPivLu().solve(J_func);
       if (r.norm() < 1e-8) break;
 
       xi -= r;
@@ -437,8 +380,9 @@ EM mk_m(const EM N) {
   }
 
 EM mk_n(const size_t dof, const size_t nnode, const EV n) {
-    EM N = EM::Zero(dof,dof*nnode);
+    EM N(dof,dof*nnode);
 
+    N = EM::Zero(dof,dof*nnode);
     if (dof == 1) {
       for (size_t i = 0; i < nnode; i++){
         N(0,i) = n(i);
@@ -467,16 +411,17 @@ EM mk_n(const size_t dof, const size_t nnode, const EV n) {
   }
 
 // ------------------------------------------------------------------- //
-EM mk_nqn(const EM N, const EM q, const EM imp) {
+EM mk_nqn(const EM N, const EM3 q, const EM3 imp) {
     EM nqn;
 
     nqn = N.transpose() * q.transpose() * imp * q * N;
     return nqn;
   }
 
-std::tuple<double, EM>
+std::tuple<double, EM3>
   mk_q(const size_t dof, const EM xnT, const EM dn) {
-    EM q, t;
+    EM3 q;
+    EM t(3,2);
     EV3 t0, t1, n;
     double det;
 
@@ -507,7 +452,7 @@ EM mk_k(const EM B, const EM D) {
   }
 
 EM mk_b(const size_t dof, const size_t nnode, const EM dnj) {
-    EM B;
+    EM B(6,3*nnode);
 
     B = EM::Zero(6,3*nnode);
     for (size_t i = 0; i < nnode; i++){
@@ -533,7 +478,7 @@ EM mk_b(const size_t dof, const size_t nnode, const EM dnj) {
   }
 
 EM mk_b_T(const size_t dof, const size_t nnode, const EM dnj) {
-    EM B;
+    EM B(3*nnode,6);
 
     B = EM::Zero(3*nnode,6);
     for (size_t i = 0; i < nnode; i++){
@@ -573,9 +518,6 @@ std::tuple<double, EM3>
     EM3 jacobi_inv;
 
     auto [det, jacobi] = mk_jacobi(xnT, dn);
-    // jacobi_inv <<  jacobi(1,1), -jacobi(0,1),
-    //               -jacobi(1,0),  jacobi(0,0);
-    // jacobi_inv /= det;
     jacobi_inv = jacobi.inverse();
     return {det, jacobi_inv};
   }
@@ -585,7 +527,6 @@ std::tuple<double, EM3>
   mk_jacobi(const EM xnT, const EM dn) {
     EM3 jacobi = xnT * dn;
 
-    // double det = jacobi(0,0)*jacobi(1,1) - jacobi(0,1)*jacobi(1,0);
     double det = jacobi.determinant();
     return {det, jacobi};
   }

@@ -1,5 +1,6 @@
 using EV = Eigen::VectorXd ;
 using EM = Eigen::MatrixXd ;
+using EM3 = Eigen::Matrix3d ;
 
 class Material {
   public:
@@ -7,7 +8,7 @@ class Material {
     std::string style;
     std::vector<double> param;
     double rmu, rlambda, rho;
- 
+
     Material();
     Material(size_t id, std::string style, std::vector<double> param);
 
@@ -20,5 +21,5 @@ class Material {
   public:
     EM mk_d(const size_t dof);
     EM mk_visco(const size_t dof);
-    EM mk_imp(const size_t dof);
+    EM3 mk_imp(const size_t dof);
 };

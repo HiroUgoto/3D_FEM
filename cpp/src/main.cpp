@@ -32,10 +32,10 @@ int main() {
   double fp = 0.5;
   double duration = 6.0;
 
-  EV slip_rate;
   auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
-  slip_rate = input_wave::ricker(tim,fp,1.0/fp,1.0);
   size_t ntim = tim.size();
+  EV slip_rate(ntim);
+  slip_rate = input_wave::ricker(tim,fp,1.0/fp,1.0);
 
 
   double strike = 270.0;
@@ -62,15 +62,9 @@ int main() {
   // ----- Prepare time solver ----- //
   fem.update_init(dt);
 
-  EM output_dispx = EM::Zero(ntim,fem.output_nnode);
-  EM output_dispy = EM::Zero(ntim,fem.output_nnode);
-  EM output_dispz = EM::Zero(ntim,fem.output_nnode);
-  EM output_velx = EM::Zero(ntim,fem.output_nnode);
-  EM output_vely = EM::Zero(ntim,fem.output_nnode);
-  EM output_velz = EM::Zero(ntim,fem.output_nnode);
-  EM output_accx = EM::Zero(ntim,fem.output_nnode);
-  EM output_accy = EM::Zero(ntim,fem.output_nnode);
-  EM output_accz = EM::Zero(ntim,fem.output_nnode);
+  EM output_velx(ntim,fem.output_nnode);
+  EM output_vely(ntim,fem.output_nnode);
+  EM output_velz(ntim,fem.output_nnode);
 
   // ----- time iteration ----- //
   double slip0 = 0.0;
@@ -82,20 +76,14 @@ int main() {
 
     for (size_t i = 0 ; i < fem.output_nnode ; i++) {
       Node* node_p = fem.output_nodes_p[i];
-      output_dispx(it,i) = node_p->u(0);
-      output_dispy(it,i) = node_p->u(1);
-      output_dispz(it,i) = node_p->u(2);
       output_velx(it,i) = node_p->v(0);
       output_vely(it,i) = node_p->v(1);
       output_velz(it,i) = node_p->v(2);
-      output_accx(it,i) = node_p->a(0);
-      output_accy(it,i) = node_p->a(1);
-      output_accz(it,i) = node_p->a(2);
     }
 
     if (it%40 == 0) {
       std::cout << it << " t= " << it*dt << " ";
-      std::cout << output_dispx(it,0) << "\n";
+      std::cout << output_velx(it,0) << "\n";
     }
   }
 
@@ -103,49 +91,23 @@ int main() {
   std::cout << "elapsed_time: " << (double)(end - start) / CLOCKS_PER_SEC << "[sec]\n";
 
   // --- Write output file --- //
-  std::ofstream fdx(output_dir + "output_x.disp");
-  std::ofstream fdy(output_dir + "output_y.disp");
-  for (size_t it = 0 ; it < ntim ; it++) {
-    fdx << tim(it) ;
-    fdy << tim(it) ;
-    for (size_t i = 0 ; i < fem.output_nnode ; i++) {
-      fdx << " " << output_dispx(it,i);
-      fdy << " " << output_dispy(it,i);
-    }
-    fdx << "\n";
-    fdy << "\n";
-  }
-  fdx.close();
-  fdy.close();
-
   std::ofstream fvx(output_dir + "output_x.vel");
   std::ofstream fvy(output_dir + "output_y.vel");
+  std::ofstream fvz(output_dir + "output_z.vel");
   for (size_t it = 0 ; it < ntim ; it++) {
     fvx << tim(it) ;
     fvy << tim(it) ;
+    fvz << tim(it) ;
     for (size_t i = 0 ; i < fem.output_nnode ; i++) {
       fvx << " " << output_velx(it,i);
       fvy << " " << output_vely(it,i);
+      fvz << " " << output_velz(it,i);
     }
     fvx << "\n";
     fvy << "\n";
+    fvz << "\n";
   }
   fvx.close();
   fvy.close();
-
-  std::ofstream fax(output_dir + "output_x.acc");
-  std::ofstream fay(output_dir + "output_y.acc");
-  for (size_t it = 0 ; it < ntim ; it++) {
-    fax << tim(it) ;
-    fay << tim(it) ;
-    for (size_t i = 0 ; i < fem.output_nnode ; i++) {
-      fax << " " << output_accx(it,i);
-      fay << " " << output_accy(it,i);
-    }
-    fax << "\n";
-    fay << "\n";
-  }
-  fax.close();
-  fay.close();
-
+  fvz.close();
 }

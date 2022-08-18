@@ -104,8 +104,6 @@ void Fem::_set_initial_matrix(){
         for (size_t i = 0 ; i < this->dof ; i++) {
           element.nodes_p[inode]->mass[i] += element.M_diag[id];
           element.nodes_p[inode]->c[i] += element.C_diag[id];
-          element.nodes_p[inode]->k[i] += element.K_diag[id];
-          element.nodes_p[inode]->static_force[i] += element.force[id];
           id++;
         }
       }
@@ -133,173 +131,7 @@ void Fem::set_output(std::tuple<std::vector<size_t>, std::vector<size_t>> output
 
 // ------------------------------------------------------------------- //
 // ------------------------------------------------------------------- //
-void Fem::self_gravity() {
-    // Initial condition //
-    double H = 0.0;
-    for (auto& node : this->nodes) {
-      if (node.xyz[1] > H) {
-        H = node.xyz[1];
-      }
-    }
-
-    double g = 9.8;
-    double vp = 1500.0;
-    for (auto& node : this->nodes) {
-      node.u[0] = 0.0;
-      node.u[1] = g/(2*vp*vp) * (H*H - node.xyz[1]*node.xyz[1]);
-      node.um = node.u;
-    }
-
-    this->_self_gravity_cg(false);
-    this->_self_gravity_cg(true);
-
-    for (auto& node : this->nodes) {
-      node.u0 = node.u;
-      node.um = node.u;
-    }
-
-  }
-
-// ------------------------------------------------------------------- //
-void Fem::_self_gravity_cg(const bool full) {
-    size_t id;
-    if (full) {
-      id = 0;
-    } else {
-      id = 1;
-    }
-
-    // CG Method //
-    // --- set initial variables --- //
-    for (auto& node : this->nodes) {
-      node.force = EV::Zero(node.dof);
-    }
-    for (auto& element : this->elements) {
-      element.mk_ku();
-    }
-    for (auto& node : this->nodes) {
-      for (size_t i = id ; i < node.dof ; i++) {
-        if (node.freedom[i] == 0) {
-          node._ur[i] = 0.0;
-        } else {
-          node._ur[i] = node.static_force[i] - node.force[i];
-        }
-      }
-    }
-    for (auto& element_p : this->connected_elements_p) {
-      EV u = EV::Zero(element_p->dof);
-      for (size_t inode = 0 ; inode < element_p->nnode ; inode++) {
-        u += element_p->nodes_p[inode]->_ur;
-      }
-      for (size_t inode = 0 ; inode < element_p->nnode ; inode++) {
-        element_p->nodes_p[inode]->_ur = u/element_p->nnode;
-      }
-    }
-    for (auto& element_p : this->input_elements_p) {
-      for (size_t inode = 0 ; inode < element_p->nnode ; inode++) {
-        element_p->nodes_p[inode]->_ur = EV::Zero(element_p->dof);
-      }
-    }
-    for (auto& node : this->nodes) {
-      node._up = node._ur;
-    }
-
-
-    // --- CG iterations --- //
-    for (size_t it=0 ; it < 10*this->nnode ; it++) {
-      double rr, rr1, py, alpha, beta;
-
-      // y = Ap
-      for (auto& node : this->nodes) {
-        node.force = EV::Zero(node.dof);
-      }
-      for (auto& element : this->elements) {
-        element.mk_ku_up();
-      }
-      for (auto& node : this->nodes) {
-        node._uy = node.force;
-      }
-
-      // correction boundary condition
-      for (auto& node : this->nodes) {
-        for (size_t i = id ; i < node.dof ; i++) {
-          if (node.freedom[i] == 0) {
-            node._uy[i] = 0.0;
-          }
-        }
-      }
-      for (auto& element_p : this->connected_elements_p) {
-        EV u = EV::Zero(element_p->dof);
-        for (size_t inode = 0 ; inode < element_p->nnode ; inode++) {
-          u += element_p->nodes_p[inode]->_uy;
-        }
-        for (size_t inode = 0 ; inode < element_p->nnode ; inode++) {
-          element_p->nodes_p[inode]->_uy = u/element_p->nnode;
-        }
-      }
-      for (auto& element_p : this->input_elements_p) {
-        for (size_t inode = 0 ; inode < element_p->nnode ; inode++) {
-          element_p->nodes_p[inode]->_uy = EV::Zero(element_p->dof);
-        }
-      }
-
-      // alpha = rr/py
-      rr = 0.0; py = 0.0;
-      for (auto& node : this->nodes) {
-        rr += node._ur.dot(node._ur);
-        py += node._up.dot(node._uy);
-      }
-      alpha = rr/py;
-
-      // x = x + alpha*p
-      rr1 = 0.0;
-      for (auto& node : this->nodes) {
-        for (size_t i = id ; i < node.dof ; i++) {
-          if (node.freedom[i] != 0) {
-            node.u[i] += alpha * node._up[i];
-            node._ur[i] -= alpha * node._uy[i];
-          }
-        }
-        rr1 += node._ur.dot(node._ur);
-      }
-
-      if (rr1 < 1.e-10) {
-        std::cout << " (self gravity process .. ) " << it << " " ;
-        std::cout << this->nodes[0].u[1] << " ";
-        std::cout << rr1 << "\n";
-        break;
-      }
-
-      // p = r + beta*p
-      beta = rr1/rr;
-      for (auto& node : this->nodes) {
-        for (size_t i = id ; i < node.dof ; i++) {
-          if (node.freedom[i] != 0) {
-            node._up[i] = node._ur[i] + beta * node._up[i];
-          }
-        }
-      }
-
-      if (it%100 == 0){
-        std::cout << " (self gravity process .. ) " << it << " " ;
-        std::cout << this->nodes[0].u[1] << " ";
-        std::cout << rr1 << "\n";
-      }
-    }
-
-  }
-
-// ------------------------------------------------------------------- //
-// ------------------------------------------------------------------- //
 void Fem::update_init(const double dt) {
-    for (auto& node : this->nodes) {
-      for (size_t i = 0 ; i < node.dof ; i++) {
-        node.inv_mc[i] = 1.0 / (node.mass[i] + 0.5*dt*node.c[i]);
-        node.mass_inv_mc[i] = node.mass[i] * node.inv_mc[i];
-        node.c_inv_mc[i] = node.c[i] * node.inv_mc[i] * 0.5*dt;
-        node.dtdt_inv_mc[i] = dt*dt*node.inv_mc[i];
-      }
-    }
     this->dt = dt;
     this->inv_dt2 = 1.0/(2.0*dt);
     this->inv_dtdt = 1.0/(dt*dt);
@@ -311,37 +143,14 @@ void Fem::update_time(const EV acc0, const EV vel0, const bool input_wave) {
     if(input_wave) {
       this->update_time_input_MD(vel0);
     } else {
-      this->update_time_MD(acc0);
-    }
-  }
-
-// ------------------------------------------------------------------- //
-void Fem::update_time_MD(const EV acc0) {
-    for (auto& node : this->nodes) {
-      node.force = -node.dynamic_force;
-    }
-
-    for (auto& element : this->elements) {
-      element.update_bodyforce(acc0);
-    }
-
-    for (auto& element : this->elements) {
-      element.mk_ku_cv();
-    }
-
-    this->_update_time_set_free_nodes();
-    this->_update_time_set_fixed_nodes();
-    this->_update_time_set_connected_elements();
-
-    for (auto& element_p : this->output_elements_p) {
-      element_p->calc_stress();
+      exit(1);
     }
   }
 
 // ------------------------------------------------------------------- //
 void Fem::update_time_input_MD(const EV vel0) {
     for (auto& node : this->nodes) {
-      node.force = -node.dynamic_force;
+      node.force = EV::Zero(this->dof);
     }
 
     for (auto& element_p : this->input_elements_p) {
@@ -364,7 +173,7 @@ void Fem::update_time_input_MD(const EV vel0) {
 // ------------------------------------------------------------------- //
 void Fem::update_time_source(const std::vector<Source> sources, const double slip0) {
     for (auto& node : this->nodes) {
-      node.force = -node.dynamic_force;
+      node.force = EV::Zero(this->dof);
     }
 
     this->_update_time_source(sources,slip0);
@@ -403,11 +212,16 @@ void Fem::_update_time_set_free_nodes() {
     for (auto& node_p : this->free_nodes_p) {
       EV u = node_p->u;
       for (size_t i = 0 ; i < node_p->dof ; i++) {
-        node_p->u[i] = node_p->mass_inv_mc[i]*(2.0*u[i] - node_p->um[i])
-                + node_p->c_inv_mc[i]*node_p->um[i] - node_p->dtdt_inv_mc[i]*node_p->force[i];
+        double inv_mc = 1.0 / (node_p->mass[i] + 0.5*this->dt*node_p->c[i]);
+        double mass_inv_mc = node_p->mass[i] * inv_mc;
+        double c_inv_mc = node_p->c[i] * inv_mc * 0.5*this->dt;
+        double dtdt_inv_mc = this->dt*this->dt*inv_mc;
+
+        node_p->u[i] = mass_inv_mc*(2.0*u[i] - node_p->um[i])
+                + c_inv_mc*node_p->um[i] - dtdt_inv_mc*node_p->force[i];
+
       }
       node_p->v = (node_p->u - node_p->um) * this->inv_dt2;
-      node_p->a = (node_p->u - 2*u + node_p->um) * this->inv_dtdt;
       node_p->um = u;
     }
   }
@@ -419,12 +233,16 @@ void Fem::_update_time_set_fixed_nodes() {
         if (node_p->freedom[i] == 0) {
           node_p->u[i] = 0.0;
         } else {
-          node_p->u[i] = node_p->mass_inv_mc[i]*(2.0*u[i] - node_p->um[i])
-                  + node_p->c_inv_mc[i]*node_p->um[i] - node_p->dtdt_inv_mc[i]*node_p->force[i];
+          double inv_mc = 1.0 / (node_p->mass[i] + 0.5*this->dt*node_p->c[i]);
+          double mass_inv_mc = node_p->mass[i] * inv_mc;
+          double c_inv_mc = node_p->c[i] * inv_mc * 0.5*this->dt;
+          double dtdt_inv_mc = this->dt*this->dt*inv_mc;
+
+          node_p->u[i] = mass_inv_mc*(2.0*u[i] - node_p->um[i])
+                  + c_inv_mc*node_p->um[i] - dtdt_inv_mc*node_p->force[i];
         }
       }
       node_p->v = (node_p->u - node_p->um) * this->inv_dt2;
-      node_p->a = (node_p->u - 2*u + node_p->um) * this->inv_dtdt;
       node_p->um = u;
     }
   }
@@ -432,14 +250,11 @@ void Fem::_update_time_set_fixed_nodes() {
 void Fem::_update_time_set_connected_elements() {
     for (auto& element_p : this->connected_elements_p) {
       EV u = EV::Zero(element_p->dof);
-      EV a = EV::Zero(element_p->dof);
       for (size_t inode = 0 ; inode < element_p->nnode ; inode++) {
         u += element_p->nodes_p[inode]->u;
-        a += element_p->nodes_p[inode]->a;
       }
       for (size_t inode = 0 ; inode < element_p->nnode ; inode++) {
         element_p->nodes_p[inode]->u = u/element_p->nnode;
-        element_p->nodes_p[inode]->a = a/element_p->nnode;
       }
     }
   }

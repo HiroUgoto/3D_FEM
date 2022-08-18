@@ -35,13 +35,6 @@ class Fem {
   public:
     void set_output(std::tuple<std::vector<size_t>, std::vector<size_t>> outputs);
 
-  public:
-    void self_gravity();
-
-  private:
-    void _self_gravity_cg(const bool full=true);
-
-  public:
     void update_init(const double dt);
 
     void update_time(const EV acc0, const EV vel0, const bool input_wave);

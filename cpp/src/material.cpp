@@ -4,6 +4,7 @@
 
 using EV = Eigen::VectorXd ;
 using EM = Eigen::MatrixXd ;
+using EM3 = Eigen::Matrix3d ;
 
 Material::Material () {}
 Material::Material (size_t id, std::string style, std::vector<double> param) {
@@ -64,7 +65,7 @@ void Material::set_param() {
 
 // ------------------------------------------------------------------- //
 EM Material::mk_d(const size_t dof) {
-    EM D;
+    EM D(6,6);
 
     D = EM::Zero(6,6);
     D(0,0) = this->rlambda + 2.0*this->rmu;
@@ -88,7 +89,7 @@ EM Material::mk_d(const size_t dof) {
 
 // ------------------------------------------------------------------- //
 EM Material::mk_visco(const size_t dof) {
-    EM D;
+    EM D(6,6);
     double mu = 0.001; // [Pa s]
 
     D = EM::Zero(6,6);
@@ -100,8 +101,8 @@ EM Material::mk_visco(const size_t dof) {
   }
 
 // ------------------------------------------------------------------- //
-EM Material::mk_imp(const size_t dof) {
-    EM imp;
+EM3 Material::mk_imp(const size_t dof) {
+    EM3 imp;
     double vs = sqrt(this->rmu/this->rho);
     double vp = sqrt((this->rlambda + 2.0*this->rmu)/this->rho);
 

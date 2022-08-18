@@ -16,17 +16,14 @@ class Element {
     Material material;
     double rho, mass;
 
-    size_t nnode, dim, ng, ng_all, dof, ndof;
-    EV xi, w;
+    size_t nnode, dim, ng_all, dof, ndof;
     EM xnT;
-    std::vector<EV> n_list;
-    std::vector<EM> dn_list;
-    std::vector<double> w_list;
     EM dn_center;
 
-    EV M_diag, K_diag, C_diag;
-    EM K, K_off_diag, C, C_off_diag;
-    EM De, Dv, imp;
+    EV M_diag, C_diag;
+    EM K, C_off_diag;
+    EM De, Dv;
+    EM3 imp;
     EV force;
     EV strain, stress;
 
@@ -47,30 +44,26 @@ class Element {
     void mk_local_vector();
 
     void mk_ku();
-    void mk_ku_up();
     void mk_cv();
     void mk_ku_cv();
 
   private:
     EV mk_u_hstack();
     EV mk_v_hstack();
-    EV mk_u_hstack_up();
     EM mk_u_vstack();
 
   public:
-    void update_bodyforce(const EV acc0);
-    void mk_bodyforce(const EV acc0);
     void update_inputwave(const EV vel0);
     void mk_source(const EM dn, const EV strain_tensor, const double slip0);
     void calc_stress();
-    std::tuple<bool, EV> check_inside(const EV x);
+    std::tuple<bool, EV3> check_inside(const EV3 x);
 };
 
 EM mk_m(const EM N);
 EM mk_n(const size_t dof, const size_t nnode, const EV n);
 
-EM mk_nqn(const EM N, const EM q, const EM imp);
-std::tuple<double, EM> mk_q(const size_t dof, const EM xnT, const EM dn);
+EM mk_nqn(const EM N, const EM3 q, const EM3 imp);
+std::tuple<double, EM3> mk_q(const size_t dof, const EM xnT, const EM dn);
 
 EM mk_k(const EM B, const EM D);
 EM mk_b(const size_t dof, const size_t nnode, const EM dnj);

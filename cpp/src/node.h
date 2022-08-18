@@ -1,4 +1,4 @@
-using EV = Eigen::VectorXd ;
+using EV3 = Eigen::Vector3d ;
 
 class Node {
   public:
@@ -6,13 +6,9 @@ class Node {
     std::vector<double> xyz;
     std::vector<size_t> freedom;
 
-    EV u, um, v, a, u0;
-    EV mass, c, k;
-    EV force, static_force, dynamic_force;
-
-    EV inv_mc, mass_inv_mc, c_inv_mc, dtdt_inv_mc;
-    EV _up, _ur, _uy;
-
+    EV3 u, um, v;
+    EV3 mass, c;
+    EV3 force;
 
     Node ();
     Node (size_t id, std::vector<double> xyz, std::vector<size_t> freedom);
