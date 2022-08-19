@@ -68,6 +68,7 @@ void set_gauss_points (const size_t n, EV& xi, EV& w) {
 
 // ------- Virtual class (ElementStyle) ----------------- //
 ElementStyle::ElementStyle () {}
+ElementStyle::~ElementStyle () {}
 
 EV ElementStyle::shape_function_n (double xi, double eta, double zeta) {
   EV n;
@@ -105,6 +106,8 @@ Solid_3d_8Node::Solid_3d_8Node () {
 
   this->dn_center = this->shape_function_dn(0.0,0.0,0.0);
 }
+
+Solid_3d_8Node::~Solid_3d_8Node () {}
 
 EV Solid_3d_8Node::shape_function_n (double xi, double eta, double zeta) {
     EV n = EV::Zero(8);
@@ -181,6 +184,8 @@ Solid_2d_4Node::Solid_2d_4Node () {
   this->dn_center = this->shape_function_dn(0.0,0.0);
 }
 
+Solid_2d_4Node::~Solid_2d_4Node () {}
+
 EV Solid_2d_4Node::shape_function_n (double xi, double eta, double zeta) {
     EV n = EV::Zero(4);
     n(0) = (1.0 - xi)*(1.0 - eta) / 4.0;
@@ -230,6 +235,8 @@ Solid_2d_8Node::Solid_2d_8Node () {
 
   this->dn_center = this->shape_function_dn(0.0,0.0);
 }
+
+Solid_2d_8Node::~Solid_2d_8Node () {}
 
 EV Solid_2d_8Node::shape_function_n (double xi, double eta, double zeta) {
     EV n = EV::Zero(8);
@@ -296,6 +303,8 @@ Solid_2d_9Node::Solid_2d_9Node () {
 
   this->dn_center = this->shape_function_dn(0.0,0.0);
 }
+
+Solid_2d_9Node::~Solid_2d_9Node () {}
 
 EV Solid_2d_9Node::shape_function_n (double xi, double eta, double zeta) {
     EV n = EV::Zero(9);
@@ -366,6 +375,8 @@ Line_1d_2Node::Line_1d_2Node () {
   this->dn_center = this->shape_function_dn(0.0);
 }
 
+Line_1d_2Node::~Line_1d_2Node () {}
+
 EV Line_1d_2Node::shape_function_n (double xi, double eta, double zeta) {
     EV n = EV::Zero(2);
     n(0) = (1.0 - xi) / 2.0;
@@ -402,6 +413,8 @@ Line_1d_3Node::Line_1d_3Node () {
   this->dn_center = this->shape_function_dn(0.0);
 }
 
+Line_1d_3Node::~Line_1d_3Node () {}
+
 EV Line_1d_3Node::shape_function_n (double xi, double eta, double zeta) {
     EV n = EV::Zero(3);
     n(0) = -xi*(1.0 - xi) / 2.0;
@@ -425,3 +438,5 @@ Connect::Connect () {
   this->xi = EV::Zero(1);
   this->w  = EV::Zero(1);
 }
+
+Connect::~Connect () {}

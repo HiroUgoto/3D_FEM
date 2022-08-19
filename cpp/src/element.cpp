@@ -42,6 +42,7 @@ void Element::set_style() {
     this->dim = estyle_p->dim;
     this->ng_all = estyle_p->ng_all;
     this->dn_center = estyle_p->dn_center;
+    delete estyle_p;
   }
 
 // ------------------------------------------------------------------- //
@@ -98,6 +99,7 @@ void Element::mk_local_matrix_init(const size_t dof){
         V += det * w_list[i];
       }
       this->mass = this->rho * V;
+      delete estyle_p;
 
     } else if (this->dim == 2) {
       this->imp = this->material.mk_imp(this->dof);
@@ -148,6 +150,8 @@ void Element::mk_local_matrix() {
       this->C_off_diag = this->C_diag.asDiagonal();
       this->C_off_diag = C - (this->C_off_diag);
 
+      delete estyle_p;
+
     } else if (this->dim == 2) {
       if (this->style.find("input") != std::string::npos ||
           this->style.find("visco") != std::string::npos) {
@@ -174,6 +178,8 @@ void Element::mk_local_matrix() {
         this->C_diag = C.diagonal();
         this->C_off_diag = this->C_diag.asDiagonal();
         this->C_off_diag = C - (this->C_off_diag);
+
+        delete estyle_p;
       }
     }
   }
@@ -203,6 +209,7 @@ void Element::mk_local_vector() {
       }
 
       this->force *= this->mass / V;
+      delete estyle_p;
     }
   }
 
@@ -367,6 +374,7 @@ std::tuple<bool, EV3>
       is_inside = true;
     }
 
+    delete estyle_p;
     return {is_inside, xi};
   }
 
