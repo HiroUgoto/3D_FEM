@@ -11,6 +11,8 @@ class Fem {
     std::vector<Node*> free_nodes_p, fixed_nodes_p;
     std::vector<Element*> connected_elements_p;
     std::vector<Element*> input_elements_p;
+    std::vector<Element*> solid_elements_p;
+    std::vector<Element*> visco_elements_p;
 
     size_t output_nnode, output_nelem;
     std::vector<Node*> output_nodes_p;

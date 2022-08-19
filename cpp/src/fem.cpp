@@ -68,6 +68,12 @@ void Fem::_set_mesh() {
 
       element.set_material(material_p);
 
+      if (element.style.find("solid") != std::string::npos) {
+        this->solid_elements_p.push_back(&element);
+      }
+      if (element.style.find("visco") != std::string::npos) {
+        this->visco_elements_p.push_back(&element);
+      }
       if (element.style.find("input") != std::string::npos) {
         this->input_elements_p.push_back(&element);
       }
@@ -103,11 +109,19 @@ void Fem::_set_initial_matrix(){
       for (size_t inode = 0 ; inode < element.nnode ; inode++) {
         for (size_t i = 0 ; i < this->dof ; i++) {
           element.nodes_p[inode]->mass[i] += element.M_diag[id];
-          element.nodes_p[inode]->c[i] += element.C_diag[id];
           id++;
         }
       }
 
+      if (element.style.find("visco") != std::string::npos) {
+        size_t id = 0;
+        for (size_t inode = 0 ; inode < element.nnode ; inode++) {
+          for (size_t i = 0 ; i < this->dof ; i++) {
+            element.nodes_p[inode]->c[i] += element.C_diag[id];
+            id++;
+          }
+        }
+      }
     }
   }
 
@@ -178,8 +192,15 @@ void Fem::update_time_source(const std::vector<Source> sources, const double sli
 
     this->_update_time_source(sources,slip0);
 
-    for (auto& element : this->elements) {
-      element.mk_ku_cv();
+    // for (auto& element : this->elements) {
+    //   element.mk_ku_cv();
+    // }
+
+    for (auto& element_p : this->solid_elements_p) {
+      element_p->mk_ku();
+    }
+    for (auto& element_p : this->visco_elements_p) {
+      element_p->mk_ku_cv();
     }
 
     this->_update_time_set_free_nodes();
