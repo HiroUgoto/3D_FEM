@@ -80,7 +80,8 @@ class Material:
 
     # ---------------------------------------------------------
     def mk_visco(self,dof):
-        mu = 0.001 # [Pa s]
+        # mu = 0.001 # [Pa s]
+        mu = 0.0
 
         D = np.zeros([6,6],dtype=np.float64)
         D[3,3] = mu

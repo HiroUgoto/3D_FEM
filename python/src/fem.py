@@ -107,9 +107,12 @@ class Fem():
         self.fault_m_elements = []
 
         for fault in self.faults:
-            fault.set_initial_condition(self.elements)
-            self.fault_p_elements = [fault.pelement]
-            self.fault_m_elements = [fault.melement]
+            fault.set_initial_condition0(self.elements)
+            self.fault_p_elements += [fault.pelement]
+            self.fault_m_elements += [fault.melement]
+
+        for fault in self.faults:
+            fault.set_initial_condition1(self.elements)
 
 
     # ======================================================================= #
@@ -252,14 +255,16 @@ class Fem():
             self._update_time_set_fixed_nodes(node)
 
         for fault in self.faults:
-            fault.update_friction()
+            fault.update_friction(self.dt)
 
         for fault in self.faults:
             fault.calc_traction(self.elements)
 
+        for fault in self.faults:
+            fault.update_rupture(self.elements)
+
         for element in self.output_elements:
             element.calc_stress()
-
 
     # ---------------------------------------
     def _update_time_node_init(self,node):

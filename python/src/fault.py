@@ -24,24 +24,33 @@ class Fault:
         self.dc = param[3]
 
     # ===================================================================== #
-    def set_initial_condition(self,elements):
+    def set_initial_condition0(self,elements):
         self.pelement = elements[self.pelem_id] # pointer???
         self.melement = elements[self.melem_id] # pointer???
 
         self.find_neighbour_element(elements)
         self.set_R()
+        self.slip = 0.0
 
+        self.area = 0.0
+        for gp in self.pelement.gauss_points:
+            dn = self.pelement.estyle.shape_function_dn(gp.xi,gp.eta)
+
+            det,_ = element.mk_q(self.pelement.dof,self.pelement.xnT,dn)
+            detJ = gp.w*det
+            self.area += detJ
+
+        self.pelement.traction = 0.0
+        self.melement.traction = 0.0
+        self.rupture = False
+        self.set_spring_kvkh(elements)
+
+    def set_initial_condition1(self,elements):
         if self.p0 > self.tp:
             self.pelement.traction = self.tp - self.p0
             self.melement.traction = self.tp - self.p0
             self.rupture = True
             self.set_spring_kv(elements)
-
-        else:
-            self.pelement.traction = 0.0
-            self.melement.traction = 0.0
-            self.rupture = False
-            self.set_spring_kvkh(elements)
 
     # ===================================================================== #
     def find_neighbour_element(self,elements):
@@ -72,27 +81,8 @@ class Fault:
         self.melement.R = self.R
 
     # ===================================================================== #
-    def set_spring_kv(self,elements):
-        for id in self.spring_id:
-            if elements[id].K is None:
-                D = elements[id].material.mk_d_slider()
-                R_spring = np.zeros([6,6], dtype=np.float64)
-                R_spring[0:3,0:3] = self.R[0:3,0:3]
-                R_spring[3:6,3:6] = self.R[0:3,0:3]
-                elements[id].K = R_spring.T @ D @ R_spring
-
-    def set_spring_kvkh(self,elements):
-        for id in self.spring_id:
-            if elements[id].K is None:
-                D = elements[id].material.mk_d_spring()
-                R_spring = np.zeros([6,6], dtype=np.float64)
-                R_spring[0:3,0:3] = self.R[0:3,0:3]
-                R_spring[3:6,3:6] = self.R[0:3,0:3]
-                elements[id].K = R_spring.T @ D @ R_spring
-
-    # ===================================================================== #
-    def update_friction(self):
-        self.calc_average_slip()
+    def update_friction(self,dt):
+        self.calc_average_slip(dt)
         f = 0.0
         if self.slip < self.dc:
             f = self.tp - self.slip*(self.tp-self.tr)/self.dc - self.p0
@@ -103,7 +93,7 @@ class Fault:
         self.melement.traction = f
 
     # ===================================================================== #
-    def calc_average_slip(self):
+    def calc_average_slip(self,dt):
         n = self.pelement.estyle.shape_function_n(0.0,0.0)
         Np = element.mk_n(self.pelement.dof,self.pelement.nnode,n)
         up = Np @ np.hstack(self.pelement.u)
@@ -112,7 +102,9 @@ class Fault:
         Nm = element.mk_n(self.melement.dof,self.melement.nnode,n)
         um = Nm @ np.hstack(self.melement.u)
 
-        self.slip = (self.R @ (up-um))[1]
+        slip = (self.R @ (up-um))[1]
+        self.sliprate = (slip-self.slip)/dt
+        self.slip = slip
 
     # ===================================================================== #
     def calc_traction(self,elements):
@@ -128,6 +120,20 @@ class Fault:
         self.traction /= 2.0
 
     # ===================================================================== #
+    def update_rupture(self,elements):
+        t = self.traction + self.p0
+        if not self.rupture:
+            if self.id == 5:
+                print(self.traction,t,self.tp)
+
+            if t > self.tp:
+                self.rupture = True
+                self.set_spring_kv(elements)
+            # else:
+                # self.pelement.traction = 0.0
+                # self.melement.traction = 0.0
+
+    # ===================================================================== #
     def stress_to_traction(self,stress,n):
         stress_mat = np.zeros([3,3],dtype=np.float64)
 
@@ -137,3 +143,20 @@ class Fault:
 
         traction = stress_mat @ n
         return traction
+
+    # ===================================================================== #
+    def set_spring_kv(self,elements):
+        for id in self.spring_id:
+            D = elements[id].material.mk_d_slider()
+            R_spring = np.zeros([6,6], dtype=np.float64)
+            R_spring[0:3,0:3] = self.R[0:3,0:3]
+            R_spring[3:6,3:6] = self.R[0:3,0:3]
+            elements[id].K = R_spring.T @ D @ R_spring
+
+    def set_spring_kvkh(self,elements):
+        for id in self.spring_id:
+            D = elements[id].material.mk_d_spring()
+            R_spring = np.zeros([6,6], dtype=np.float64)
+            R_spring[0:3,0:3] = self.R[0:3,0:3]
+            R_spring[3:6,3:6] = self.R[0:3,0:3]
+            elements[id].K = R_spring.T @ D @ R_spring

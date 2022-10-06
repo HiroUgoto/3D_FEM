@@ -1,13 +1,15 @@
 import numpy as np
 import os
 
-area_x = 1000.0
-area_y = 500.0
-area_z = 500.0
+ndiv = 2
+
+area_x = 1000.0 / ndiv
+area_y = 500.0 / ndiv
+area_z = 4000.0
 
 nx = 2
 ny = 1
-nz = 1
+nz = 8 * ndiv
 dof = 3
 
 xg = np.linspace(0,area_x,nx+1,endpoint=True)
@@ -23,7 +25,7 @@ inode = 0
 for k in range(len(zg)):
     for j in range(len(yg)):
         for i in range(len(xg)):
-            dofx,dofy,dofz = 1,1,1
+            dofx,dofy,dofz = 0,1,0
 
             node[i,j,k] = inode
             node_lines += [ "{} {} {} {} {} {} {}\n".format(inode,xg[i],yg[j],zg[k],dofx,dofy,dofz)]
@@ -145,11 +147,18 @@ for k in range(nz):
         ielem_fault1 = ielem
         ielem += 1
 
-
-        p0 = 81.6e6  # [Pa]
-        tp = 81.24e6 # [Pa]
-        tr = 63.0e6  # [Pa]
-        dc = 0.4     # [m]
+        z = (zg[k] + zg[k+1])/2
+        if np.abs(z-2000) <= 500:
+            p0 = 81.6e6  # [Pa]
+            tp = 81.24e6 # [Pa]
+            tr = 63.0e6  # [Pa]
+            dc = 0.4     # [m]
+        else:
+            p0 = 70.0e6  # [Pa]
+            # p0 = 81.6e6  # [Pa]
+            tp = 81.24e6 # [Pa]
+            tr = 63.0e6  # [Pa]
+            dc = 0.4     # [m]
 
         fault_lines += ["{} {} {} {} {} {} {} {} {} {} {}\n".format(id_fault,ielem_fault1,ielem_fault0,spring_id[j,k],spring_id[j+1,k],spring_id[j+1,k+1],spring_id[j,k+1],p0,tp,tr,dc)]
         id_fault += 1
@@ -161,7 +170,7 @@ nfault = id_fault   #number of faults
 
 ### Set material ###
 material_lines = []
-material_lines += ["{} {} {} {} {}\n".format(0,"vs_vp_rho",3464.0,6000.0,2450.0)]
+material_lines += ["{} {} {} {} {}\n".format(0,"vs_vp_rho",3464.0,6000.0,2670.0)]
 material_lines += ["{} {} {} {}\n".format(1,"spring",1.0e15,1.0e15)]
 
 nmaterial = len(material_lines)

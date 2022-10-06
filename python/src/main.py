@@ -23,7 +23,7 @@ fem.set_output(outputs)
 # exit()
 
 ## --- Define EQ source --- ##
-fsamp = 1000
+fsamp = 5000
 duration = 2
 
 tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
@@ -66,7 +66,7 @@ for it in range(len(tim)):
     output_accz[it,:] = [node.a[2] for node in fem.output_nodes]
 
     if it%20 == 0:
-        plot_model.plot_mesh_update(ax,fem,10.)
+        plot_model.plot_mesh_update(ax,fem,50.)
         print(it,"t=",it*dt,output_dispx[it,0])
 
 elapsed_time = time.time() - start
