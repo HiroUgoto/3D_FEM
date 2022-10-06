@@ -2,20 +2,21 @@ import numpy as np
 from concurrent import futures
 
 class Fem():
-    def __init__(self,dof,nodes,elements,materials):
+    def __init__(self,dof,nodes,elements,faults,materials):
         self.nnode = len(nodes)
         self.nelem = len(elements)
         self.dof = dof
 
         self.nodes = nodes
         self.elements = elements
+        self.faults = faults
         self.materials = materials
 
         self.input_elements = []
         self.free_nodes = []
         self.fixed_nodes = []
         self.connected_elements = []
-        self.slip_joint_node_elements = []
+        self.fault_elements = []
 
     # ======================================================================= #
     def set_init(self):
@@ -53,8 +54,8 @@ class Fem():
                 self.input_elements += [element]
             if "connect" in element.style:
                 self.connected_elements += [element]
-            if "slip_joint_node" in element.style:
-                self.slip_joint_node_elements += [element]
+            if "fault" in element.style:
+                self.fault_elements += [element]
 
     # ---------------------------------------
     def _set_initial_condition(self):
@@ -101,116 +102,14 @@ class Fem():
             self.output_elements[id] = self.elements[ielem]
 
     # ======================================================================= #
-    def self_gravity(self):
-        ### Initial condition ###
-        H = 0.0
-        for node in self.nodes:
-            if node.xyz[1] > H:
-                H = node.xyz[1]
+    def set_initial_fault(self):
+        self.fault_p_elements = []
+        self.fault_m_elements = []
 
-        g,vp = 9.8,1500.0
-        for node in self.node_set:
-            node.u[0] = 0.0
-            node.u[1] = g/(2*vp**2) * (H**2 - node.xyz[1]**2)
-            node.um = np.copy(node.u)
-
-        self._self_gravity_cg(full=False)
-        self._self_gravity_cg(full=True)
-
-        for node in self.node_set:
-            node.u0 = np.copy(node.u)
-            node.um = np.copy(node.u)
-
-    # ---------------------------------------
-    def _self_gravity_cg(self,full=True):
-        if full:    # Calculate both components
-            id = 0
-        else:       # Calculate only vertical component
-            id = 1
-
-        ### CG Method ###
-        for node in self.node_set:
-            node.force = np.zeros(node.dof,dtype=np.float64)
-        for element in self.element_set:
-            element.mk_ku()
-        for node in self.node_set:
-            for i in range(id,node.dof):
-                if node.freedom[i] == 0:
-                    node._ur[i] = 0.0
-                else:
-                    node._ur[i] = node.static_force[i] - node.force[i]
-        for element in self.connected_element_set:
-            u = np.zeros(element.nodes[0].dof,dtype=np.float64)
-            for node in element.node_set:
-                u += node._ur
-            for node in element.node_set:
-                node._ur = u/element.nnode
-        for element in self.input_elements:
-            for node in element.node_set:
-                node._ur = np.zeros(element.nodes[0].dof,dtype=np.float64)
-        for node in self.node_set:
-            node._up = np.copy(node._ur)
-        for element in self.element_set:
-            element._up = ()
-            for node in element.nodes:
-                element._up += (node._up.view(),)
-
-        for it in range(10*self.nnode):
-            ## y = Ap
-            for node in self.node_set:
-                node.force = np.zeros(node.dof,dtype=np.float64)
-            for element in self.element_set:
-                element.mk_ku_u(element._up)
-            for node in self.node_set:
-                node._uy = node.force
-
-            ## correction boundary condition
-            for node in self.node_set:
-                for i in range(id,node.dof):
-                    if node.freedom[i] == 0:
-                        node._uy[i] = 0.0
-            for element in self.connected_element_set:
-                u = np.zeros(element.nodes[0].dof,dtype=np.float64)
-                for node in element.node_set:
-                    u += node._uy
-                for node in element.node_set:
-                    node._uy = u/element.nnode
-            for element in self.input_elements:
-                for node in element.node_set:
-                    node._uy = np.zeros(element.nodes[0].dof,dtype=np.float64)
-
-            ## alpha = rr/py
-            rr,py = 0.0,0.0
-            for node in self.node_set:
-                rr += node._ur @ node._ur
-                py += node._up @ node._uy
-            alpha = rr/py
-
-            ## x = x + alpha*p
-            rr1 = 0.0
-            for node in self.node_set:
-                for i in range(id,node.dof):
-                    if node.freedom[i] == 0:
-                        pass
-                    else:
-                        node.u[i] += alpha*node._up[i]
-                        node._ur[i] -= alpha*node._uy[i]
-                rr1 += node._ur @ node._ur
-
-            if rr1 < 1.e-10:
-                break
-
-            ## p = r + beta*p
-            beta = rr1/rr
-            for node in self.node_set:
-                for i in range(id,node.dof):
-                    if node.freedom[i] == 0:
-                        pass
-                    else:
-                        node._up[i] = node._ur[i] + beta*node._up[i]
-
-            if it%100 == 0:
-                print(" (self gravity process .. )",it,self.nodes[0].u[1],rr1)
+        for fault in self.faults:
+            fault.set_initial_condition(self.elements)
+            self.fault_p_elements = [fault.pelement]
+            self.fault_m_elements = [fault.melement]
 
 
     # ======================================================================= #
@@ -333,6 +232,34 @@ class Fem():
         for element in self.output_elements:
             element.calc_stress()
 
+    # ======================================================================= #
+    def update_time_dynamic_fault(self):
+        for node in self.nodes:
+            node.dynamic_force = np.zeros(self.dof,dtype=np.float64)
+            self._update_time_node_init(node)
+
+        for element in self.elements:
+            element.mk_ku_cv()
+
+        for element in self.fault_m_elements:
+            self._update_time_fault_m_elements(element)
+        for element in self.fault_p_elements:
+            self._update_time_fault_p_elements(element)
+
+        for node in self.free_nodes:
+            self._update_time_set_free_nodes(node)
+        for node in self.fixed_nodes:
+            self._update_time_set_fixed_nodes(node)
+
+        for fault in self.faults:
+            fault.update_friction()
+
+        for fault in self.faults:
+            fault.calc_traction(self.elements)
+
+        for element in self.output_elements:
+            element.calc_stress()
+
 
     # ---------------------------------------
     def _update_time_node_init(self,node):
@@ -392,6 +319,16 @@ class Fem():
         element.nodes[0].u[:] =  element.R.T @ slip
         element.nodes[1].u[:] = -element.R.T @ slip
 
+
+    def _update_time_fault_m_elements(self,element):
+        Tinput = np.array([0.0,element.traction,0.0])
+        T = element.R.T @ Tinput
+        element.mk_T(T)
+
+    def _update_time_fault_p_elements(self,element):
+        Tinput = np.array([0.0,-element.traction,0.0])
+        T = element.R.T @ Tinput
+        element.mk_T(T)
 
     # ======================================================================= #
     def print_all(self):

@@ -1,13 +1,13 @@
 import numpy as np
 import fem
-import node,element,material
+import node,element,material,fault
 
 # ------------------------------------------------------------------- #
 def input_mesh(mesh_file):
     with open(mesh_file) as f:
         lines = f.readlines()
 
-        nnode,nelem,nmaterial,dof = [int(s) for s in lines[0].split()]
+        nnode,nelem,nfault,nmaterial,dof = [int(s) for s in lines[0].split()]
 
         irec = 1
         nodes = [None] * nnode
@@ -33,6 +33,19 @@ def input_mesh(mesh_file):
             elements[ielem] = element.Element(id,style,material_id,inode)
 
         irec += nelem
+        faults = [None] * nfault
+        for ifault in range(nfault):
+            items = lines[ifault+irec].split()
+
+            id = int(items[0])
+            pelem_id = int(items[1])
+            melem_id = int(items[2])
+            spring_id = [int(s) for s in items[3:7]]
+            param = np.array([float(s) for s in items[7:]])
+
+            faults[ifault] = fault.Fault(id,pelem_id,melem_id,spring_id,param)
+
+        irec += nfault
         materials = [None] * nmaterial
         for imaterial in range(nmaterial):
             items = lines[imaterial+irec].split()
@@ -43,7 +56,7 @@ def input_mesh(mesh_file):
 
             materials[imaterial] = material.Material(id,style,param)
 
-    return fem.Fem(dof,nodes,elements,materials)
+    return fem.Fem(dof,nodes,elements,faults,materials)
 
 # ------------------------------------------------------------------- #
 def input_outputs(output_file):

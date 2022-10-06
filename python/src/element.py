@@ -94,8 +94,8 @@ class Element:
                     gp = element_style.Gauss_Points(wx*wy,xi,eta)
                     self.gauss_points += [gp]
 
-        # elif self.dim == 0 and "slip" in self.style:
-        #     self.R = self.material.R
+        elif self.dim == 0 and "spring" in self.style:
+            self.K = None
 
     # ---------------------------------------------------------
     def mk_local_matrix(self):
@@ -135,7 +135,7 @@ class Element:
             self.C_off_diag = self.C - np.diag(self.C_diag)
 
         elif self.dim == 2:
-            if "input" or "visco" in self.style:
+            if ("input" in self.style) or ("visco" in self.style):
                 self.C = np.zeros([self.ndof,self.ndof], dtype=np.float64)
 
                 for gp in self.gauss_points:
@@ -215,6 +215,23 @@ class Element:
             moment = self.material.rmu * source.strain_tensor * slip0
             self.force = BT @ moment
 
+    def mk_T(self,T):
+        integralNT = np.zeros([self.ndof], dtype=np.float64)
+        for gp in self.gauss_points:
+            n = self.estyle.shape_function_n(gp.xi,gp.eta)
+            dn = self.estyle.shape_function_dn(gp.xi,gp.eta)
+
+            det,_ = mk_q(self.dof,self.xnT,dn)
+            N = mk_n(self.dof,self.nnode,n)
+
+            detJ = gp.w*det
+            NT = N.T @ T
+            integralNT += NT*detJ
+
+        for i in range(self.nnode):
+            i0 = self.dof*i
+            self.nodes[i].force[:] -= integralNT[i0:i0+self.dof]
+
     # --------------------------------------------------------
     def mk_B_stress(self):
         if self.dim == 1:
@@ -243,9 +260,16 @@ class Element:
         self.strain = B @ np.hstack(self.u)
         self.stress = self.De @ self.strain
 
+    def calc_stress_xi(self,xi,eta,zeta):
+        dn = self.estyle.shape_function_dn(xi,eta,zeta)
+        _,dnj = mk_dnj(self.xnT,dn)
+        B = mk_b(self.dof,self.nnode,dnj)
+        strain = B @ np.hstack(self.u)
+        stress = self.De @ strain
+        return stress
 
     # ---------------------------------------------------------
-    def check_inside(self,x):
+    def check_inside(self,x,margin=0.0):
         xi = np.zeros(3)
         for itr in range(20):
             n = self.estyle.shape_function_n(xi[0],xi[1],xi[2])
@@ -260,7 +284,7 @@ class Element:
 
             xi -= r
 
-        if (-1.0 <= xi[0] < 1.0) and (-1.0 <= xi[1] < 1.0) and (-1.0 <= xi[2] < 1.0):
+        if (-1.0-margin <= xi[0] < 1.0+margin) and (-1.0-margin <= xi[1] < 1.0+margin) and (-1.0-margin <= xi[2] < 1.0+margin):
             is_inside = True
         else:
             is_inside = False

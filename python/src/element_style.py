@@ -24,8 +24,12 @@ def set_style(style):
         return Visco_1d_2Node()
     elif style == "1d3visco":
         return Visco_1d_3Node()
+    elif style == "2d4fault":
+        return Fault_2d_4Node()
     elif style == "connect":
         return Connect()
+    elif style == "spring":
+        return Spring()
     elif style == "slip_joint_node":
         return SlipJointNode()
 
@@ -293,6 +297,12 @@ class Connect:
         self.gauss = np.array([]),np.array([])
 
 # ---------------------------------------------------------------------- #
+class Spring:
+    def __init__(self):
+        self.dim = 0
+        self.gauss = np.array([]),np.array([])
+
+# ---------------------------------------------------------------------- #
 class SlipJointNode:
     def __init__(self):
         self.dim = 0
@@ -312,4 +322,8 @@ class Visco_2d_4Node(Solid_2d_4Node):
 class Visco_1d_2Node(Line_1d_2Node):
     pass
 class Visco_1d_3Node(Line_1d_3Node):
+    pass
+
+# ---------------------------------------------------------------------- #
+class Fault_2d_4Node(Solid_2d_4Node):
     pass

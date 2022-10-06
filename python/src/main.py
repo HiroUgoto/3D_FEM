@@ -23,30 +23,15 @@ fem.set_output(outputs)
 # exit()
 
 ## --- Define EQ source --- ##
-fsamp = 100
-
-fp = 0.5
-duration = 6
+fsamp = 1000
+duration = 2
 
 tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
-slip_rate = input_wave.ricker(tim,fp,tp=1.0/fp,amp=1.0)
 ntim = len(tim)
 
 
-strike = 270.0   # degree
-dip = 30.0      # degree
-rake = 90.0     # degree
-
-width = 1000.0      # m
-length = 1000.0     # m
-nl,nw = 2,2
-sources = source.set_source(fem.elements,strike,dip,rake,length,width,2500,2500,2500,nl,nw)
-# exit()
-
-# plt.figure()
-# plt.plot(tim,slip_rate)
-# plt.show()
-# exit()
+## --- Fault setup --- ##
+fem.set_initial_fault()
 
 ## --- Prepare time solver --- ##
 ax = plot_model.plot_mesh_update_init()
@@ -65,11 +50,8 @@ output_accx = np.zeros((ntim,fem.output_nnode))
 output_accy = np.zeros((ntim,fem.output_nnode))
 output_accz = np.zeros((ntim,fem.output_nnode))
 
-slip0 = 0.0
 for it in range(len(tim)):
-    slip0 += slip_rate[it]*dt
-
-    fem.update_time_source(sources,slip0)
+    fem.update_time_dynamic_fault()
 
     output_dispx[it,:] = [node.u[0] for node in fem.output_nodes]
     output_dispy[it,:] = [node.u[1] for node in fem.output_nodes]
@@ -83,8 +65,8 @@ for it in range(len(tim)):
     output_accy[it,:] = [node.a[1] for node in fem.output_nodes]
     output_accz[it,:] = [node.a[2] for node in fem.output_nodes]
 
-    if it%40 == 0:
-        plot_model.plot_mesh_update(ax,fem,10000.)
+    if it%20 == 0:
+        plot_model.plot_mesh_update(ax,fem,10.)
         print(it,"t=",it*dt,output_dispx[it,0])
 
 elapsed_time = time.time() - start
@@ -109,7 +91,6 @@ output_line = np.vstack([tim,output_accy.T]).T
 np.savetxt(output_dir+"output_y.acc",output_line)
 
 ## Output result ##
-plt.figure()
-# plt.plot(tim,slip_rate,c='k')
-plt.plot(tim,output_velx[:,0],c='r')
-plt.show()
+# plt.figure()
+# plt.plot(tim,output_velx[:,0],c='r')
+# plt.show()

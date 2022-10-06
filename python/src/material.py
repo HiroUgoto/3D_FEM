@@ -31,6 +31,10 @@ class Material:
             self.rlambda = 2*nu/(1-2*nu) * self.rmu
             self.rho = rho
 
+        elif self.style == "spring":
+            self.rho = 0.0
+            self.kv,self.kh = param
+
         elif self.style == "slip_joint_node_normal":
             self.rho = 0.0
             n0,n1,amp = param
@@ -51,6 +55,26 @@ class Material:
         D[3,3] = self.rmu
         D[4,4] = self.rmu
         D[5,5] = self.rmu
+
+        return D
+
+    def mk_d_spring(self):
+        D = np.zeros([6,6],dtype=np.float64)
+        D[0,0],D[3,0] =  self.kv, -self.kv
+        D[0,3],D[3,3] = -self.kv,  self.kv
+        D[1,1],D[4,1] =  self.kh, -self.kh
+        D[1,4],D[4,4] = -self.kh,  self.kh
+        D[2,2],D[5,2] =  self.kh, -self.kh
+        D[2,5],D[5,5] = -self.kh,  self.kh
+
+        return D
+
+    def mk_d_slider(self):
+        D = np.zeros([6,6],dtype=np.float64)
+        D[0,0],D[3,0] =  self.kv, -self.kv
+        D[0,3],D[3,3] = -self.kv,  self.kv
+        D[2,2],D[5,2] =  self.kh, -self.kh
+        D[2,5],D[5,5] = -self.kh,  self.kh
 
         return D
 
