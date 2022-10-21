@@ -324,14 +324,13 @@ class Fem():
         element.nodes[0].u[:] =  element.R.T @ slip
         element.nodes[1].u[:] = -element.R.T @ slip
 
-
-    def _update_time_fault_m_elements(self,element):
-        Tinput = np.array([0.0,element.traction,0.0])
+    def _update_time_fault_p_elements(self,element):
+        Tinput = np.array([0.0,-element.traction,0.0])
         T = element.R.T @ Tinput
         element.mk_T(T)
 
-    def _update_time_fault_p_elements(self,element):
-        Tinput = np.array([0.0,-element.traction,0.0])
+    def _update_time_fault_m_elements(self,element):
+        Tinput = np.array([0.0,element.traction,0.0])
         T = element.R.T @ Tinput
         element.mk_T(T)
 

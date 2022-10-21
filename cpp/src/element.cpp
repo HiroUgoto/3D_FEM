@@ -326,6 +326,35 @@ void Element::mk_source(const EM dn, const EV strain_tensor, const double slip0)
 }
 
 // ------------------------------------------------------------------- //
+void Element::mk_T(const EV T) {
+  ElementStyle* estyle_p = set_element_style(this->style);
+  std::vector<EV> n_list = estyle_p->n_list;
+  std::vector<EM> dn_list = estyle_p->dn_list;
+  std::vector<double> w_list = estyle_p->w_list;
+
+  EV integralNT = EV::Zero(this->ndof);
+  for (size_t i = 0 ; i < this->ng_all ; i++){
+    double detJ;
+    EM N;
+
+    auto [det, q] = mk_q(this->dof, this->xnT, dn_list[i]);
+    N = mk_n(this->dof, this->nnode, n_list[i]);
+
+    detJ = det * w_list[i];
+    integralNT += N.transpose() * T * detJ;
+  }
+
+  for (size_t inode = 0 ; inode < this->nnode ; inode++){
+    size_t i0 = inode*this->dof;
+    for (size_t i = 0 ; i < this->dof ; i++) {
+      this->nodes_p[inode]->force(i) -= integralNT(i0+i);
+    }
+  }
+
+  delete estyle_p;
+}
+
+// ------------------------------------------------------------------- //
 void Element::calc_stress() {
     EV u;
     EM B;
@@ -338,9 +367,23 @@ void Element::calc_stress() {
     this->stress = this->De * this->strain;
   }
 
+EV Element::calc_stress_xi(const EV xi) {
+    ElementStyle* estyle_p = set_element_style(this->style);
+    EM dn = estyle_p->shape_function_dn(xi(0),xi(1),xi(2));
+    delete estyle_p;
+
+    auto [det, dnj] = mk_dnj(this->xnT, dn);
+    EM B = mk_b(this->dof, this->nnode, dnj);
+    EV u = this->mk_u_hstack();
+
+    EV stress = this->De * B * u;
+    return stress;
+  }
+
+
 // ------------------------------------------------------------------- //
 std::tuple<bool, EV3>
-  Element::check_inside(const EV3 x) {
+  Element::check_inside(const EV3 x, double margin) {
     EV3 xi = EV::Zero(3);
     bool is_inside = false;
     ElementStyle* estyle_p = set_element_style(this->style);
@@ -358,9 +401,9 @@ std::tuple<bool, EV3>
       xi -= r;
     }
 
-    if ( (-1.0 <= xi[0]) && (xi[0] < 1.0) &&
-         (-1.0 <= xi[1]) && (xi[1] < 1.0) &&
-         (-1.0 <= xi[2]) && (xi[2] < 1.0) ) {
+    if ( (-1.0-margin <= xi[0]) && (xi[0] < 1.0+margin) &&
+         (-1.0-margin <= xi[1]) && (xi[1] < 1.0+margin) &&
+         (-1.0-margin <= xi[2]) && (xi[2] < 1.0+margin) ) {
       is_inside = true;
     }
 

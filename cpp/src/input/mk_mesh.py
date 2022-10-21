@@ -1,13 +1,15 @@
 import numpy as np
 import os
 
-area_x = 5000.0
-area_y = 5000.0
-area_z = 5000.0
+ndiv = 2
 
-nx = 10
-ny = 10
-nz = 10
+area_x = 1000.0 / ndiv
+area_y = 500.0 / ndiv
+area_z = 4000.0
+
+nx = 2
+ny = 1
+nz = 8 * ndiv
 dof = 3
 
 xg = np.linspace(0,area_x,nx+1,endpoint=True)
@@ -23,11 +25,23 @@ inode = 0
 for k in range(len(zg)):
     for j in range(len(yg)):
         for i in range(len(xg)):
-            dofx,dofy,dofz = 1,1,1
+            dofx,dofy,dofz = 0,1,0
 
             node[i,j,k] = inode
             node_lines += [ "{} {} {} {} {} {} {}\n".format(inode,xg[i],yg[j],zg[k],dofx,dofy,dofz)]
             inode += 1
+
+# Fault element #
+i_fault = nx//2
+node_fault = np.empty([1,len(yg),len(zg)],dtype=np.int32)
+
+for k in range(len(zg)):
+    for j in range(len(yg)):
+        dofx,dofy,dofz = 1,1,1
+
+        node_fault[0,j,k] = inode
+        node_lines += [ "{} {} {} {} {} {} {}\n".format(inode,xg[i_fault],yg[j],zg[k],dofx,dofy,dofz)]
+        inode += 1
 
 
 ### Set element ###
@@ -42,21 +56,27 @@ for k in range(nz):
             style = "3d8solid"
 
             param_line = "{} {} {} ".format(ielem,style,im)
-            style_line = "{} {} {} {} {} {} {} {}".format(node[i,j,k],node[i+1,j,k],node[i+1,j+1,k],node[i,j+1,k],
-                                                             node[i,j,k+1],node[i+1,j,k+1],node[i+1,j+1,k+1],node[i,j+1,k+1])
+
+            if i == i_fault:
+                style_line = "{} {} {} {} {} {} {} {}".format(node_fault[0,j,k],node[i+1,j,k],node[i+1,j+1,k],node_fault[0,j+1,k],
+                                                                 node_fault[0,j,k+1],node[i+1,j,k+1],node[i+1,j+1,k+1],node_fault[0,j+1,k+1])
+            else:
+                style_line = "{} {} {} {} {} {} {} {}".format(node[i,j,k],node[i+1,j,k],node[i+1,j+1,k],node[i,j+1,k],
+                                                                 node[i,j,k+1],node[i+1,j,k+1],node[i+1,j+1,k+1],node[i,j+1,k+1])
             element_lines += [param_line + style_line + "\n"]
             ielem += 1
 
-for j in range(ny):
-    for i in range(nx):
-        im = 0
-        style = "2d4visco"
 
-        param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[i,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node[i,j+1,-1])
-
-        element_lines += [param_line + style_line + "\n"]
-        ielem += 1
+# for j in range(ny):
+#     for i in range(nx):
+#         im = 0
+#         style = "2d4visco"
+#
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[i,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node[i,j+1,-1])
+#
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
 
 for k in range(nz):
     for j in range(ny):
@@ -75,31 +95,83 @@ for k in range(nz):
         element_lines += [param_line + style_line + "\n"]
         ielem += 1
 
+# for k in range(nz):
+#     for i in range(nx):
+#         im = 0
+#         style = "2d4visco"
+#
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[i,0,k],node[i+1,0,k],node[i+1,0,k+1],node[i,0,k+1])
+#
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
+#
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[i,-1,k],node[i,-1,k+1],node[i+1,-1,k+1],node[i+1,-1,k])
+#
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
+
+spring_id = np.empty([len(yg),len(zg)],dtype=np.int32)
+for k in range(len(zg)):
+    for j in range(len(yg)):
+        im = 1
+        style = "spring"
+
+        param_line = "{} {} {} ".format(ielem,style,im)
+        style_line = "{} {}".format(node[i_fault,j,k],node_fault[0,j,k])
+        element_lines += [param_line + style_line + "\n"]
+        spring_id[j,k] = ielem
+        ielem += 1
+
+
+####################################################
+fault_lines = []
+id_fault = 0
 for k in range(nz):
-    for i in range(nx):
+    for j in range(ny):
         im = 0
-        style = "2d4visco"
+        style = "2d4fault"
 
         param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[i,0,k],node[i+1,0,k],node[i+1,0,k+1],node[i,0,k+1])
+        style_line = "{} {} {} {}".format(node[i_fault,j,k],node[i_fault,j+1,k],node[i_fault,j+1,k+1],node[i_fault,j,k+1])
 
         element_lines += [param_line + style_line + "\n"]
+        ielem_fault0 = ielem
         ielem += 1
 
         param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[i,-1,k],node[i,-1,k+1],node[i+1,-1,k+1],node[i+1,-1,k])
+        style_line = "{} {} {} {}".format(node_fault[0,j,k],node_fault[0,j+1,k],node_fault[0,j+1,k+1],node_fault[0,j,k+1])
 
         element_lines += [param_line + style_line + "\n"]
+        ielem_fault1 = ielem
         ielem += 1
+
+        z = (zg[k] + zg[k+1])/2
+        if np.abs(z-2000) <= 500:
+            p0 = 81.6e6  # [Pa]
+            tp = 81.24e6 # [Pa]
+            tr = 63.0e6  # [Pa]
+            dc = 0.4     # [m]
+        else:
+            p0 = 70.0e6  # [Pa]
+            # p0 = 81.6e6  # [Pa]
+            tp = 81.24e6 # [Pa]
+            tr = 63.0e6  # [Pa]
+            dc = 0.4     # [m]
+
+        fault_lines += ["{} {} {} {} {} {} {} {} {} {} {}\n".format(id_fault,ielem_fault1,ielem_fault0,spring_id[j,k],spring_id[j+1,k],spring_id[j+1,k+1],spring_id[j,k+1],p0,tp,tr,dc)]
+        id_fault += 1
 
 
 nnode = inode       #number of nodes
 nelem = ielem       #number of elements
-
+nfault = id_fault   #number of faults
 
 ### Set material ###
 material_lines = []
-material_lines += ["{} {} {} {} {}\n".format(0,"vs_vp_rho",3464.0,6000.0,2450.0)]
+material_lines += ["{} {} {} {} {}\n".format(0,"vs_vp_rho",3464.0,6000.0,2670.0)]
+material_lines += ["{} {} {} {}\n".format(1,"spring",1.0e15,1.0e15)]
 
 nmaterial = len(material_lines)
 
@@ -120,10 +192,12 @@ output_nelem = len(output_element_lines)
 
 
 with open("mesh.in","w") as f:
-    f.write("{} {} {} {} \n".format(nnode,nelem,nmaterial,dof))
+    f.write("{} {} {} {} {} \n".format(nnode,nelem,nfault,nmaterial,dof))
     f.writelines(node_lines)
     f.writelines(element_lines)
+    f.writelines(fault_lines)
     f.writelines(material_lines)
+
 
 with open("output.in","w") as f:
     f.write("{} {} \n".format(output_nnode,output_nelem))

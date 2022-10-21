@@ -4,6 +4,7 @@
 #include "material.h"
 #include "element_style.h"
 #include "element.h"
+#include "fault.h"
 #include "source.h"
 #include "fem.h"
 #include "io_data.h"
@@ -27,37 +28,15 @@ int main() {
   // exit(1);
 
   // ----- Define source ----- //
-  size_t fsamp = 100;
-
-  double fp = 0.5;
-  double duration = 6.0;
+  size_t fsamp = 5000;
+  double duration = 2.0;
 
   auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
   size_t ntim = tim.size();
-  EV slip_rate(ntim);
-  slip_rate = input_wave::ricker(tim,fp,1.0/fp,1.0);
 
 
-  double strike = 270.0;
-  double dip = 30.0;
-  double rake = 90.0;
-
-  double length = 1000.0;
-  double width = 1000.0;
-  double sx = 2500.0;
-  double sy = 2500.0;
-  double sz = 2500.0;
-
-  auto sources = set_source(fem.elements,strike,dip,rake,length,width,sx,sy,sz,2,2);
-
-  // std::ofstream f0(output_dir + "slip_rate.dat");
-  // for (size_t it = 0 ; it < ntim ; it++) {
-  //   f0 << tim(it) ;
-  //   f0 << " " << slip_rate(it) ;
-  //   f0 << "\n";
-  // }
-  // f0.close();
-  // exit(1);
+  // ----- Fault setup ----- //
+  fem.set_initial_fault();
 
   // ----- Prepare time solver ----- //
   fem.update_init(dt);
@@ -67,12 +46,8 @@ int main() {
   EM output_velz(ntim,fem.output_nnode);
 
   // ----- time iteration ----- //
-  double slip0 = 0.0;
-
   for (size_t it = 0 ; it < ntim ; it++) {
-    slip0 += slip_rate[it]*dt;
-
-    fem.update_time_source(sources,slip0);
+    fem.update_time_dynamic_fault();
 
     for (size_t i = 0 ; i < fem.output_nnode ; i++) {
       Node* node_p = fem.output_nodes_p[i];

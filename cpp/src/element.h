@@ -27,6 +27,9 @@ class Element {
     EV force;
     EV strain, stress;
 
+    EM3 R;
+    double traction;
+
     Element (size_t id, std::string style, int material_id, std::vector<size_t> inode);
     void print();
 
@@ -47,16 +50,19 @@ class Element {
     void mk_cv();
     void mk_ku_cv();
 
-  private:
     EV mk_u_hstack();
+
+  private:
     EV mk_v_hstack();
     EM mk_u_vstack();
 
   public:
     void update_inputwave(const EV vel0);
     void mk_source(const EM dn, const EV strain_tensor, const double slip0);
+    void mk_T(const EV T);
     void calc_stress();
-    std::tuple<bool, EV3> check_inside(const EV3 x);
+    EV calc_stress_xi(const EV xi);
+    std::tuple<bool, EV3> check_inside(const EV3 x, double margin=0.0);
 };
 
 EM mk_m(const EM N);

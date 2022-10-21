@@ -4,6 +4,7 @@
 #include "material.h"
 #include "element_style.h"
 #include "element.h"
+#include "fault.h"
 #include "source.h"
 #include "fem.h"
 
@@ -13,6 +14,7 @@ using EV = Eigen::VectorXd ;
 // ------------------------------------------------------------------- //
 Fem::Fem (size_t dof, std::vector<Node> nodes,
                 std::vector<Element> elements,
+                std::vector<Fault> faults,
                 std::vector<Material> materials)
   {
     this->nnode = nodes.size();
@@ -21,6 +23,7 @@ Fem::Fem (size_t dof, std::vector<Node> nodes,
 
     this->nodes = nodes;
     this->elements = elements;
+    this->faults = faults;
     this->materials = materials;
   }
 
@@ -65,7 +68,6 @@ void Fem::_set_mesh() {
           }
         }
       }
-
       element.set_material(material_p);
 
       if (element.style.find("solid") != std::string::npos) {
@@ -80,6 +82,13 @@ void Fem::_set_mesh() {
       if (element.style.find("connect") != std::string::npos) {
         this->connected_elements_p.push_back(&element);
       }
+      if (element.style.find("spring") != std::string::npos) {
+        this->spring_elements_p.push_back(&element);
+      }
+      if (element.style.find("fault") != std::string::npos) {
+        this->fault_elements_p.push_back(&element);
+      }
+
     }
   }
 
@@ -142,6 +151,20 @@ void Fem::set_output(std::tuple<std::vector<size_t>, std::vector<size_t>> output
       this->output_elements_p.push_back(&this->elements[id]);
     }
   }
+
+// ------------------------------------------------------------------- //
+// ------------------------------------------------------------------- //
+void Fem::set_initial_fault() {
+  for (auto& fault : this->faults) {
+    fault.set_initial_condition0(this->elements);
+    this->fault_p_elements_p.push_back(fault.pelement_p);
+    this->fault_m_elements_p.push_back(fault.melement_p);
+  }
+
+  for (auto& fault : this->faults) {
+    fault.set_initial_condition1(this->elements);
+  }
+}
 
 // ------------------------------------------------------------------- //
 // ------------------------------------------------------------------- //
@@ -224,6 +247,58 @@ void Fem::_update_time_source(const std::vector<Source> sources, const double sl
         this->elements[id].nodes_p[inode]->force(i) -= this->elements[id].force[i0+i];
       }
     }
+  }
+}
+
+// ------------------------------------------------------------------- //
+void Fem::update_time_dynamic_fault() {
+  for (auto& node : this->nodes) {
+    node.force = EV::Zero(this->dof);
+  }
+
+  for (auto& element_p : this->solid_elements_p) {
+    element_p->mk_ku();
+  }
+  for (auto& element_p : this->visco_elements_p) {
+    element_p->mk_ku_cv();
+  }
+  for (auto& element_p : this->spring_elements_p) {
+    element_p->mk_ku();
+  }
+
+  this->_update_time_fault_elements();
+
+  this->_update_time_set_free_nodes();
+  this->_update_time_set_fixed_nodes();
+  this->_update_time_set_connected_elements();
+
+  for (auto& fault : this->faults) {
+    fault.update_friction(this->dt);
+  }
+  for (auto& fault : this->faults) {
+    fault.calc_traction(this->elements);
+  }
+  for (auto& fault : this->faults) {
+    fault.update_rupture(this->elements);
+  }
+
+  for (auto& element_p : this->output_elements_p) {
+    element_p->calc_stress();
+  }
+
+}
+
+void Fem::_update_time_fault_elements() {
+  for (auto& element_p : this->fault_p_elements_p) {
+    EV3 Tinput = EV::Zero(3);
+    Tinput(1) = -element_p->traction;
+    element_p->mk_T(Tinput);
+  }
+
+  for (auto& element_p : this->fault_m_elements_p) {
+    EV3 Tinput = EV::Zero(3);
+    Tinput(1) =  element_p->traction;
+    element_p->mk_T(Tinput);
   }
 }
 

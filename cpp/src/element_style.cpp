@@ -30,8 +30,12 @@ ElementStyle* set_element_style(const std::string style) {
     es_p = new Visco_1d_2Node();
   } else if (style == "1d3visco") {
     es_p = new Visco_1d_3Node();
+  } else if (style == "2d4fault") {
+    es_p = new Fault_2d_4Node();
   } else if (style == "connect") {
     es_p = new Connect();
+  } else if (style == "spring") {
+    es_p = new Spring();
   } else {
     es_p = new ElementStyle();
   }

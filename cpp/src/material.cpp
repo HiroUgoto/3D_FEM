@@ -60,6 +60,11 @@ void Material::set_param() {
     this->rlambda = 2.0*nu/(1.0-2.0*nu) * this->rmu;
     this->rho = rho;
 
+  } else if (this->style == "spring") {
+    this->rho = 0.0;
+    this->kv = this->param.at(0);
+    this->kh = this->param.at(1);
+
   }
 }
 
@@ -86,6 +91,46 @@ EM Material::mk_d(const size_t dof) {
 
     return D;
   }
+
+// ------------------------------------------------------------------- //
+EM Material::mk_d_spring() {
+  EM D(6,6);
+
+  D = EM::Zero(6,6);
+  D(0,0) =  this->kv;
+  D(3,0) = -this->kv;
+  D(0,3) = -this->kv;
+  D(3,3) =  this->kv;
+
+  D(1,1) =  this->kh;
+  D(4,1) = -this->kh;
+  D(1,4) = -this->kh;
+  D(4,4) =  this->kh;
+
+  D(2,2) =  this->kh;
+  D(5,2) = -this->kh;
+  D(2,5) = -this->kh;
+  D(5,5) =  this->kh;
+
+  return D;
+}
+
+EM Material::mk_d_slider() {
+  EM D(6,6);
+
+  D = EM::Zero(6,6);
+  D(0,0) =  this->kv;
+  D(3,0) = -this->kv;
+  D(0,3) = -this->kv;
+  D(3,3) =  this->kv;
+
+  D(2,2) =  this->kh;
+  D(5,2) = -this->kh;
+  D(2,5) = -this->kh;
+  D(5,5) =  this->kh;
+
+  return D;
+}
 
 // ------------------------------------------------------------------- //
 EM Material::mk_visco(const size_t dof) {

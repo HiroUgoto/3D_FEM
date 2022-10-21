@@ -76,7 +76,7 @@ class Fault:
         t0 = t[:,0] / np.linalg.norm(t[:,0])
         t1 = t[:,1] / np.linalg.norm(t[:,1])
 
-        self.R = np.vstack([n/det,t0,t1])     # transport???
+        self.R = np.vstack([n/det,t0,t1])
         self.pelement.R = self.R
         self.melement.R = self.R
 

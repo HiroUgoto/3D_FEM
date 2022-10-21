@@ -89,8 +89,13 @@ class Visco_1d_2Node: public Line_1d_2Node {};
 class Visco_1d_3Node: public Line_1d_3Node {};
 
 // ----------------------------------------------------- //
+class Fault_2d_4Node: public Solid_2d_4Node {};
+
+// ----------------------------------------------------- //
 class Connect: public Line_1d_2Node {
   public:
     Connect ();
     ~Connect ();
 };
+
+class Spring: public Connect {};
