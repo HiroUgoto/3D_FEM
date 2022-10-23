@@ -24,7 +24,7 @@ fem.set_output(outputs)
 
 ## --- Define EQ source --- ##
 fsamp = 5000
-duration = 2
+duration = 1.0
 
 tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
 ntim = len(tim)
@@ -38,36 +38,30 @@ ax = plot_model.plot_mesh_update_init()
 fem.update_init(dt)
 
 ## Iteration ##
-output_dispx = np.zeros((ntim,fem.output_nnode))
-output_dispy = np.zeros((ntim,fem.output_nnode))
-output_dispz = np.zeros((ntim,fem.output_nnode))
-
 output_velx = np.zeros((ntim,fem.output_nnode))
 output_vely = np.zeros((ntim,fem.output_nnode))
 output_velz = np.zeros((ntim,fem.output_nnode))
 
-output_accx = np.zeros((ntim,fem.output_nnode))
-output_accy = np.zeros((ntim,fem.output_nnode))
-output_accz = np.zeros((ntim,fem.output_nnode))
+output_slip = np.zeros((ntim,fem.output_nfault))
+output_sliprate = np.zeros((ntim,fem.output_nfault))
+output_traction = np.zeros((ntim,fem.output_nfault))
 
 for it in range(len(tim)):
     fem.update_time_dynamic_fault()
-
-    output_dispx[it,:] = [node.u[0] for node in fem.output_nodes]
-    output_dispy[it,:] = [node.u[1] for node in fem.output_nodes]
-    output_dispz[it,:] = [node.u[2] for node in fem.output_nodes]
 
     output_velx[it,:] = [node.v[0] for node in fem.output_nodes]
     output_vely[it,:] = [node.v[1] for node in fem.output_nodes]
     output_velz[it,:] = [node.v[2] for node in fem.output_nodes]
 
-    output_accx[it,:] = [node.a[0] for node in fem.output_nodes]
-    output_accy[it,:] = [node.a[1] for node in fem.output_nodes]
-    output_accz[it,:] = [node.a[2] for node in fem.output_nodes]
+    output_slip[it,:] = [fault.slip for fault in fem.output_faults]
+    output_sliprate[it,:] = [fault.sliprate for fault in fem.output_faults]
+    output_traction[it,:] = [fault.traction + fault.p0 for fault in fem.output_faults]
 
     if it%20 == 0:
-        plot_model.plot_mesh_update(ax,fem,50.)
-        print(it,"t=",it*dt,output_dispx[it,0])
+        # plot_model.plot_mesh_update(ax,fem,50.)
+        print(it,"t=",it*dt,output_sliprate[it,:4])
+        print("     ",output_slip[it,:4])
+        print("     ",output_traction[it,:4])
 
 elapsed_time = time.time() - start
 print ("elapsed_time: {0}".format(elapsed_time) + "[sec]")
@@ -75,20 +69,17 @@ print ("elapsed_time: {0}".format(elapsed_time) + "[sec]")
 # plot_model.plot_mesh_update(ax,fem,10.,fin=True)
 
 ## --- Write output file --- ##
-output_line = np.vstack([tim,output_dispx.T]).T
-np.savetxt(output_dir+"output_x.disp",output_line)
-output_line = np.vstack([tim,output_dispy.T]).T
-np.savetxt(output_dir+"output_y.disp",output_line)
-
 output_line = np.vstack([tim,output_velx.T]).T
 np.savetxt(output_dir+"output_x.vel",output_line)
 output_line = np.vstack([tim,output_vely.T]).T
 np.savetxt(output_dir+"output_y.vel",output_line)
 
-output_line = np.vstack([tim,output_accx.T]).T
-np.savetxt(output_dir+"output_x.acc",output_line)
-output_line = np.vstack([tim,output_accy.T]).T
-np.savetxt(output_dir+"output_y.acc",output_line)
+output_line = np.vstack([tim,output_slip.T]).T
+np.savetxt(output_dir+"output_slip.dat",output_line)
+output_line = np.vstack([tim,output_sliprate.T]).T
+np.savetxt(output_dir+"output_sliprate.dat",output_line)
+output_line = np.vstack([tim,output_traction.T]).T
+np.savetxt(output_dir+"output_traction.dat",output_line)
 
 ## Output result ##
 # plt.figure()

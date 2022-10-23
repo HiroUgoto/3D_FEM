@@ -89,7 +89,7 @@ class Fem():
 
     # ======================================================================= #
     def set_output(self,outputs):
-        output_node_list,output_element_list = outputs
+        output_node_list,output_element_list,output_fault_list = outputs
 
         self.output_nnode = len(output_node_list)
         self.output_nodes = [None] * self.output_nnode
@@ -100,6 +100,12 @@ class Fem():
         self.output_elements = [None] * self.output_nelem
         for id,ielem in enumerate(output_element_list):
             self.output_elements[id] = self.elements[ielem]
+
+        self.output_nfault = len(output_fault_list)
+        self.output_faults = [None] * self.output_nfault
+        for id,ifault in enumerate(output_fault_list):
+            self.output_faults[id] = self.faults[ifault]
+
 
     # ======================================================================= #
     def set_initial_fault(self):
@@ -244,10 +250,12 @@ class Fem():
         for element in self.elements:
             element.mk_ku_cv()
 
-        for element in self.fault_m_elements:
-            self._update_time_fault_m_elements(element)
-        for element in self.fault_p_elements:
-            self._update_time_fault_p_elements(element)
+        for fault in self.faults:
+            fault.update_time_fault(self.elements)
+        # for element in self.fault_m_elements:
+        #     self._update_time_fault_m_elements(element)
+        # for element in self.fault_p_elements:
+        #     self._update_time_fault_p_elements(element)
 
         for node in self.free_nodes:
             self._update_time_set_free_nodes(node)
@@ -256,10 +264,8 @@ class Fem():
 
         for fault in self.faults:
             fault.update_friction(self.dt)
-
         for fault in self.faults:
             fault.calc_traction(self.elements)
-
         for fault in self.faults:
             fault.update_rupture(self.elements)
 

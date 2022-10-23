@@ -42,15 +42,22 @@ class Fault:
 
         self.pelement.traction = 0.0
         self.melement.traction = 0.0
-        self.rupture = False
-        self.set_spring_kvkh(elements)
+        self.traction_force = 0.0
+        self.rupture = True
+        self.set_spring_kv(elements)
+        # self.rupture = False
+        # self.set_spring_kvkh(elements)
 
     def set_initial_condition1(self,elements):
         if self.p0 > self.tp:
             self.pelement.traction = self.tp - self.p0
             self.melement.traction = self.tp - self.p0
-            self.rupture = True
-            self.set_spring_kv(elements)
+            self.traction_force = self.tp - self.p0
+            # self.rupture = True
+            # self.set_spring_kv(elements)
+        else:
+            self.rupture = False
+            self.set_spring_kvkh(elements)
 
     # ===================================================================== #
     def find_neighbour_element(self,elements):
@@ -81,16 +88,31 @@ class Fault:
         self.melement.R = self.R
 
     # ===================================================================== #
+    def update_time_fault(self,elements):
+        Tinput = np.array([0.0,self.traction_force,0.0])
+        T = self.R.T @ Tinput
+        self.pelement.mk_T(-T)
+        self.melement.mk_T( T)
+
+    # ===================================================================== #
     def update_friction(self,dt):
         self.calc_average_slip(dt)
         f = 0.0
-        if self.slip < self.dc:
-            f = self.tp - self.slip*(self.tp-self.tr)/self.dc - self.p0
-        else:
-            f = self.tr - self.p0
+        if self.rupture:
+            if self.slip > 0.0:
+                if self.slip < self.dc:
+                    f = self.tp - self.slip*(self.tp-self.tr)/self.dc - self.p0
+                else:
+                    f = self.tr - self.p0
+        # if self.slip > 0.0:
+        #     if self.slip < self.dc:
+        #         f = self.tp - self.slip*(self.tp-self.tr)/self.dc - self.p0
+        #     else:
+        #         f = self.tr - self.p0
 
         self.pelement.traction = f
         self.melement.traction = f
+        self.traction_force = f
 
     # ===================================================================== #
     def calc_average_slip(self,dt):
@@ -104,7 +126,20 @@ class Fault:
 
         slip = (self.R @ (up-um))[1]
         self.sliprate = (slip-self.slip)/dt
+
         self.slip = slip
+        # if self.sliprate < 0.0:
+        #     self.sliprate = 0.0
+        # else:
+        #     self.slip = slip
+
+        # if not self.rupture:
+        #     if self.sliprate < 0.0:
+        #         self.sliprate = 0.0
+        #     else:
+        #         self.slip = slip
+        # else:
+        #     self.slip = slip
 
     # ===================================================================== #
     def calc_traction(self,elements):

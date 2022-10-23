@@ -63,7 +63,7 @@ def input_outputs(output_file):
     with open(output_file) as f:
         lines = f.readlines()
 
-        nnode,nelem = [int(s) for s in lines[0].split()]
+        nnode,nelem,nfault = [int(s) for s in lines[0].split()]
 
         irec = 1
         nodes = [None] * nnode
@@ -81,4 +81,13 @@ def input_outputs(output_file):
             id = int(items[0])
             elements[ielem] = id
 
-    return nodes, elements
+        irec += nelem
+        faults = [None] * nfault
+        for ifault in range(nfault):
+            items = lines[ifault+irec].split()
+
+            id = int(items[0])
+            faults[ifault] = id
+
+
+    return nodes, elements, faults
