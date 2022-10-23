@@ -123,9 +123,6 @@ class Fault:
     def update_rupture(self,elements):
         t = self.traction + self.p0
         if not self.rupture:
-            if self.id == 5:
-                print(self.traction,t,self.tp)
-
             if t > self.tp:
                 self.rupture = True
                 self.set_spring_kv(elements)

@@ -87,6 +87,14 @@ void Fault::find_neighbour_element(std::vector<Element> elements) {
     }
   }
 
+  // if (this->id == 5) {
+  //   for (auto& id : this->neighbour_elements_id) {
+  //     std::cout << id << " ";
+  //   }
+  //   std::cout << std::endl;
+  //   exit(1);
+  // }
+  //
   delete estyle_p;
 }
 
@@ -162,8 +170,9 @@ void Fault::calc_average_slip(double dt) {
 void Fault::calc_traction(std::vector<Element> elements) {
   this->traction = 0.0;
   size_t num = this->neighbour_elements_id.size();
+
   for (size_t i=0 ; i<num ; i++) {
-      id = this->neighbour_elements_id[i];
+      size_t id = this->neighbour_elements_id[i];
       EV xi = this->neighbour_elements_xi[i];
       EV stress = elements[id].calc_stress_xi(xi);
 
@@ -177,11 +186,6 @@ void Fault::calc_traction(std::vector<Element> elements) {
 void Fault::update_rupture(std::vector<Element>& elements) {
   if (!this->rupture) {
     double t = this->traction + this->p0;
-
-    if (this->id == 5) {
-      std::cout << this->traction << " " << t << " " << this->tp << std::endl;
-    }
-
     if (t > this->tp) {
       this->rupture = true;
       this->set_spring_kv(elements);

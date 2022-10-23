@@ -56,7 +56,7 @@ int main() {
       output_velz(it,i) = node_p->v(2);
     }
 
-    if (it%40 == 0) {
+    if (it%20 == 0) {
       std::cout << it << " t= " << it*dt << " ";
       std::cout << output_velx(it,0) << "\n";
     }
