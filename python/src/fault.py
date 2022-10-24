@@ -53,8 +53,8 @@ class Fault:
             self.pelement.traction = self.tp - self.p0
             self.melement.traction = self.tp - self.p0
             self.traction_force = self.tp - self.p0
-            # self.rupture = True
-            # self.set_spring_kv(elements)
+            self.rupture = True
+            self.set_spring_kv(elements)
         else:
             self.rupture = False
             self.set_spring_kvkh(elements)

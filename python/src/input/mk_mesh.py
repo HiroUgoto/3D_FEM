@@ -4,11 +4,11 @@ import os
 ndiv = 8
 
 # area_x = 1000.0 / ndiv
-area_x = 250.0 / ndiv
+area_x = 4000.0
 area_y = 500.0 / ndiv
 area_z = 4000.0
 
-nx = 2
+nx = 8 * ndiv
 ny = 1
 nz = 8 * ndiv
 dof = 3
