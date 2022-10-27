@@ -55,28 +55,28 @@ class Element {
     EM mk_u_vstack();
 
   public:
-    void update_inputwave(const EV vel0);
-    void mk_source(const EM dn, const EV strain_tensor, const double slip0);
+    void update_inputwave(const EV& vel0);
+    void mk_source(const EM& dn, const EV& strain_tensor, const double slip0);
 
     EM mk_T_init();
-    void mk_T(const EM NT, const EV T);
+    void mk_T(const EM& NT, const EV& T);
 
     void calc_stress();
-    EM calc_stress_xi_init(const EM dn);
-    EV calc_stress_xi(const EM dn);
-    std::tuple<bool, EV3> check_inside(const EV3 x, double margin=0.0);
+    EM calc_stress_xi_init(const EM& dn);
+    EV calc_stress_xi(const EM& DB);
+    std::tuple<bool, EV3> check_inside(const EV3& x, double margin=0.0);
 };
 
-EM mk_m(const EM N);
-EM mk_n(const size_t dof, const size_t nnode, const EV n);
+EM mk_m(const EM& N);
+EM mk_n(const size_t dof, const size_t nnode, const EV& n);
 
-EM mk_nqn(const EM N, const EM3 q, const EM3 imp);
-std::tuple<double, EM3> mk_q(const size_t dof, const EM xnT, const EM dn);
+EM mk_nqn(const EM& N, const EM3& q, const EM3& imp);
+std::tuple<double, EM3> mk_q(const size_t dof, const EM& xnT, const EM& dn);
 
-EM mk_k(const EM B, const EM D);
-EM mk_b(const size_t dof, const size_t nnode, const EM dnj);
-EM mk_b_T(const size_t dof, const size_t nnode, const EM dnj);
+EM mk_k(const EM& B, const EM& D);
+EM mk_b(const size_t dof, const size_t nnode, const EM& dnj);
+EM mk_b_T(const size_t dof, const size_t nnode, const EM& dnj);
 
-std::tuple<double, EM>  mk_dnj(const EM xnT, const EM dn);
-std::tuple<double, EM3> mk_inv_jacobi(const EM xnT, const EM dn);
-std::tuple<double, EM3> mk_jacobi(const EM xnT, const EM dn);
+std::tuple<double, EM>  mk_dnj(const EM& xnT, const EM& dn);
+std::tuple<double, EM3> mk_inv_jacobi(const EM& xnT, const EM& dn);
+std::tuple<double, EM3> mk_jacobi(const EM& xnT, const EM& dn);

@@ -261,10 +261,12 @@ void Element::mk_ku_cv() {
 // ------------------------------------------------------------------- //
 EV Element::mk_u_hstack() {
     EV u(this->ndof);
+    size_t i0;
+    Node* node;
 
     for (size_t inode = 0 ; inode < this->nnode ; inode++){
-      size_t i0 = inode*this->dof;
-      Node* node = this->nodes_p[inode];
+      i0 = inode*this->dof;
+      node = this->nodes_p[inode];
       for (size_t i = 0 ; i < this->dof ; i++) {
         u(i0+i) = node->u[i];
       }
@@ -299,7 +301,7 @@ EM Element::mk_u_vstack() {
 
 
 // ------------------------------------------------------------------- //
-void Element::update_inputwave(const EV vel0) {
+void Element::update_inputwave(const EV& vel0) {
     EV v(this->ndof), cv(this->ndof);
 
     for (size_t inode = 0 ; inode < this->nnode ; inode++){
@@ -321,7 +323,7 @@ void Element::update_inputwave(const EV vel0) {
   }
 
 // ------------------------------------------------------------------- //
-void Element::mk_source(const EM dn, const EV strain_tensor, const double slip0) {
+void Element::mk_source(const EM& dn, const EV& strain_tensor, const double slip0) {
   if (this->dim == 3) {
     EM BT;
     EV moment(6);
@@ -356,7 +358,7 @@ EM Element::mk_T_init() {
   return NT;
 }
 
-void Element::mk_T(const EM NT, const EV T) {
+void Element::mk_T(const EM& NT, const EV& T) {
   EV integralNT = NT * T;
 
   for (size_t inode = 0 ; inode < this->nnode ; inode++){
@@ -381,13 +383,13 @@ void Element::calc_stress() {
     this->stress = this->De * this->strain;
   }
 
-EM Element::calc_stress_xi_init(const EM dn) {
+EM Element::calc_stress_xi_init(const EM& dn) {
   auto [det, dnj] = mk_dnj(this->xnT, dn);
   EM B = mk_b(this->dof, this->nnode, dnj);
   return this->De * B;
 }
 
-EV Element::calc_stress_xi(const EM DB) {
+EV Element::calc_stress_xi(const EM& DB) {
     EV u = this->mk_u_hstack();
     return DB * u;
   }
@@ -395,7 +397,7 @@ EV Element::calc_stress_xi(const EM DB) {
 
 // ------------------------------------------------------------------- //
 std::tuple<bool, EV3>
-  Element::check_inside(const EV3 x, double margin) {
+  Element::check_inside(const EV3& x, double margin) {
     EV3 xi, J_func, r;
     EV n;
     EM dn;
@@ -436,14 +438,14 @@ std::tuple<bool, EV3>
 
 // ------------------------------------------------------------------- //
 // ------------------------------------------------------------------- //
-EM mk_m(const EM N) {
+EM mk_m(const EM& N) {
     EM M;
 
     M = N.transpose() * N;
     return M;
   }
 
-EM mk_n(const size_t dof, const size_t nnode, const EV n) {
+EM mk_n(const size_t dof, const size_t nnode, const EV& n) {
     EM N(dof,dof*nnode);
 
     N = EM::Zero(dof,dof*nnode);
@@ -475,7 +477,7 @@ EM mk_n(const size_t dof, const size_t nnode, const EV n) {
   }
 
 // ------------------------------------------------------------------- //
-EM mk_nqn(const EM N, const EM3 q, const EM3 imp) {
+EM mk_nqn(const EM& N, const EM3& q, const EM3& imp) {
     EM nqn;
 
     nqn = N.transpose() * q.transpose() * imp * q * N;
@@ -483,7 +485,7 @@ EM mk_nqn(const EM N, const EM3 q, const EM3 imp) {
   }
 
 std::tuple<double, EM3>
-  mk_q(const size_t dof, const EM xnT, const EM dn) {
+  mk_q(const size_t dof, const EM& xnT, const EM& dn) {
     EM3 q;
     EM t(3,2);
     EV3 t0, t1, n;
@@ -508,14 +510,14 @@ std::tuple<double, EM3>
   }
 
 // ------------------------------------------------------------------- //
-EM mk_k(const EM B, const EM D) {
+EM mk_k(const EM& B, const EM& D) {
     EM K;
 
     K = B.transpose() * D * B;
     return K;
   }
 
-EM mk_b(const size_t dof, const size_t nnode, const EM dnj) {
+EM mk_b(const size_t dof, const size_t nnode, const EM& dnj) {
     EM B(6,3*nnode);
 
     B = EM::Zero(6,3*nnode);
@@ -541,7 +543,7 @@ EM mk_b(const size_t dof, const size_t nnode, const EM dnj) {
     return B;
   }
 
-EM mk_b_T(const size_t dof, const size_t nnode, const EM dnj) {
+EM mk_b_T(const size_t dof, const size_t nnode, const EM& dnj) {
     EM B(3*nnode,6);
 
     B = EM::Zero(3*nnode,6);
@@ -569,7 +571,7 @@ EM mk_b_T(const size_t dof, const size_t nnode, const EM dnj) {
 
 // ------------------------------------------------------------------- //
 std::tuple<double, EM>
-  mk_dnj(const EM xnT, const EM dn) {
+  mk_dnj(const EM& xnT, const EM& dn) {
     EM dnj;
 
     auto [det, jacobi_inv] = mk_inv_jacobi(xnT, dn);
@@ -578,7 +580,7 @@ std::tuple<double, EM>
   }
 
 std::tuple<double, EM3>
-  mk_inv_jacobi(const EM xnT, const EM dn) {
+  mk_inv_jacobi(const EM& xnT, const EM& dn) {
     EM3 jacobi_inv;
 
     auto [det, jacobi] = mk_jacobi(xnT, dn);
@@ -588,7 +590,7 @@ std::tuple<double, EM3>
 
 
 std::tuple<double, EM3>
-  mk_jacobi(const EM xnT, const EM dn) {
+  mk_jacobi(const EM& xnT, const EM& dn) {
     EM3 jacobi = xnT * dn;
 
     double det = jacobi.determinant();

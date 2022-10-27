@@ -4,7 +4,7 @@ import os
 ndiv = 200
 
 area_x = 15000.0
-area_y = 500.0
+area_y =   500.0
 area_z = 15000.0
 
 nx = ndiv
@@ -37,7 +37,7 @@ node_fault = np.empty([1,len(yg),len(zg)],dtype=np.int32)
 
 for k in range(len(zg)):
     for j in range(len(yg)):
-        dofx,dofy,dofz = 1,1,1
+        dofx,dofy,dofz = 0,1,0
 
         node_fault[0,j,k] = inode
         node_lines += [ "{} {} {} {} {} {} {}\n".format(inode,xg[i_fault],yg[j],zg[k],dofx,dofy,dofz)]
@@ -148,15 +148,16 @@ for k in range(nz):
         ielem_fault1 = ielem
         ielem += 1
 
+        y = (yg[j] + yg[j+1])/2
         z = (zg[k] + zg[k+1])/2
-        # if np.abs(z-7500) <= 1500:
-        if np.abs(z-7500) <= 500:
+        # if (np.abs(z-area_z/2) <= 1500) and (np.abs(y-area_y/2) <= 1500):
+        if np.abs(z-area_z/2) <= 500:
             p0 = 81.6e6  # [Pa]
             tp = 81.24e6 # [Pa]
             tr = 63.0e6  # [Pa]
             dc = 0.4     # [m]
-        # elif np.abs(z-7500) <= 7500:
-        elif np.abs(z-7500) <= 5000:
+        # elif (np.abs(z-area_z/2) <= 7500) and (np.abs(y-area_y/2) <= 7500):
+        elif np.abs(z-area_z/2) <= 5000:
             p0 = 70.0e6  # [Pa]
             tp = 81.24e6 # [Pa]
             tr = 63.0e6  # [Pa]

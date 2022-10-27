@@ -39,17 +39,17 @@ class Fault {
 
   public:
     void update_time_fault();
-    void update_friction(double dt);
+    void update_friction(const double dt);
 
   private:
-    void calc_average_slip(double dt);
+    void calc_average_slip(const double dt);
 
   public:
     void calc_traction();
     void update_rupture(std::vector<Element>& elements);
 
   private:
-    EV stress_to_traction(EV stress, EV n);
+    EV stress_to_traction(const EV& stress, const EV& n);
 
   public:
     void set_spring_kv(std::vector<Element>& elements);

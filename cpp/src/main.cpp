@@ -66,7 +66,7 @@ int main() {
       output_traction(it,i) = fault_p->traction + fault_p->p0;
     }
 
-    if (it%100 == 0) {
+    if (it%200 == 0) {
       std::cout << it << " t= " << it*dt << std::endl;
       std::cout << "  sliprate: " ;
       std::cout << output_sliprate(it,0) << " ";

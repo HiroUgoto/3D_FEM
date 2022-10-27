@@ -135,7 +135,7 @@ void Fault::update_time_fault() {
 }
 
 // ------------------------------------------------------------------- //
-void Fault::update_friction(double dt) {
+void Fault::update_friction(const double dt) {
   this->calc_average_slip(dt);
   double f = 0.0;
   if (this->rupture) {
@@ -152,7 +152,7 @@ void Fault::update_friction(double dt) {
 }
 
 // ------------------------------------------------------------------- //
-void Fault::calc_average_slip(double dt) {
+void Fault::calc_average_slip(const double dt) {
   EV3 up, um;
   double slip;
 
@@ -191,7 +191,7 @@ void Fault::update_rupture(std::vector<Element>& elements) {
 }
 
 // ------------------------------------------------------------------- //
-EV Fault::stress_to_traction(EV stress, EV n) {
+EV Fault::stress_to_traction(const EV& stress, const EV& n) {
   EM stress_mat = EM::Zero(3,3);
 
   stress_mat(0,0) = stress(0); stress_mat(0,1) = stress(3); stress_mat(0,2) = stress(5);
