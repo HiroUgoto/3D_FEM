@@ -1,15 +1,15 @@
 import numpy as np
 import os
 
-ndiv = 16
+ndiv = 200
 
-area_x = 4000.0
-area_y = 500.0 / ndiv
-area_z = 4000.0
+area_x = 15000.0
+area_y = 500.0
+area_z = 15000.0
 
-nx = 8 * ndiv
+nx = ndiv
 ny = 1
-nz = 8 * ndiv
+nz = ndiv
 dof = 3
 
 xg = np.linspace(0,area_x,nx+1,endpoint=True)
@@ -149,17 +149,24 @@ for k in range(nz):
         ielem += 1
 
         z = (zg[k] + zg[k+1])/2
-        if np.abs(z-2000) <= 500:
+        # if np.abs(z-7500) <= 1500:
+        if np.abs(z-7500) <= 500:
             p0 = 81.6e6  # [Pa]
+            tp = 81.24e6 # [Pa]
+            tr = 63.0e6  # [Pa]
+            dc = 0.4     # [m]
+        # elif np.abs(z-7500) <= 7500:
+        elif np.abs(z-7500) <= 5000:
+            p0 = 70.0e6  # [Pa]
             tp = 81.24e6 # [Pa]
             tr = 63.0e6  # [Pa]
             dc = 0.4     # [m]
         else:
             p0 = 70.0e6  # [Pa]
-            # p0 = 81.6e6  # [Pa]
-            tp = 81.24e6 # [Pa]
-            tr = 63.0e6  # [Pa]
-            dc = 0.4     # [m]
+            tp = 1.e12   # [Pa]
+            tr = 1.e12   # [Pa]
+            dc = 10.0    # [m]
+
 
         l = np.average([yg[j],yg[j+1]])
         w = np.average([zg[k],zg[k+1]])
@@ -174,10 +181,13 @@ nnode = inode       #number of nodes
 nelem = ielem       #number of elements
 nfault = id_fault   #number of faults
 
+dl = yg[1]-yg[0]
+dw = zg[1]-zg[0]
+
 ### Set material ###
 material_lines = []
 material_lines += ["{} {} {} {} {}\n".format(0,"vs_vp_rho",3464.0,6000.0,2670.0)]
-material_lines += ["{} {} {} {}\n".format(1,"spring",1.0e15,1.0e15)]
+material_lines += ["{} {} {} {}\n".format(1,"spring",1.5e11*dl*dw,0.5e11*dl*dw)]
 
 nmaterial = len(material_lines)
 
@@ -196,7 +206,7 @@ output_element_lines = []
 
 # ---- fault output ---- #
 output_point_l = np.linspace(area_y/2,area_y,int(area_y/2/1000)+1)
-output_point_w = np.linspace(area_z/2,area_z,int(area_z/2/250)+1)
+output_point_w = np.linspace(area_z/2,area_z,int(area_z/2/1000)+1)
 dl = yg[1]-yg[0]
 dw = zg[1]-zg[0]
 print("+++ output fault id (id, y, z)")

@@ -72,6 +72,11 @@ void Element::set_xn(){
       this->xnT(1,inode) = node->xyz[1] + node->u[1];
       this->xnT(2,inode) = node->xyz[2] + node->u[2];
     }
+
+    ElementStyle* estyle_p = set_element_style(this->style);
+    EV n = estyle_p->shape_function_n(0.0,0.0,0.0);
+    this->xc = this->xnT*n;
+    delete estyle_p;
   }
 
 // ------------------------------------------------------------------- //
@@ -102,6 +107,9 @@ void Element::mk_local_matrix_init(const size_t dof){
       this->C_off_diag = EM::Zero(this->ndof,this->ndof);
 
       this->imp = this->material.mk_imp(this->dof);
+    } else if (this->dim == 0) {
+      this->C_diag = EV::Zero(this->ndof);
+      this->C_off_diag = EM::Zero(this->ndof,this->ndof);
     }
   }
 
@@ -394,6 +402,13 @@ std::tuple<bool, EV3>
 
     xi = EV::Zero(3);
     bool is_inside = false;
+
+    double rc = (x-this->xc).norm();
+    double r0 = (this->xnT.col(0)-xc).norm();   // assume rectangular element
+    if (r0 < rc) {
+      return {false, xi};
+    }
+
     ElementStyle* estyle_p = set_element_style(this->style);
 
     for (size_t itr=0; itr<20; itr++) {

@@ -122,7 +122,7 @@ void Fem::_set_initial_matrix(){
         }
       }
 
-      if (element.style.find("visco") != std::string::npos) {
+      if ((element.style.find("visco") != std::string::npos) || (element.style.find("spring") != std::string::npos)) {
         size_t id = 0;
         for (size_t inode = 0 ; inode < element.nnode ; inode++) {
           for (size_t i = 0 ; i < this->dof ; i++) {
@@ -131,6 +131,7 @@ void Fem::_set_initial_matrix(){
           }
         }
       }
+
     }
   }
 
@@ -267,7 +268,7 @@ void Fem::update_time_dynamic_fault() {
     element_p->mk_ku_cv();
   }
   for (auto& element_p : this->spring_elements_p) {
-    element_p->mk_ku();
+    element_p->mk_ku_cv();
   }
 
   for (auto& fault : this->faults) {

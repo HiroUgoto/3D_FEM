@@ -54,5 +54,6 @@ class Fault {
   public:
     void set_spring_kv(std::vector<Element>& elements);
     void set_spring_kvkh(std::vector<Element>& elements);
+    void set_spring_c(std::vector<Element>& elements);
 
 };

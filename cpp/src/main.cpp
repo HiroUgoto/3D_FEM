@@ -28,8 +28,8 @@ int main() {
   // exit(1);
 
   // ----- Define source ----- //
-  size_t fsamp = 5000;
-  double duration = 2.0;
+  size_t fsamp = 2500;
+  double duration = 4.0;
 
   auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
   size_t ntim = tim.size();
@@ -66,14 +66,15 @@ int main() {
       output_traction(it,i) = fault_p->traction + fault_p->p0;
     }
 
-    if (it%20 == 0) {
-      std::cout << it << " t= " << it*dt << " ";
+    if (it%100 == 0) {
+      std::cout << it << " t= " << it*dt << std::endl;
+      std::cout << "  sliprate: " ;
       std::cout << output_sliprate(it,0) << " ";
       std::cout << output_sliprate(it,1) << " ";
       std::cout << output_sliprate(it,2) << " ";
       std::cout << output_sliprate(it,3) << std::endl;
 
-      std::cout << "      " ;
+      std::cout << "  traction: " ;
       std::cout << output_traction(it,0) << " ";
       std::cout << output_traction(it,1) << " ";
       std::cout << output_traction(it,2) << " ";

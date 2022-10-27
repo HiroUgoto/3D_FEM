@@ -15,9 +15,7 @@ class Fem {
     std::vector<Element*> solid_elements_p;
     std::vector<Element*> visco_elements_p;
     std::vector<Element*> spring_elements_p;
-
     std::vector<Element*> fault_elements_p;
-    std::vector<Element*> fault_p_elements_p, fault_m_elements_p;
 
     size_t output_nnode, output_nelem, output_nfault;
     std::vector<Node*> output_nodes_p;

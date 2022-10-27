@@ -57,10 +57,12 @@ void Fault::set_initial_condition0(std::vector<Element>& elements) {
   this->slip = 0.0;
 
   this->traction_force = 0.0;
-  this->rupture = true;
-  this->set_spring_kv(elements);
-  // this->rupture = false;
-  // this->set_spring_kvkh(elements);
+  // this->rupture = true;
+  // this->set_spring_kv(elements);
+  this->rupture = false;
+  this->set_spring_kvkh(elements);
+
+  this->set_spring_c(elements);
 
   delete estyle_p;
 }
@@ -68,11 +70,11 @@ void Fault::set_initial_condition0(std::vector<Element>& elements) {
 void Fault::set_initial_condition1(std::vector<Element>& elements) {
   if (this->p0 > this->tp) {
     this->traction_force = this->tp - this->p0;
-    // this->rupture = true;
-    // this->set_spring_kv(elements);
+    this->rupture = true;
+    this->set_spring_kv(elements);
   } else {
-    this->rupture = false;
-    this->set_spring_kvkh(elements);
+    // this->rupture = false;
+    // this->set_spring_kvkh(elements);
   }
 }
 
@@ -220,5 +222,14 @@ void Fault::set_spring_kvkh(std::vector<Element>& elements) {
     R_spring.block(0,0,3,3) = this->R;
     R_spring.block(3,3,3,3) = this->R;
     elements[id].K = R_spring.transpose() * D * R_spring;
+  }
+}
+
+void Fault::set_spring_c(std::vector<Element>& elements) {
+  for (auto& id : this->spring_id) {
+    EM C = elements[id].K * 1.e-5;        // reduce oscillation
+    elements[id].C_diag = C.diagonal();
+    elements[id].C_off_diag = elements[id].C_diag.asDiagonal();
+    elements[id].C_off_diag = C - elements[id].C_off_diag;
   }
 }

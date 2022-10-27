@@ -19,6 +19,7 @@ class Element {
     size_t nnode, dim, ng_all, dof, ndof;
     EM xnT;
     EM dn_center;
+    EV3 xc;
 
     EV M_diag, C_diag;
     EM K, C_off_diag;
