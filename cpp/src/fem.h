@@ -19,9 +19,10 @@ class Fem {
     std::vector<Element*> fault_elements_p;
     std::vector<Element*> fault_p_elements_p, fault_m_elements_p;
 
-    size_t output_nnode, output_nelem;
+    size_t output_nnode, output_nelem, output_nfault;
     std::vector<Node*> output_nodes_p;
     std::vector<Element*> output_elements_p;
+    std::vector<Fault*> output_faults_p;
 
   private:
     double dt, inv_dt2, inv_dtdt;
@@ -41,7 +42,7 @@ class Fem {
     void _set_initial_matrix();
 
   public:
-    void set_output(std::tuple<std::vector<size_t>, std::vector<size_t>> outputs);
+    void set_output(std::tuple<std::vector<size_t>, std::vector<size_t>, std::vector<size_t>> outputs);
 
     void set_initial_fault();
 

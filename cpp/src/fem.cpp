@@ -58,11 +58,11 @@ void Fem::_set_mesh() {
       element.set_nodes(nodes_p);
 
       Material* material_p = nullptr;
-      if (this->materials[element.material_id].id == element.material_id) {
+      if (element.material_id >=0 && this->materials[element.material_id].id == (size_t)element.material_id) {
         material_p = &this->materials[element.material_id];
       } else {
         for (auto& material : this->materials) {
-          if (material.id == element.material_id) {
+          if (element.material_id >=0 && material.id == (size_t)element.material_id) {
             material_p = &material;
             break;
           }
@@ -136,8 +136,8 @@ void Fem::_set_initial_matrix(){
 
 // ------------------------------------------------------------------- //
 // ------------------------------------------------------------------- //
-void Fem::set_output(std::tuple<std::vector<size_t>, std::vector<size_t>> outputs) {
-    auto [output_node_list, output_element_list] = outputs;
+void Fem::set_output(std::tuple<std::vector<size_t>, std::vector<size_t>, std::vector<size_t>> outputs) {
+    auto [output_node_list, output_element_list, output_fault_list] = outputs;
 
     this->output_nnode = output_node_list.size();
     for (size_t inode = 0 ; inode < this->output_nnode ; inode++) {
@@ -150,6 +150,12 @@ void Fem::set_output(std::tuple<std::vector<size_t>, std::vector<size_t>> output
       size_t id = output_element_list[ielem];
       this->output_elements_p.push_back(&this->elements[id]);
     }
+
+    this->output_nfault = output_fault_list.size();
+    for (size_t ifault = 0 ; ifault < this->output_nfault ; ifault++) {
+      size_t id = output_fault_list[ifault];
+      this->output_faults_p.push_back(&this->faults[id]);
+    }
   }
 
 // ------------------------------------------------------------------- //
@@ -157,8 +163,10 @@ void Fem::set_output(std::tuple<std::vector<size_t>, std::vector<size_t>> output
 void Fem::set_initial_fault() {
   for (auto& fault : this->faults) {
     fault.set_initial_condition0(this->elements);
-    this->fault_p_elements_p.push_back(fault.pelement_p);
-    this->fault_m_elements_p.push_back(fault.melement_p);
+    for (size_t i=0 ; i<fault.neighbour_elements_id.size() ; i++) {
+      size_t id = fault.neighbour_elements_id[i];
+      fault.neighbour_elements_p.push_back(&this->elements[id]);
+    }
   }
 
   for (auto& fault : this->faults) {
@@ -215,10 +223,6 @@ void Fem::update_time_source(const std::vector<Source> sources, const double sli
 
     this->_update_time_source(sources,slip0);
 
-    // for (auto& element : this->elements) {
-    //   element.mk_ku_cv();
-    // }
-
     for (auto& element_p : this->solid_elements_p) {
       element_p->mk_ku();
     }
@@ -266,7 +270,9 @@ void Fem::update_time_dynamic_fault() {
     element_p->mk_ku();
   }
 
-  this->_update_time_fault_elements();
+  for (auto& fault : this->faults) {
+    fault.update_time_fault();
+  }
 
   this->_update_time_set_free_nodes();
   this->_update_time_set_fixed_nodes();
@@ -274,11 +280,7 @@ void Fem::update_time_dynamic_fault() {
 
   for (auto& fault : this->faults) {
     fault.update_friction(this->dt);
-  }
-  for (auto& fault : this->faults) {
-    fault.calc_traction(this->elements);
-  }
-  for (auto& fault : this->faults) {
+    fault.calc_traction();
     fault.update_rupture(this->elements);
   }
 
@@ -286,20 +288,6 @@ void Fem::update_time_dynamic_fault() {
     element_p->calc_stress();
   }
 
-}
-
-void Fem::_update_time_fault_elements() {
-  for (auto& element_p : this->fault_p_elements_p) {
-    EV3 Tinput = EV::Zero(3);
-    Tinput(1) = -element_p->traction;
-    element_p->mk_T(Tinput);
-  }
-
-  for (auto& element_p : this->fault_m_elements_p) {
-    EV3 Tinput = EV::Zero(3);
-    Tinput(1) =  element_p->traction;
-    element_p->mk_T(Tinput);
-  }
 }
 
 // ------------------------------------------------------------------- //

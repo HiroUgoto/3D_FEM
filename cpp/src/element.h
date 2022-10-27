@@ -27,9 +27,6 @@ class Element {
     EV force;
     EV strain, stress;
 
-    EM3 R;
-    double traction;
-
     Element (size_t id, std::string style, int material_id, std::vector<size_t> inode);
     void print();
 
@@ -59,9 +56,13 @@ class Element {
   public:
     void update_inputwave(const EV vel0);
     void mk_source(const EM dn, const EV strain_tensor, const double slip0);
-    void mk_T(const EV T);
+
+    EM mk_T_init();
+    void mk_T(const EM NT, const EV T);
+
     void calc_stress();
-    EV calc_stress_xi(const EV xi);
+    EM calc_stress_xi_init(const EM dn);
+    EV calc_stress_xi(const EM dn);
     std::tuple<bool, EV3> check_inside(const EV3 x, double margin=0.0);
 };
 

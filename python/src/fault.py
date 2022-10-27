@@ -53,8 +53,8 @@ class Fault:
             self.pelement.traction = self.tp - self.p0
             self.melement.traction = self.tp - self.p0
             self.traction_force = self.tp - self.p0
-            self.rupture = True
-            self.set_spring_kv(elements)
+            # self.rupture = True
+            # self.set_spring_kv(elements)
         else:
             self.rupture = False
             self.set_spring_kvkh(elements)
@@ -104,11 +104,6 @@ class Fault:
                     f = self.tp - self.slip*(self.tp-self.tr)/self.dc - self.p0
                 else:
                     f = self.tr - self.p0
-        # if self.slip > 0.0:
-        #     if self.slip < self.dc:
-        #         f = self.tp - self.slip*(self.tp-self.tr)/self.dc - self.p0
-        #     else:
-        #         f = self.tr - self.p0
 
         self.pelement.traction = f
         self.melement.traction = f
@@ -126,20 +121,7 @@ class Fault:
 
         slip = (self.R @ (up-um))[1]
         self.sliprate = (slip-self.slip)/dt
-
         self.slip = slip
-        # if self.sliprate < 0.0:
-        #     self.sliprate = 0.0
-        # else:
-        #     self.slip = slip
-
-        # if not self.rupture:
-        #     if self.sliprate < 0.0:
-        #         self.sliprate = 0.0
-        #     else:
-        #         self.slip = slip
-        # else:
-        #     self.slip = slip
 
     # ===================================================================== #
     def calc_traction(self,elements):

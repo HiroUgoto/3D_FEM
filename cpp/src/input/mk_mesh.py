@@ -1,13 +1,13 @@
 import numpy as np
 import os
 
-ndiv = 2
+ndiv = 16
 
-area_x = 1000.0 / ndiv
+area_x = 4000.0
 area_y = 500.0 / ndiv
 area_z = 4000.0
 
-nx = 2
+nx = 8 * ndiv
 ny = 1
 nz = 8 * ndiv
 dof = 3
@@ -127,6 +127,7 @@ for k in range(len(zg)):
 
 ####################################################
 fault_lines = []
+fault_lw = []
 id_fault = 0
 for k in range(nz):
     for j in range(ny):
@@ -160,6 +161,11 @@ for k in range(nz):
             tr = 63.0e6  # [Pa]
             dc = 0.4     # [m]
 
+        l = np.average([yg[j],yg[j+1]])
+        w = np.average([zg[k],zg[k+1]])
+        fault_lw += [np.array([l,w])]
+        # print(id_fault,fault_lw[id_fault])
+
         fault_lines += ["{} {} {} {} {} {} {} {} {} {} {}\n".format(id_fault,ielem_fault1,ielem_fault0,spring_id[j,k],spring_id[j+1,k],spring_id[j+1,k+1],spring_id[j,k+1],p0,tp,tr,dc)]
         id_fault += 1
 
@@ -183,13 +189,32 @@ output_node_lines += ["{}\n".format(node[len(xg)//2,len(yg)//2,0])]
 #     k = 0
 #     output_node_lines += ["{}\n".format(node[i,j,k])]
 
+
 output_element_lines = []
 # for i in range(0,nelem-nx-len(zg)):
 #     output_element_lines += ["{} \n".format(i)]
 
+# ---- fault output ---- #
+output_point_l = np.linspace(area_y/2,area_y,int(area_y/2/1000)+1)
+output_point_w = np.linspace(area_z/2,area_z,int(area_z/2/250)+1)
+dl = yg[1]-yg[0]
+dw = zg[1]-zg[0]
+print("+++ output fault id (id, y, z)")
+
+output_fault_lines = []
+for id_fault in range(nfault):
+    l,w = fault_lw[id_fault]
+    is_l = np.any(np.logical_and(l-dl/2 <= output_point_l, output_point_l < l+dl/2))
+    is_w = np.any(np.logical_and(w-dw/2 <= output_point_w, output_point_w < w+dw/2))
+
+    if (is_l and is_w):
+        print(id_fault,l,w)
+        output_fault_lines += ["{} \n".format(id_fault)]
+
+
 output_nnode = len(output_node_lines)
 output_nelem = len(output_element_lines)
-
+output_nfault = len(output_fault_lines)
 
 with open("mesh.in","w") as f:
     f.write("{} {} {} {} {} \n".format(nnode,nelem,nfault,nmaterial,dof))
@@ -198,8 +223,8 @@ with open("mesh.in","w") as f:
     f.writelines(fault_lines)
     f.writelines(material_lines)
 
-
 with open("output.in","w") as f:
-    f.write("{} {} \n".format(output_nnode,output_nelem))
+    f.write("{} {} {} \n".format(output_nnode,output_nelem,output_nfault))
     f.writelines(output_node_lines)
     f.writelines(output_element_lines)
+    f.writelines(output_fault_lines)

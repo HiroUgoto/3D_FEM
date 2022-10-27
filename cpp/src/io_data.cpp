@@ -138,9 +138,9 @@ Fem io_data::input_mesh (const std::string mesh_file) {
   }
 
 // ------------------------------------------------------------------- //
-std::tuple<std::vector<size_t>, std::vector<size_t>>
+std::tuple<std::vector<size_t>, std::vector<size_t>, std::vector<size_t>>
   io_data::input_outputs (const std::string output_file) {
-    size_t nnode, nelem;
+    size_t nnode, nelem, nfault;
     std::string line;
 
     // Open file //
@@ -149,7 +149,7 @@ std::tuple<std::vector<size_t>, std::vector<size_t>>
     // Read header //
     std::getline(f, line);
     std::istringstream iss(line);
-    iss >> nnode >> nelem;
+    iss >> nnode >> nelem >> nfault;
 
     // Read nodes //
     std::vector<size_t> nodes;
@@ -176,5 +176,18 @@ std::tuple<std::vector<size_t>, std::vector<size_t>>
       elements.push_back(id);
     }
 
-    return {nodes, elements};
+    std::vector<size_t> faults;
+    for (size_t ifault = 0 ; ifault < nfault ; ifault++) {
+      size_t id;
+
+      std::getline(f, line);
+      // std::cout << line + "\n";
+      std::istringstream iss(line);
+      iss >> id;
+
+      faults.push_back(id);
+    }
+
+
+    return {nodes, elements, faults};
   }

@@ -326,13 +326,13 @@ void Element::mk_source(const EM dn, const EV strain_tensor, const double slip0)
 }
 
 // ------------------------------------------------------------------- //
-void Element::mk_T(const EV T) {
+EM Element::mk_T_init() {
   ElementStyle* estyle_p = set_element_style(this->style);
   std::vector<EV> n_list = estyle_p->n_list;
   std::vector<EM> dn_list = estyle_p->dn_list;
   std::vector<double> w_list = estyle_p->w_list;
 
-  EV integralNT = EV::Zero(this->ndof);
+  EM NT = EM::Zero(this->ndof,this->dof);
   for (size_t i = 0 ; i < this->ng_all ; i++){
     double detJ;
     EM N;
@@ -341,8 +341,15 @@ void Element::mk_T(const EV T) {
     N = mk_n(this->dof, this->nnode, n_list[i]);
 
     detJ = det * w_list[i];
-    integralNT += N.transpose() * T * detJ;
+    NT += N.transpose() * detJ;
   }
+
+  delete estyle_p;
+  return NT;
+}
+
+void Element::mk_T(const EM NT, const EV T) {
+  EV integralNT = NT * T;
 
   for (size_t inode = 0 ; inode < this->nnode ; inode++){
     size_t i0 = inode*this->dof;
@@ -351,7 +358,6 @@ void Element::mk_T(const EV T) {
     }
   }
 
-  delete estyle_p;
 }
 
 // ------------------------------------------------------------------- //
@@ -367,35 +373,37 @@ void Element::calc_stress() {
     this->stress = this->De * this->strain;
   }
 
-EV Element::calc_stress_xi(const EV xi) {
-    ElementStyle* estyle_p = set_element_style(this->style);
-    EM dn = estyle_p->shape_function_dn(xi(0),xi(1),xi(2));
-    delete estyle_p;
+EM Element::calc_stress_xi_init(const EM dn) {
+  auto [det, dnj] = mk_dnj(this->xnT, dn);
+  EM B = mk_b(this->dof, this->nnode, dnj);
+  return this->De * B;
+}
 
-    auto [det, dnj] = mk_dnj(this->xnT, dn);
-    EM B = mk_b(this->dof, this->nnode, dnj);
+EV Element::calc_stress_xi(const EM DB) {
     EV u = this->mk_u_hstack();
-
-    EV stress = this->De * B * u;
-    return stress;
+    return DB * u;
   }
 
 
 // ------------------------------------------------------------------- //
 std::tuple<bool, EV3>
   Element::check_inside(const EV3 x, double margin) {
-    EV3 xi = EV::Zero(3);
+    EV3 xi, J_func, r;
+    EV n;
+    EM dn;
+
+    xi = EV::Zero(3);
     bool is_inside = false;
     ElementStyle* estyle_p = set_element_style(this->style);
 
     for (size_t itr=0; itr<20; itr++) {
-      EV n = estyle_p->shape_function_n(xi[0],xi[1],xi[2]);
-      EM dn = estyle_p->shape_function_dn(xi[0],xi[1],xi[2]);
+      n = estyle_p->shape_function_n(xi[0],xi[1],xi[2]);
+      dn = estyle_p->shape_function_dn(xi[0],xi[1],xi[2]);
 
-      EV3 J_func = this->xnT*n - x;
+      J_func = this->xnT*n - x;
       auto [det,dJ_func] = mk_jacobi(this->xnT, dn);
 
-      EV3 r = dJ_func.partialPivLu().solve(J_func);
+      r = dJ_func.partialPivLu().solve(J_func);
       if (r.norm() < 1e-8) break;
 
       xi -= r;

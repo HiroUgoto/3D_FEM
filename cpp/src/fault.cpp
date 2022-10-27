@@ -36,65 +36,69 @@ void Fault::set_param() {
 // ------------------------------------------------------------------- //
 // ------------------------------------------------------------------- //
 void Fault::set_initial_condition0(std::vector<Element>& elements) {
+  ElementStyle* estyle_p;
+  EV n;
+
   this->pelement_p = &elements[this->pelem_id];
   this->melement_p = &elements[this->melem_id];
+
+  estyle_p = set_element_style(this->pelement_p->style);
+  n = estyle_p->shape_function_n(0.0,0.0,0.0);
+  this->Np = mk_n(this->pelement_p->dof,this->pelement_p->nnode,n);
+  this->NTp = this->pelement_p->mk_T_init();
+
+  estyle_p = set_element_style(this->melement_p->style);
+  n = estyle_p->shape_function_n(0.0,0.0,0.0);
+  this->Nm = mk_n(this->melement_p->dof,this->melement_p->nnode,n);
+  this->NTm = this->melement_p->mk_T_init();
 
   this->find_neighbour_element(elements);
   this->set_R();
   this->slip = 0.0;
 
-  ElementStyle* estyle_p = set_element_style(this->pelement_p->style);
-  std::vector<EM> dn_list = estyle_p->dn_list;
-  std::vector<double> w_list = estyle_p->w_list;
-
-  this->area = 0.0;
-  for (size_t i = 0 ; i < this->pelement_p->ng_all ; i++){
-    auto [det, q] = mk_q(this->pelement_p->dof, this->pelement_p->xnT, dn_list[i]);
-    double detJ = det * w_list[i];
-    this->area += detJ;
-  }
-
-  this->pelement_p->traction = 0.0;
-  this->melement_p->traction = 0.0;
-  this->rupture = false;
-  this->set_spring_kvkh(elements);
+  this->traction_force = 0.0;
+  this->rupture = true;
+  this->set_spring_kv(elements);
+  // this->rupture = false;
+  // this->set_spring_kvkh(elements);
 
   delete estyle_p;
 }
 
 void Fault::set_initial_condition1(std::vector<Element>& elements) {
   if (this->p0 > this->tp) {
-    this->pelement_p->traction = this->tp - this->p0;
-    this->melement_p->traction = this->tp - this->p0;
-    this->rupture = true;
-    this->set_spring_kv(elements);
+    this->traction_force = this->tp - this->p0;
+    // this->rupture = true;
+    // this->set_spring_kv(elements);
+  } else {
+    this->rupture = false;
+    this->set_spring_kvkh(elements);
   }
 }
 
 // ------------------------------------------------------------------- //
-void Fault::find_neighbour_element(std::vector<Element> elements) {
+void Fault::find_neighbour_element(std::vector<Element>& elements) {
   ElementStyle* estyle_p = set_element_style(this->pelement_p->style);
   EV n = estyle_p->shape_function_n(0.0,0.0,0.0);
   EV3 xc = this->pelement_p->xnT*n;
+  EM dn, DB;
 
   for (auto& element : elements) {
     if (element.style.find("3d") != std::string::npos) {
       auto [is_inside, xi] = element.check_inside(xc,0.01);
       if (is_inside) {
         this->neighbour_elements_id.push_back(element.id);
-        this->neighbour_elements_xi.push_back(xi);
+
+        ElementStyle* estyle_p1 = set_element_style(element.style);
+        dn = estyle_p1->shape_function_dn(xi(0),xi(1),xi(2));
+        DB = element.calc_stress_xi_init(dn);
+        this->neighbour_elements_DB.push_back(DB);
+
+        delete estyle_p1;
       }
     }
   }
 
-  // if (this->id == 5) {
-  //   for (auto& id : this->neighbour_elements_id) {
-  //     std::cout << id << " ";
-  //   }
-  //   std::cout << std::endl;
-  //   exit(1);
-  // }
-  //
   delete estyle_p;
 }
 
@@ -104,10 +108,7 @@ void Fault::set_R() {
   EV3 t0, t1, n;
   double det;
 
-  ElementStyle* estyle_p = set_element_style(this->pelement_p->style);
-  dn = estyle_p->shape_function_dn(0.0,0.0,0.0);
-
-  t = this->pelement_p->xnT*dn;
+  t = this->pelement_p->xnT * this->pelement_p->dn_center;
   t0 = t.col(0); t1 = t.col(1);
   n = t0.cross(t1);
   det = n.norm();
@@ -120,66 +121,60 @@ void Fault::set_R() {
   this->R(0,0) =  n(0); this->R(0,1) =  n(1); this->R(0,2) =  n(2);
   this->R(1,0) = t0(0); this->R(1,1) = t0(1); this->R(1,2) = t0(2);
   this->R(2,0) = t1(0); this->R(2,1) = t1(1); this->R(2,2) = t1(2);
+}
 
-  this->pelement_p->R = this->R;
-  this->melement_p->R = this->R;
-
-  delete estyle_p;
+// ------------------------------------------------------------------- //
+void Fault::update_time_fault() {
+  EV3 Tinput = EV::Zero(3);
+  Tinput(1) = this->traction_force;
+  EV3 T = this->R.transpose() * Tinput;
+  this->pelement_p->mk_T(this->NTp,-T);
+  this->melement_p->mk_T(this->NTm, T);
 }
 
 // ------------------------------------------------------------------- //
 void Fault::update_friction(double dt) {
   this->calc_average_slip(dt);
   double f = 0.0;
-  if (this->slip < this->dc) {
-    f = this->tp - this->slip*(this->tp - this->tr)/this->dc - this->p0;
-  } else {
-    f = this->tr - this->p0;
+  if (this->rupture) {
+    if (this->slip > 0.0) {
+      if (this->slip < this->dc) {
+        f = this->tp - this->slip*(this->tp - this->tr)/this->dc - this->p0;
+      } else {
+        f = this->tr - this->p0;
+      }
+    }
   }
 
-  this->pelement_p->traction = f;
-  this->melement_p->traction = f;
+  this->traction_force = f;
 }
 
 // ------------------------------------------------------------------- //
 void Fault::calc_average_slip(double dt) {
-  ElementStyle* estyle_p;
-  EV n;
-  EM Np, Nm;
   EV3 up, um;
   double slip;
 
-  estyle_p = set_element_style(this->pelement_p->style);
-  n = estyle_p->shape_function_n(0.0,0.0,0.0);
-  Np = mk_n(this->pelement_p->dof,this->pelement_p->nnode,n);
-  up = Np * this->pelement_p->mk_u_hstack();
-
-  estyle_p = set_element_style(this->melement_p->style);
-  n = estyle_p->shape_function_n(0.0,0.0,0.0);
-  Nm = mk_n(this->melement_p->dof,this->melement_p->nnode,n);
-  um = Nm * this->melement_p->mk_u_hstack();
+  up = this->Np * this->pelement_p->mk_u_hstack();
+  um = this->Nm * this->melement_p->mk_u_hstack();
 
   slip = (this->R * (up-um))(1);
   this->sliprate = (slip-this->slip)/dt;
   this->slip = slip;
-
-  delete estyle_p;
 }
 
 // ------------------------------------------------------------------- //
-void Fault::calc_traction(std::vector<Element> elements) {
+void Fault::calc_traction() {
+  EV stress, traction;
+
   this->traction = 0.0;
   size_t num = this->neighbour_elements_id.size();
-
   for (size_t i=0 ; i<num ; i++) {
-      size_t id = this->neighbour_elements_id[i];
-      EV xi = this->neighbour_elements_xi[i];
-      EV stress = elements[id].calc_stress_xi(xi);
-
-      EV traction = this->stress_to_traction(stress,this->R.row(0));
+      stress = this->neighbour_elements_p[i]->calc_stress_xi(this->neighbour_elements_DB[i]);
+      traction = this->stress_to_traction(stress,this->R.row(0));
       this->traction += traction(1);
   }
   this->traction /= num;
+
 }
 
 // ------------------------------------------------------------------- //

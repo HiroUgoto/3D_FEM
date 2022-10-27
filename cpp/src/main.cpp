@@ -34,7 +34,6 @@ int main() {
   auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
   size_t ntim = tim.size();
 
-
   // ----- Fault setup ----- //
   fem.set_initial_fault();
 
@@ -44,6 +43,10 @@ int main() {
   EM output_velx(ntim,fem.output_nnode);
   EM output_vely(ntim,fem.output_nnode);
   EM output_velz(ntim,fem.output_nnode);
+
+  EM output_slip(ntim,fem.output_nfault);
+  EM output_sliprate(ntim,fem.output_nfault);
+  EM output_traction(ntim,fem.output_nfault);
 
   // ----- time iteration ----- //
   for (size_t it = 0 ; it < ntim ; it++) {
@@ -56,9 +59,25 @@ int main() {
       output_velz(it,i) = node_p->v(2);
     }
 
+    for (size_t i = 0 ; i < fem.output_nfault ; i++) {
+      Fault* fault_p = fem.output_faults_p[i];
+      output_slip(it,i) = fault_p->slip;
+      output_sliprate(it,i) = fault_p->sliprate;
+      output_traction(it,i) = fault_p->traction + fault_p->p0;
+    }
+
     if (it%20 == 0) {
       std::cout << it << " t= " << it*dt << " ";
-      std::cout << output_velx(it,0) << "\n";
+      std::cout << output_sliprate(it,0) << " ";
+      std::cout << output_sliprate(it,1) << " ";
+      std::cout << output_sliprate(it,2) << " ";
+      std::cout << output_sliprate(it,3) << std::endl;
+
+      std::cout << "      " ;
+      std::cout << output_traction(it,0) << " ";
+      std::cout << output_traction(it,1) << " ";
+      std::cout << output_traction(it,2) << " ";
+      std::cout << output_traction(it,3) << std::endl;
     }
   }
 
@@ -85,4 +104,24 @@ int main() {
   fvx.close();
   fvy.close();
   fvz.close();
+
+  std::ofstream fs(output_dir + "output_slip.dat");
+  std::ofstream fsr(output_dir + "output_sliprate.dat");
+  std::ofstream ft(output_dir + "output_traction.dat");
+  for (size_t it = 0 ; it < ntim ; it++) {
+    fs  << tim(it) ;
+    fsr << tim(it) ;
+    ft  << tim(it) ;
+    for (size_t i = 0 ; i < fem.output_nfault ; i++) {
+      fs  << " " << output_slip(it,i);
+      fsr << " " << output_sliprate(it,i);
+      ft  << " " << output_traction(it,i);
+    }
+    fs  << "\n";
+    fsr << "\n";
+    ft  << "\n";
+  }
+  fs.close();
+  fsr.close();
+  ft.close();
 }

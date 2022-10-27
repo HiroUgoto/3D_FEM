@@ -1,0 +1,1192 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 61.81      3.43     3.43                             Fem::update_time_dynamic_fault()
+  5.59      3.74     0.31  1010952     0.00     0.00  Eigen::internal::general_matrix_vector_product<long, double, Eigen::internal::const_blas_data_mapper<double, long, 0>, 0, false, double, Eigen::internal::const_blas_data_mapper<double, long, 1>, false, 0>::run(long, long, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, double*, long, double)
+  4.68      4.00     0.26  8326784     0.00     0.00  Solid_3d_8Node::shape_function_dn(double, double, double)
+  4.32      4.24     0.24 58275804     0.00     0.00  void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag)
+  4.14      4.47     0.23   345728     0.00     0.00  Eigen::internal::gebp_kernel<double, double, long, Eigen::internal::blas_data_mapper<double, long, 0, 0>, 4, 4, false, false>::operator()(Eigen::internal::blas_data_mapper<double, long, 0, 0> const&, double const*, double const*, long, long, long, double, long, long, long, long)
+  2.16      4.59     0.12  1735046     0.00     0.00  Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long)
+  1.44      4.67     0.08   524288     0.00     0.00  Eigen::internal::partial_lu_impl<double, 0, int>::unblocked_lu(Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>&, int*, int&)
+  1.44      4.75     0.08   278656     0.00     0.00  Solid_3d_8Node::Solid_3d_8Node()
+  1.44      4.83     0.08   110592     0.00     0.00  mk_m(Eigen::Matrix<double, -1, -1, 0, -1, -1>)
+  1.26      4.90     0.07   263296     0.00     0.00  Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double)
+  0.90      4.95     0.05  8048000     0.00     0.00  Solid_3d_8Node::shape_function_n(double, double, double)
+  0.90      5.00     0.05   461000     0.00     0.00  Element::mk_u_hstack()
+  0.90      5.05     0.05   110592     0.00     0.00  mk_k(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>)
+  0.81      5.10     0.05  4194304     0.00     0.00  Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, 0>::MapBase(double*, long, long)
+  0.72      5.14     0.04   221184     0.00     0.00  Eigen::internal::gemm_pack_lhs<double, long, Eigen::internal::const_blas_data_mapper<double, long, 1>, 4, 2, 1, false, false>::operator()(double*, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, long, long, long, long)
+  0.72      5.18     0.04     4482     0.01     0.13  Element::mk_local_matrix()
+  0.54      5.21     0.03  2855552     0.00     0.00  Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1> const, -1, 1, true>, 0>::MapBase(double const*, long, long)
+  0.54      5.24     0.03   868864     0.00     0.00  mk_jacobi(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>)
+  0.54      5.27     0.03   337664     0.00     0.00  mk_n(unsigned long, unsigned long, Eigen::Matrix<double, -1, 1, 0, -1, 1>)
+  0.36      5.29     0.02  2839424     0.00     0.00  Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1> const, 1, -1, false>, 0>::MapBase(double const*, long, long)
+  0.36      5.31     0.02  1764736     0.00     0.00  Eigen::DenseStorage<double, -1, -1, -1, 0>::DenseStorage(Eigen::DenseStorage<double, -1, -1, -1, 0> const&)
+  0.36      5.33     0.02  1048576     0.00     0.00  void Eigen::internal::outer_product_selector_run<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, Eigen::internal::generic_product_impl<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, Eigen::DenseShape, Eigen::DenseShape, 5>::sub>(Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>&, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false> const&, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false> const&, Eigen::internal::generic_product_impl<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, Eigen::DenseShape, Eigen::DenseShape, 5>::sub const&, Eigen::internal::false_type const&)
+  0.36      5.35     0.02   292098     0.00     0.00  ElementStyle::~ElementStyle()
+  0.36      5.37     0.02   124544     0.00     0.00  Eigen::internal::gemm_pack_lhs<double, long, Eigen::internal::const_blas_data_mapper<double, long, 0>, 4, 2, 0, false, false>::operator()(double*, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, long, long, long, long)
+  0.36      5.39     0.02   115200     0.00     0.00  Eigen::internal::general_matrix_vector_product<long, double, Eigen::internal::const_blas_data_mapper<double, long, 1>, 1, false, double, Eigen::internal::const_blas_data_mapper<double, long, 0>, false, 0>::run(long, long, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, double*, long, double)
+  0.36      5.41     0.02    12800     0.00     0.00  Fault::stress_to_traction(Eigen::Matrix<double, -1, 1, 0, -1, 1>, Eigen::Matrix<double, -1, 1, 0, -1, 1>)
+  0.36      5.43     0.02       64     0.31    13.29  Fault::set_initial_condition0(std::vector<Element, std::allocator<Element> >&)
+  0.18      5.44     0.01  1048576     0.00     0.00  Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 0>::MapBase(double*, long, long)
+  0.18      5.45     0.01   524288     0.00     0.00  Eigen::PartialPivLU<Eigen::Matrix<double, 3, 3, 0, 3, 3> >::compute()
+  0.18      5.46     0.01   422600     0.00     0.00  Element::mk_ku()
+  0.18      5.47     0.01   300294     0.00     0.00  Element::Element(Element const&)
+  0.18      5.48     0.01   292162     0.00     0.00  std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > >::_M_default_append(unsigned long)
+  0.18      5.49     0.01   124544     0.00     0.00  Eigen::internal::general_matrix_matrix_product<long, double, 0, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*)
+  0.18      5.50     0.01   123392     0.00     0.00  mk_b(unsigned long, unsigned long, Eigen::Matrix<double, -1, -1, 0, -1, -1>)
+  0.18      5.51     0.01   115072     0.00     0.00  void Eigen::internal::call_dense_assignment_loop<Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::internal::assign_op<double, double> >(Eigen::Matrix<double, -1, -1, 0, -1, -1>&, Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, Eigen::Matrix<double, -1, -1, 0, -1, -1> > const&, Eigen::internal::assign_op<double, double> const&)
+  0.18      5.52     0.01     6400     0.00     0.01  Fault::calc_traction(std::vector<Element, std::allocator<Element> >)
+  0.18      5.53     0.01      100     0.10     0.10  Fem::_update_time_set_fixed_nodes()
+  0.18      5.54     0.01                             Line_1d_3Node::shape_function_dn(double, double, double)
+  0.18      5.55     0.01                             io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)
+  0.09      5.55     0.01                             void Eigen::TriangularViewImpl<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>, 5u, Eigen::Dense>::solveInPlace<1, Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false> >(Eigen::MatrixBase<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false> > const&) const
+  0.00      5.55     0.00  4194304     0.00     0.00  Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, 0>::MapBase(double*, long, long)
+  0.00      5.55     0.00  1572864     0.00     0.00  Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>, -1, 1, true>, 0>::MapBase(double*, long, long)
+  0.00      5.55     0.00  1372760     0.00     0.00  Eigen::internal::aligned_malloc(unsigned long)
+  0.00      5.55     0.00  1048576     0.00     0.00  Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, 0>::MapBase(double*, long, long)
+  0.00      5.55     0.00   524288     0.00     0.00  Eigen::PartialPivLU<Eigen::Matrix<double, 3, 3, 0, 3, 3> >::PartialPivLU<Eigen::Matrix<double, 3, 3, 0, 3, 3> >(Eigen::EigenBase<Eigen::Matrix<double, 3, 3, 0, 3, 3> > const&)
+  0.00      5.55     0.00   524288     0.00     0.00  Eigen::internal::partial_lu_impl<double, 0, int>::blocked_lu(long, long, double*, long, int*, int&, long)
+  0.00      5.55     0.00   452682     0.00     0.00  Element::Element(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, std::vector<unsigned long, std::allocator<unsigned long> >)
+  0.00      5.55     0.00   345728     0.00     0.00  Eigen::internal::gemm_pack_rhs<double, long, Eigen::internal::const_blas_data_mapper<double, long, 0>, 4, 0, false, false>::operator()(double*, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, long, long, long, long)
+  0.00      5.55     0.00   345728     0.00     0.00  void Eigen::internal::evaluateProductBlockingSizesHeuristic<double, double, 1, long>(long&, long&, long&, long)
+  0.00      5.55     0.00   292162     0.00     0.00  set_gauss_points(unsigned long, Eigen::Matrix<double, -1, 1, 0, -1, 1>&, Eigen::Matrix<double, -1, 1, 0, -1, 1>&)
+  0.00      5.55     0.00   292162     0.00     0.00  set_element_style(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)
+  0.00      5.55     0.00   292162     0.00     0.00  std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::_M_default_append(unsigned long)
+  0.00      5.55     0.00   292162     0.00     0.00  std::vector<double, std::allocator<double> >::_M_default_append(unsigned long)
+  0.00      5.55     0.00   278656     0.00     0.00  Solid_3d_8Node::~Solid_3d_8Node()
+  0.00      5.55     0.00   232832     0.00     0.00  Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1>, -1, 1, true>, 0>::MapBase(double*, long, long)
+  0.00      5.55     0.00   221184     0.00     0.00  Eigen::internal::general_matrix_matrix_product<long, double, 1, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*)
+  0.00      5.55     0.00   133760     0.00     0.00  Solid_2d_4Node::shape_function_dn(double, double, double)
+  0.00      5.55     0.00   124544     0.00     0.00  Eigen::PlainObjectBase<Eigen::Matrix<double, -1, 3, 0, -1, 3> >::resize(long, long)
+  0.00      5.55     0.00   123392     0.00     0.00  mk_inv_jacobi(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>)
+  0.00      5.55     0.00   123392     0.00     0.00  mk_dnj(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>)
+  0.00      5.55     0.00   120576     0.00     0.00  Solid_2d_4Node::shape_function_n(double, double, double)
+  0.00      5.55     0.00   116352     0.00     0.00  mk_q(unsigned long, Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>)
+  0.00      5.55     0.00   115200     0.00     0.00  Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, 1, 0, -1, 1>, -1, 1, true>, 0>::MapBase(double*, long, long)
+  0.00      5.55     0.00   115200     0.00     0.00  void Eigen::internal::gemv_dense_selector<2, 1, true>::run<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, 1, 0, -1, 1>, Eigen::Matrix<double, -1, 1, 0, -1, 1> >(Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> > const&, Eigen::Matrix<double, -1, 1, 0, -1, 1> const&, Eigen::Matrix<double, -1, 1, 0, -1, 1>&, Eigen::Matrix<double, -1, 1, 0, -1, 1>::Scalar const&)
+  0.00      5.55     0.00   110592     0.00     0.00  Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1, -1, false>, 0>::MapBase(double*, long, long)
+  0.00      5.55     0.00    41472     0.00     0.00  Eigen::MapBase<Eigen::Block<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> const> const, 1, -1, true>, 0>::MapBase(double const*, long, long)
+  0.00      5.55     0.00    26267     0.00     0.00  void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char const*>(char const*, char const*, std::forward_iterator_tag)
+  0.00      5.55     0.00    25216     0.00     0.00  std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::vector(std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > > const&)
+  0.00      5.55     0.00    17737     0.00     0.00  void std::vector<unsigned long, std::allocator<unsigned long> >::_M_realloc_insert<unsigned long const&>(__gnu_cxx::__normal_iterator<unsigned long*, std::vector<unsigned long, std::allocator<unsigned long> > >, unsigned long const&)
+  0.00      5.55     0.00    16128     0.00     0.00  Eigen::MapBase<Eigen::Block<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> > const, 1, -1, true>, 0>::MapBase(double const*, long, long)
+  0.00      5.55     0.00    13376     0.00     0.00  Solid_2d_4Node::Solid_2d_4Node()
+  0.00      5.55     0.00    13128     0.00     0.00  std::vector<double, std::allocator<double> >::operator=(std::vector<double, std::allocator<double> > const&)
+  0.00      5.55     0.00    13126     0.00     0.00  std::vector<unsigned long, std::allocator<unsigned long> >::operator=(std::vector<unsigned long, std::allocator<unsigned long> > const&)
+  0.00      5.55     0.00    13056     0.00     0.00  Fault_2d_4Node::~Fault_2d_4Node()
+  0.00      5.55     0.00    12800     0.00     0.00  Element::mk_v_hstack()
+  0.00      5.55     0.00    12800     0.00     0.00  Element::calc_stress_xi(Eigen::Matrix<double, -1, -1, 0, -1, -1>)
+  0.00      5.55     0.00    12800     0.00     0.01  Element::mk_T(Eigen::Matrix<double, -1, 1, 0, -1, 1>)
+  0.00      5.55     0.00    12800     0.00     0.00  Element::mk_ku_cv()
+  0.00      5.55     0.00    12416     0.00     0.00  std::vector<double, std::allocator<double> >::vector(std::vector<double, std::allocator<double> > const&)
+  0.00      5.55     0.00     8964     0.00     0.00  Eigen::PlainObjectBase<Eigen::Matrix<double, -1, 1, 0, -1, 1> >::resize(long, long)
+  0.00      5.55     0.00     8581     0.00     0.00  Node*& std::vector<Node*, std::allocator<Node*> >::emplace_back<Node*>(Node*&&)
+  0.00      5.55     0.00     8580     0.00     0.00  Node::set_initial_condition()
+  0.00      5.55     0.00     8580     0.00     0.00  Node::Node(unsigned long, std::vector<double, std::allocator<double> >, std::vector<unsigned long, std::allocator<unsigned long> >)
+  0.00      5.55     0.00     8320     0.00     0.00  std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > >::vector(std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > > const&)
+  0.00      5.55     0.00     6400     0.00     0.00  Fault::update_rupture(std::vector<Element, std::allocator<Element> >&)
+  0.00      5.55     0.00     6400     0.00     0.00  Fault::update_friction(double)
+  0.00      5.55     0.00     6400     0.00     0.00  Fault::calc_average_slip(double)
+  0.00      5.55     0.00     6400     0.00     0.01  Fault::update_time_fault()
+  0.00      5.55     0.00     4484     0.00     0.00  Material::set_param()
+  0.00      5.55     0.00     4482     0.00     0.00  Element::set_material(Material*)
+  0.00      5.55     0.00     4482     0.00     0.01  Element::mk_local_vector()
+  0.00      5.55     0.00     4482     0.00     0.00  Element::mk_local_matrix_init(unsigned long)
+  0.00      5.55     0.00     4482     0.00     0.00  Element::set_xn()
+  0.00      5.55     0.00     4482     0.00     0.00  Element::set_nodes(std::vector<Node*, std::allocator<Node*> >)
+  0.00      5.55     0.00     4482     0.00     0.00  Element::set_style()
+  0.00      5.55     0.00     4482     0.00     0.00  Material::set_init(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<double, std::allocator<double> >)
+  0.00      5.55     0.00     4482     0.00     0.00  Material::Material()
+  0.00      5.55     0.00     4482     0.00     0.00  std::vector<Node*, std::allocator<Node*> >::operator=(std::vector<Node*, std::allocator<Node*> > const&)
+  0.00      5.55     0.00     4482     0.00     0.00  Element*& std::vector<Element*, std::allocator<Element*> >::emplace_back<Element*>(Element*&&)
+  0.00      5.55     0.00     4224     0.00     0.00  std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > >::~vector()
+  0.00      5.55     0.00     4224     0.00     0.00  std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::~vector()
+  0.00      5.55     0.00     4096     0.00     0.00  Material::mk_d(unsigned long)
+  0.00      5.55     0.00     1152     0.00     0.00  mk_nqn(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, 3, 3, 0, 3, 3>, Eigen::Matrix<double, 3, 3, 0, 3, 3>)
+  0.00      5.55     0.00      520     0.00     0.00  Line_1d_2Node::shape_function_dn(double, double, double)
+  0.00      5.55     0.00      448     0.00     0.00  void Eigen::internal::call_dense_assignment_loop<Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Product<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1>, Eigen::internal::assign_op<double, double> >(Eigen::Matrix<double, -1, -1, 0, -1, -1>&, Eigen::Product<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1> const&, Eigen::internal::assign_op<double, double> const&)
+  0.00      5.55     0.00      390     0.00     0.00  Line_1d_2Node::shape_function_n(double, double, double)
+  0.00      5.55     0.00      256     0.00     0.00  Visco_2d_4Node::~Visco_2d_4Node()
+  0.00      5.55     0.00      256     0.00     0.00  Material::mk_d_slider()
+  0.00      5.55     0.00      256     0.00     0.00  Material::mk_imp(unsigned long)
+  0.00      5.55     0.00      197     0.00     0.00  void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&)
+  0.00      5.55     0.00      192     0.00     0.00  Fault::Fault(Fault const&)
+  0.00      5.55     0.00      192     0.00     0.00  Material::mk_d_spring()
+  0.00      5.55     0.00      130     0.00     0.00  Line_1d_2Node::Line_1d_2Node()
+  0.00      5.55     0.00      130     0.00     0.00  Spring::~Spring()
+  0.00      5.55     0.00      130     0.00     0.00  Connect::Connect()
+  0.00      5.55     0.00      128     0.00     0.00  void std::vector<Eigen::Matrix<double, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<double, 3, 1, 0, 3, 1> > >::_M_realloc_insert<Eigen::Matrix<double, 3, 1, 0, 3, 1> const&>(__gnu_cxx::__normal_iterator<Eigen::Matrix<double, 3, 1, 0, 3, 1>*, std::vector<Eigen::Matrix<double, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<double, 3, 1, 0, 3, 1> > > >, Eigen::Matrix<double, 3, 1, 0, 3, 1> const&)
+  0.00      5.55     0.00      128     0.00     0.00  void std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::_M_realloc_insert<Eigen::Matrix<double, -1, -1, 0, -1, -1> const&>(__gnu_cxx::__normal_iterator<Eigen::Matrix<double, -1, -1, 0, -1, -1>*, std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > > >, Eigen::Matrix<double, -1, -1, 0, -1, -1> const&)
+  0.00      5.55     0.00      100     0.00     0.00  Fem::_update_time_set_free_nodes()
+  0.00      5.55     0.00      100     0.00     0.00  Fem::_update_time_set_connected_elements()
+  0.00      5.55     0.00       64     0.00     0.00  Fault::set_spring_kv(std::vector<Element, std::allocator<Element> >&)
+  0.00      5.55     0.00       64     0.00    12.78  Fault::find_neighbour_element(std::vector<Element, std::allocator<Element> >)
+  0.00      5.55     0.00       64     0.00     0.00  Fault::set_initial_condition1(std::vector<Element, std::allocator<Element> >&)
+  0.00      5.55     0.00       64     0.00     0.00  Fault::set_R()
+  0.00      5.55     0.00       64     0.00     0.00  Fault::set_param()
+  0.00      5.55     0.00       64     0.00     0.00  Fault::Fault(unsigned long, unsigned long, unsigned long, std::vector<unsigned long, std::allocator<unsigned long> >, std::vector<double, std::allocator<double> >)
+  0.00      5.55     0.00       48     0.00     0.00  Fault::set_spring_kvkh(std::vector<Element, std::allocator<Element> >&)
+  0.00      5.55     0.00       38     0.00     0.00  void std::vector<Element*, std::allocator<Element*> >::_M_realloc_insert<Element*>(__gnu_cxx::__normal_iterator<Element**, std::vector<Element*, std::allocator<Element*> > >, Element*&&)
+  0.00      5.55     0.00       15     0.00     0.00  void std::vector<Node, std::allocator<Node> >::_M_realloc_insert<Node const&>(__gnu_cxx::__normal_iterator<Node*, std::vector<Node, std::allocator<Node> > >, Node const&)
+  0.00      5.55     0.00       14     0.00     0.00  void std::vector<Element, std::allocator<Element> >::_M_realloc_insert<Element const&>(__gnu_cxx::__normal_iterator<Element*, std::vector<Element, std::allocator<Element> > >, Element const&)
+  0.00      5.55     0.00       14     0.00     0.00  void std::vector<Element*, std::allocator<Element*> >::_M_realloc_insert<Element* const&>(__gnu_cxx::__normal_iterator<Element**, std::vector<Element*, std::allocator<Element*> > >, Element* const&)
+  0.00      5.55     0.00        7     0.00     0.00  void std::vector<Fault, std::allocator<Fault> >::_M_realloc_insert<Fault const&>(__gnu_cxx::__normal_iterator<Fault*, std::vector<Fault, std::allocator<Fault> > >, Fault const&)
+  0.00      5.55     0.00        4     0.00     0.00  void std::vector<Fault*, std::allocator<Fault*> >::_M_realloc_insert<Fault*>(__gnu_cxx::__normal_iterator<Fault**, std::vector<Fault*, std::allocator<Fault*> > >, Fault*&&)
+  0.00      5.55     0.00        2     0.00     0.00  Material::Material(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<double, std::allocator<double> >)
+  0.00      5.55     0.00        2     0.00     0.00  void std::vector<Material, std::allocator<Material> >::_M_realloc_insert<Material const&>(__gnu_cxx::__normal_iterator<Material*, std::vector<Material, std::allocator<Material> > >, Material const&)
+  0.00      5.55     0.00        1     0.00     0.00  _GLOBAL__sub_I__Z10set_sourceSt6vectorI7ElementSaIS0_EEddddddddmm
+  0.00      5.55     0.00        1     0.00     0.00  _GLOBAL__sub_I__Z17set_element_styleNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+  0.00      5.55     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN10input_wave8linspaceEddm
+  0.00      5.55     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN3FemC2EmSt6vectorI4NodeSaIS1_EES0_I7ElementSaIS4_EES0_I5FaultSaIS7_EES0_I8MaterialSaISA_EE
+  0.00      5.55     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN4NodeC2Ev
+  0.00      5.55     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN5FaultC2EmmmSt6vectorImSaImEES0_IdSaIdEE
+  0.00      5.55     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN7ElementC2EmNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEiSt6vectorImSaImEE
+  0.00      5.55     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN7io_data10input_meshENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+  0.00      5.55     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN8MaterialC2Ev
+  0.00      5.55     0.00        1     0.00     0.00  _GLOBAL__sub_I_main
+  0.00      5.55     0.00        1     0.00     0.00  Fem::_set_initial_condition()
+  0.00      5.55     0.00        1     0.00     0.04  Fem::_set_mesh()
+  0.00      5.55     0.00        1     0.00     0.19  Fem::Fem(unsigned long, std::vector<Node, std::allocator<Node> >, std::vector<Element, std::allocator<Element> >, std::vector<Fault, std::allocator<Fault> >, std::vector<Material, std::allocator<Material> >)
+  0.00      5.55     0.00        1     0.00     0.00  Eigen::internal::queryCacheSizes(int&, int&, int&)
+  0.00      5.55     0.00        1     0.00     0.00  std::vector<Node, std::allocator<Node> >::operator=(std::vector<Node, std::allocator<Node> > const&)
+  0.00      5.55     0.00        1     0.00     0.00  std::vector<Fault, std::allocator<Fault> >::operator=(std::vector<Fault, std::allocator<Fault> > const&)
+  0.00      5.55     0.00        1     0.00     0.19  std::vector<Element, std::allocator<Element> >::operator=(std::vector<Element, std::allocator<Element> > const&)
+  0.00      5.55     0.00        1     0.00     0.00  std::vector<Material, std::allocator<Material> >::operator=(std::vector<Material, std::allocator<Material> > const&)
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.18% of 5.55 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]     72.3    3.43    0.58                 Fem::update_time_dynamic_fault() [1]
+                0.24    0.00 57369600/58275804     void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [13]
+                0.01    0.18  422600/422600      Element::mk_ku() [15]
+                0.00    0.08    6400/6400        Fault::update_time_fault() [25]
+                0.01    0.05    6400/6400        Fault::calc_traction(std::vector<Element, std::allocator<Element> >) [27]
+                0.01    0.00     100/100         Fem::_update_time_set_fixed_nodes() [55]
+                0.00    0.01   12800/12800       Element::mk_ku_cv() [57]
+                0.00    0.01    6400/6400        Fault::update_friction(double) [59]
+                0.00    0.00    6400/6400        Fault::update_rupture(std::vector<Element, std::allocator<Element> >&) [119]
+                0.00    0.00     100/100         Fem::_update_time_set_free_nodes() [138]
+                0.00    0.00     100/100         Fem::_update_time_set_connected_elements() [139]
+-----------------------------------------------
+                                                 <spontaneous>
+[2]     15.3    0.00    0.85                 Fem::set_initial_fault() [2]
+                0.02    0.83      64/64          Fault::set_initial_condition0(std::vector<Element, std::allocator<Element> >&) [3]
+                0.00    0.00      48/48          Fault::set_spring_kvkh(std::vector<Element, std::allocator<Element> >&) [70]
+                0.00    0.00      64/64          Fault::set_initial_condition1(std::vector<Element, std::allocator<Element> >&) [140]
+                0.00    0.00      14/14          void std::vector<Element*, std::allocator<Element*> >::_M_realloc_insert<Element* const&>(__gnu_cxx::__normal_iterator<Element**, std::vector<Element*, std::allocator<Element*> > >, Element* const&) [145]
+-----------------------------------------------
+                0.02    0.83      64/64          Fem::set_initial_fault() [2]
+[3]     15.3    0.02    0.83      64         Fault::set_initial_condition0(std::vector<Element, std::allocator<Element> >&) [3]
+                0.00    0.82      64/64          Fault::find_neighbour_element(std::vector<Element, std::allocator<Element> >) [5]
+                0.01    0.00  286848/300294      Element::Element(Element const&) [50]
+                0.00    0.00     128/292162      set_element_style(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [8]
+                0.00    0.00      64/64          Fault::set_spring_kv(std::vector<Element, std::allocator<Element> >&) [69]
+                0.00    0.00     128/337664      mk_n(unsigned long, unsigned long, Eigen::Matrix<double, -1, 1, 0, -1, 1>) [28]
+                0.00    0.00      64/13056       Fault_2d_4Node::~Fault_2d_4Node() [63]
+                0.00    0.00      64/64          Fault::set_R() [78]
+                0.00    0.00     128/58275804     void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [13]
+                0.00    0.00     128/120576      Solid_2d_4Node::shape_function_n(double, double, double) [102]
+-----------------------------------------------
+                0.00    0.00    1152/263296      mk_nqn(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, 3, 3, 0, 3, 3>, Eigen::Matrix<double, 3, 3, 0, 3, 3>) [62]
+                0.07    0.75  262144/263296      Fault::find_neighbour_element(std::vector<Element, std::allocator<Element> >) [5]
+[4]     14.8    0.07    0.75  263296         Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double) [4]
+                0.00    0.34  262144/292162      set_element_style(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [8]
+                0.01    0.16  524288/524288      Eigen::PartialPivLU<Eigen::Matrix<double, 3, 3, 0, 3, 3> >::compute() [18]
+                0.16    0.00  524288/1010952     Eigen::internal::general_matrix_vector_product<long, double, Eigen::internal::const_blas_data_mapper<double, long, 0>, 0, false, double, Eigen::internal::const_blas_data_mapper<double, long, 1>, false, 0>::run(long, long, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, double*, long, double) [10]
+                0.02    0.03  524288/868864      mk_jacobi(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [26]
+                0.00    0.02  262144/278656      Solid_3d_8Node::~Solid_3d_8Node() [46]
+                0.02    0.00  524288/8326784     Solid_3d_8Node::shape_function_dn(double, double, double) [12]
+                0.00    0.00  524288/8048000     Solid_3d_8Node::shape_function_n(double, double, double) [29]
+                0.00    0.00  262144/58275804     void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [13]
+                0.00    0.00  524288/524288      Eigen::PartialPivLU<Eigen::Matrix<double, 3, 3, 0, 3, 3> >::PartialPivLU<Eigen::Matrix<double, 3, 3, 0, 3, 3> >(Eigen::EigenBase<Eigen::Matrix<double, 3, 3, 0, 3, 3> > const&) [93]
+                0.00    0.00   41472/41472       Eigen::MapBase<Eigen::Block<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> const> const, 1, -1, true>, 0>::MapBase(double const*, long, long) [105]
+                0.00    0.00    2304/1372760     Eigen::internal::aligned_malloc(unsigned long) [91]
+-----------------------------------------------
+                0.00    0.82      64/64          Fault::set_initial_condition0(std::vector<Element, std::allocator<Element> >&) [3]
+[5]     14.7    0.00    0.82      64         Fault::find_neighbour_element(std::vector<Element, std::allocator<Element> >) [5]
+                0.07    0.75  262144/263296      Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double) [4]
+                0.00    0.00     192/292162      set_element_style(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [8]
+                0.00    0.00      64/1010952     Eigen::internal::general_matrix_vector_product<long, double, Eigen::internal::const_blas_data_mapper<double, long, 0>, 0, false, double, Eigen::internal::const_blas_data_mapper<double, long, 1>, false, 0>::run(long, long, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, double*, long, double) [10]
+                0.00    0.00     128/278656      Solid_3d_8Node::~Solid_3d_8Node() [46]
+                0.00    0.00      64/13056       Fault_2d_4Node::~Fault_2d_4Node() [63]
+                0.00    0.00     128/8326784     Solid_3d_8Node::shape_function_dn(double, double, double) [12]
+                0.00    0.00     192/58275804     void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [13]
+                0.00    0.00     128/128         void std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::_M_realloc_insert<Eigen::Matrix<double, -1, -1, 0, -1, -1> const&>(__gnu_cxx::__normal_iterator<Eigen::Matrix<double, -1, -1, 0, -1, -1>*, std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > > >, Eigen::Matrix<double, -1, -1, 0, -1, -1> const&) [137]
+                0.00    0.00     128/17737       void std::vector<unsigned long, std::allocator<unsigned long> >::_M_realloc_insert<unsigned long const&>(__gnu_cxx::__normal_iterator<unsigned long*, std::vector<unsigned long, std::allocator<unsigned long> > >, unsigned long const&) [108]
+                0.00    0.00     128/128         void std::vector<Eigen::Matrix<double, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<double, 3, 1, 0, 3, 1> > >::_M_realloc_insert<Eigen::Matrix<double, 3, 1, 0, 3, 1> const&>(__gnu_cxx::__normal_iterator<Eigen::Matrix<double, 3, 1, 0, 3, 1>*, std::vector<Eigen::Matrix<double, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<double, 3, 1, 0, 3, 1> > > >, Eigen::Matrix<double, 3, 1, 0, 3, 1> const&) [136]
+                0.00    0.00      64/120576      Solid_2d_4Node::shape_function_n(double, double, double) [102]
+-----------------------------------------------
+                                                 <spontaneous>
+[6]     11.9    0.00    0.66                 Fem::_set_initial_matrix() [6]
+                0.04    0.57    4482/4482        Element::mk_local_matrix() [7]
+                0.00    0.04    4482/4482        Element::mk_local_vector() [33]
+                0.00    0.02    4482/4482        Element::mk_local_matrix_init(unsigned long) [48]
+                0.00    0.00    4482/4482        Element::set_xn() [65]
+-----------------------------------------------
+                0.04    0.57    4482/4482        Fem::_set_initial_matrix() [6]
+[7]     10.9    0.04    0.57    4482         Element::mk_local_matrix() [7]
+                0.05    0.23  110592/110592      mk_k(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [11]
+                0.08    0.11  110592/110592      mk_m(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [16]
+                0.00    0.02  110592/123392      mk_dnj(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [35]
+                0.02    0.00  336128/1735046     Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long) [22]
+                0.01    0.01  111744/337664      mk_n(unsigned long, unsigned long, Eigen::Matrix<double, -1, 1, 0, -1, 1>) [28]
+                0.01    0.01  110592/123392      mk_b(unsigned long, unsigned long, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [47]
+                0.01    0.00  667008/1764736     Eigen::DenseStorage<double, -1, -1, -1, 0>::DenseStorage(Eigen::DenseStorage<double, -1, -1, -1, 0> const&) [40]
+                0.00    0.01    4224/292162      set_element_style(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [8]
+                0.00    0.00    1152/1152        mk_nqn(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, 3, 3, 0, 3, 3>, Eigen::Matrix<double, 3, 3, 0, 3, 3>) [62]
+                0.00    0.00    4224/115072      void Eigen::internal::call_dense_assignment_loop<Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::internal::assign_op<double, double> >(Eigen::Matrix<double, -1, -1, 0, -1, -1>&, Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, Eigen::Matrix<double, -1, -1, 0, -1, -1> > const&, Eigen::internal::assign_op<double, double> const&) [52]
+                0.00    0.00    4096/278656      Solid_3d_8Node::~Solid_3d_8Node() [46]
+                0.00    0.00    1152/116352      mk_q(unsigned long, Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [38]
+                0.00    0.00    4224/58275804     void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [13]
+                0.00    0.00     128/256         Visco_2d_4Node::~Visco_2d_4Node() [74]
+                0.00    0.00    4224/8320        std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > >::vector(std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > > const&) [118]
+                0.00    0.00    4224/25216       std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::vector(std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > > const&) [107]
+                0.00    0.00    4224/12416       std::vector<double, std::allocator<double> >::vector(std::vector<double, std::allocator<double> > const&) [113]
+                0.00    0.00    4224/4224        std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::~vector() [127]
+                0.00    0.00    4224/4224        std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > >::~vector() [126]
+                0.00    0.00    4096/4096        Material::mk_d(unsigned long) [128]
+-----------------------------------------------
+                0.00    0.00     128/292162      Fault::set_initial_condition0(std::vector<Element, std::allocator<Element> >&) [3]
+                0.00    0.00     192/292162      Fault::find_neighbour_element(std::vector<Element, std::allocator<Element> >) [5]
+                0.00    0.01    4096/292162      Element::mk_local_matrix_init(unsigned long) [48]
+                0.00    0.01    4096/292162      Element::mk_local_vector() [33]
+                0.00    0.01    4224/292162      Element::mk_local_matrix() [7]
+                0.00    0.01    4482/292162      Element::set_style() [58]
+                0.00    0.02   12800/292162      Element::mk_T(Eigen::Matrix<double, -1, 1, 0, -1, 1>) [24]
+                0.00    0.34  262144/292162      Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double) [4]
+[8]      6.9    0.00    0.38  292162         set_element_style(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [8]
+                0.08    0.30  278656/278656      Solid_3d_8Node::Solid_3d_8Node() [9]
+                0.00    0.00   13376/13376       Solid_2d_4Node::Solid_2d_4Node() [64]
+                0.00    0.00     130/130         Connect::Connect() [77]
+-----------------------------------------------
+                0.08    0.30  278656/278656      set_element_style(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [8]
+[9]      6.8    0.08    0.30  278656         Solid_3d_8Node::Solid_3d_8Node() [9]
+                0.24    0.00 7802368/8326784     Solid_3d_8Node::shape_function_dn(double, double, double) [12]
+                0.05    0.00 7523712/8048000     Solid_3d_8Node::shape_function_n(double, double, double) [29]
+                0.01    0.00  278656/292162      std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > >::_M_default_append(unsigned long) [53]
+                0.00    0.00  278656/292162      set_gauss_points(unsigned long, Eigen::Matrix<double, -1, 1, 0, -1, 1>&, Eigen::Matrix<double, -1, 1, 0, -1, 1>&) [96]
+                0.00    0.00  278656/292162      std::vector<double, std::allocator<double> >::_M_default_append(unsigned long) [98]
+                0.00    0.00  278656/292162      std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::_M_default_append(unsigned long) [97]
+-----------------------------------------------
+                0.00    0.00      64/1010952     Fault::find_neighbour_element(std::vector<Element, std::allocator<Element> >) [5]
+                0.00    0.00   12800/1010952     Element::calc_stress_xi(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [37]
+                0.00    0.00   12800/1010952     Fault::stress_to_traction(Eigen::Matrix<double, -1, 1, 0, -1, 1>, Eigen::Matrix<double, -1, 1, 0, -1, 1>) [36]
+                0.00    0.00   12800/1010952     Fault::calc_average_slip(double) [60]
+                0.14    0.00  448200/1010952     Element::Element(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, std::vector<unsigned long, std::allocator<unsigned long> >) [21]
+                0.16    0.00  524288/1010952     Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double) [4]
+[10]     5.6    0.31    0.00 1010952         Eigen::internal::general_matrix_vector_product<long, double, Eigen::internal::const_blas_data_mapper<double, long, 0>, 0, false, double, Eigen::internal::const_blas_data_mapper<double, long, 1>, false, 0>::run(long, long, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, double*, long, double) [10]
+-----------------------------------------------
+                0.05    0.23  110592/110592      Element::mk_local_matrix() [7]
+[11]     5.0    0.05    0.23  110592         mk_k(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [11]
+                0.01    0.09  110592/124544      Eigen::internal::general_matrix_matrix_product<long, double, 0, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*) [23]
+                0.00    0.09  110592/221184      Eigen::internal::general_matrix_matrix_product<long, double, 1, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*) [17]
+                0.02    0.00  331776/1735046     Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long) [22]
+                0.01    0.00  110592/115072      void Eigen::internal::call_dense_assignment_loop<Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::internal::assign_op<double, double> >(Eigen::Matrix<double, -1, -1, 0, -1, -1>&, Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, Eigen::Matrix<double, -1, -1, 0, -1, -1> > const&, Eigen::internal::assign_op<double, double> const&) [52]
+                0.00    0.00  221184/345728      void Eigen::internal::evaluateProductBlockingSizesHeuristic<double, double, 1, long>(long&, long&, long&, long) [95]
+-----------------------------------------------
+                0.00    0.00     128/8326784     Fault::find_neighbour_element(std::vector<Element, std::allocator<Element> >) [5]
+                0.02    0.00  524288/8326784     Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double) [4]
+                0.24    0.00 7802368/8326784     Solid_3d_8Node::Solid_3d_8Node() [9]
+[12]     4.7    0.26    0.00 8326784         Solid_3d_8Node::shape_function_dn(double, double, double) [12]
+-----------------------------------------------
+                0.00    0.00       2/58275804     std::vector<Material, std::allocator<Material> >::operator=(std::vector<Material, std::allocator<Material> > const&) [81]
+                0.00    0.00       2/58275804     void std::vector<Material, std::allocator<Material> >::_M_realloc_insert<Material const&>(__gnu_cxx::__normal_iterator<Material*, std::vector<Material, std::allocator<Material> > >, Material const&) [80]
+                0.00    0.00     128/58275804     Fault::set_initial_condition0(std::vector<Element, std::allocator<Element> >&) [3]
+                0.00    0.00     192/58275804     Fault::find_neighbour_element(std::vector<Element, std::allocator<Element> >) [5]
+                0.00    0.00    4096/58275804     Element::mk_local_matrix_init(unsigned long) [48]
+                0.00    0.00    4096/58275804     Element::mk_local_vector() [33]
+                0.00    0.00    4224/58275804     Element::mk_local_matrix() [7]
+                0.00    0.00    4482/58275804     Element::set_style() [58]
+                0.00    0.00    4486/58275804     io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+                0.00    0.00    8964/58275804     Element::set_material(Material*) [71]
+                0.00    0.00   12800/58275804     Element::mk_T(Eigen::Matrix<double, -1, 1, 0, -1, 1>) [24]
+                0.00    0.00  262144/58275804     Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double) [4]
+                0.00    0.00  600588/58275804     Element::Element(Element const&) [50]
+                0.24    0.00 57369600/58275804     Fem::update_time_dynamic_fault() [1]
+[13]     4.3    0.24    0.00 58275804         void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [13]
+-----------------------------------------------
+                0.08    0.00  124544/345728      Eigen::internal::general_matrix_matrix_product<long, double, 0, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*) [23]
+                0.15    0.00  221184/345728      Eigen::internal::general_matrix_matrix_product<long, double, 1, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*) [17]
+[14]     4.1    0.23    0.00  345728         Eigen::internal::gebp_kernel<double, double, long, Eigen::internal::blas_data_mapper<double, long, 0, 0>, 4, 4, false, false>::operator()(Eigen::internal::blas_data_mapper<double, long, 0, 0> const&, double const*, double const*, long, long, long, double, long, long, long, long) [14]
+-----------------------------------------------
+                0.01    0.18  422600/422600      Fem::update_time_dynamic_fault() [1]
+[15]     3.4    0.01    0.18  422600         Element::mk_ku() [15]
+                0.00    0.13  422600/452682      Element::Element(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, std::vector<unsigned long, std::allocator<unsigned long> >) [21]
+                0.05    0.00  422600/461000      Element::mk_u_hstack() [30]
+                0.00    0.00  845200/1372760     Eigen::internal::aligned_malloc(unsigned long) [91]
+-----------------------------------------------
+                0.08    0.11  110592/110592      Element::mk_local_matrix() [7]
+[16]     3.4    0.08    0.11  110592         mk_m(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [16]
+                0.00    0.09  110592/221184      Eigen::internal::general_matrix_matrix_product<long, double, 1, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*) [17]
+                0.02    0.00  221184/1735046     Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long) [22]
+                0.00    0.00  110592/345728      void Eigen::internal::evaluateProductBlockingSizesHeuristic<double, double, 1, long>(long&, long&, long&, long) [95]
+-----------------------------------------------
+                0.00    0.09  110592/221184      mk_m(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [16]
+                0.00    0.09  110592/221184      mk_k(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [11]
+[17]     3.4    0.00    0.19  221184         Eigen::internal::general_matrix_matrix_product<long, double, 1, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*) [17]
+                0.15    0.00  221184/345728      Eigen::internal::gebp_kernel<double, double, long, Eigen::internal::blas_data_mapper<double, long, 0, 0>, 4, 4, false, false>::operator()(Eigen::internal::blas_data_mapper<double, long, 0, 0> const&, double const*, double const*, long, long, long, double, long, long, long, long) [14]
+                0.04    0.00  221184/221184      Eigen::internal::gemm_pack_lhs<double, long, Eigen::internal::const_blas_data_mapper<double, long, 1>, 4, 2, 1, false, false>::operator()(double*, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, long, long, long, long) [32]
+                0.00    0.00  221184/345728      Eigen::internal::gemm_pack_rhs<double, long, Eigen::internal::const_blas_data_mapper<double, long, 0>, 4, 0, false, false>::operator()(double*, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, long, long, long, long) [94]
+-----------------------------------------------
+                0.01    0.16  524288/524288      Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double) [4]
+[18]     3.0    0.01    0.16  524288         Eigen::PartialPivLU<Eigen::Matrix<double, 3, 3, 0, 3, 3> >::compute() [18]
+                0.00    0.16  524288/524288      Eigen::internal::partial_lu_impl<double, 0, int>::blocked_lu(long, long, double*, long, int*, int&, long) [19]
+-----------------------------------------------
+                0.00    0.16  524288/524288      Eigen::PartialPivLU<Eigen::Matrix<double, 3, 3, 0, 3, 3> >::compute() [18]
+[19]     2.8    0.00    0.16  524288         Eigen::internal::partial_lu_impl<double, 0, int>::blocked_lu(long, long, double*, long, int*, int&, long) [19]
+                0.08    0.08  524288/524288      Eigen::internal::partial_lu_impl<double, 0, int>::unblocked_lu(Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>&, int*, int&) [20]
+-----------------------------------------------
+                0.08    0.08  524288/524288      Eigen::internal::partial_lu_impl<double, 0, int>::blocked_lu(long, long, double*, long, int*, int&, long) [19]
+[20]     2.8    0.08    0.08  524288         Eigen::internal::partial_lu_impl<double, 0, int>::unblocked_lu(Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>&, int*, int&) [20]
+                0.05    0.00 4194304/4194304     Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, 0>::MapBase(double*, long, long) [31]
+                0.02    0.00 1048576/1048576     void Eigen::internal::outer_product_selector_run<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, Eigen::internal::generic_product_impl<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, Eigen::DenseShape, Eigen::DenseShape, 5>::sub>(Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>&, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false> const&, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false> const&, Eigen::internal::generic_product_impl<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, Eigen::DenseShape, Eigen::DenseShape, 5>::sub const&, Eigen::internal::false_type const&) [41]
+                0.01    0.00 1048576/1048576     Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 0>::MapBase(double*, long, long) [54]
+                0.00    0.00 4194304/4194304     Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, 0>::MapBase(double*, long, long) [89]
+                0.00    0.00 1048576/1048576     Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, 0>::MapBase(double*, long, long) [92]
+-----------------------------------------------
+                0.00    0.00    4482/452682      io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+                0.00    0.01   25600/452682      Element::mk_ku_cv() [57]
+                0.00    0.13  422600/452682      Element::mk_ku() [15]
+[21]     2.6    0.00    0.14  452682         Element::Element(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, std::vector<unsigned long, std::allocator<unsigned long> >) [21]
+                0.14    0.00  448200/1010952     Eigen::internal::general_matrix_vector_product<long, double, Eigen::internal::const_blas_data_mapper<double, long, 0>, 0, false, double, Eigen::internal::const_blas_data_mapper<double, long, 1>, false, 0>::run(long, long, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, double*, long, double) [10]
+                0.00    0.01    4482/4482        Element::set_style() [58]
+                0.00    0.00  448200/1372760     Eigen::internal::aligned_malloc(unsigned long) [91]
+                0.00    0.00    4482/4482        Material::Material() [123]
+                0.00    0.00    4482/13126       std::vector<unsigned long, std::allocator<unsigned long> >::operator=(std::vector<unsigned long, std::allocator<unsigned long> > const&) [111]
+-----------------------------------------------
+                0.00    0.00     256/1735046     void Eigen::internal::call_dense_assignment_loop<Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::internal::assign_op<double, double> >(Eigen::Matrix<double, -1, -1, 0, -1, -1>&, Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, Eigen::Matrix<double, -1, -1, 0, -1, -1> > const&, Eigen::internal::assign_op<double, double> const&) [52]
+                0.00    0.00    2304/1735046     mk_nqn(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, 3, 3, 0, 3, 3>, Eigen::Matrix<double, 3, 3, 0, 3, 3>) [62]
+                0.00    0.00    4482/1735046     Element::set_xn() [65]
+                0.00    0.00    4482/1735046     Element::set_style() [58]
+                0.00    0.00    4482/1735046     Element::mk_local_matrix_init(unsigned long) [48]
+                0.00    0.00   12800/1735046     Element::calc_stress_xi(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [37]
+                0.01    0.00  123392/1735046     mk_b(unsigned long, unsigned long, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [47]
+                0.01    0.00  123392/1735046     mk_dnj(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [35]
+                0.02    0.00  221184/1735046     mk_m(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [16]
+                0.02    0.00  232704/1735046     mk_q(unsigned long, Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [38]
+                0.02    0.00  331776/1735046     mk_k(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [11]
+                0.02    0.00  336128/1735046     Element::mk_local_matrix() [7]
+                0.02    0.00  337664/1735046     mk_n(unsigned long, unsigned long, Eigen::Matrix<double, -1, 1, 0, -1, 1>) [28]
+[22]     2.2    0.12    0.00 1735046         Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long) [22]
+-----------------------------------------------
+                0.00    0.00    1152/124544      mk_nqn(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, 3, 3, 0, 3, 3>, Eigen::Matrix<double, 3, 3, 0, 3, 3>) [62]
+                0.00    0.01   12800/124544      Element::calc_stress_xi(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [37]
+                0.01    0.09  110592/124544      mk_k(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [11]
+[23]     2.0    0.01    0.10  124544         Eigen::internal::general_matrix_matrix_product<long, double, 0, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*) [23]
+                0.08    0.00  124544/345728      Eigen::internal::gebp_kernel<double, double, long, Eigen::internal::blas_data_mapper<double, long, 0, 0>, 4, 4, false, false>::operator()(Eigen::internal::blas_data_mapper<double, long, 0, 0> const&, double const*, double const*, long, long, long, double, long, long, long, long) [14]
+                0.02    0.00  124544/124544      Eigen::internal::gemm_pack_lhs<double, long, Eigen::internal::const_blas_data_mapper<double, long, 0>, 4, 2, 0, false, false>::operator()(double*, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, long, long, long, long) [43]
+                0.00    0.00  124544/345728      Eigen::internal::gemm_pack_rhs<double, long, Eigen::internal::const_blas_data_mapper<double, long, 0>, 4, 0, false, false>::operator()(double*, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, long, long, long, long) [94]
+-----------------------------------------------
+                0.00    0.08   12800/12800       Fault::update_time_fault() [25]
+[24]     1.4    0.00    0.08   12800         Element::mk_T(Eigen::Matrix<double, -1, 1, 0, -1, 1>) [24]
+                0.00    0.02  115200/115200      void Eigen::internal::gemv_dense_selector<2, 1, true>::run<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, 1, 0, -1, 1>, Eigen::Matrix<double, -1, 1, 0, -1, 1> >(Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> > const&, Eigen::Matrix<double, -1, 1, 0, -1, 1> const&, Eigen::Matrix<double, -1, 1, 0, -1, 1>&, Eigen::Matrix<double, -1, 1, 0, -1, 1>::Scalar const&) [44]
+                0.00    0.02  115200/116352      mk_q(unsigned long, Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [38]
+                0.01    0.01  115200/337664      mk_n(unsigned long, unsigned long, Eigen::Matrix<double, -1, 1, 0, -1, 1>) [28]
+                0.00    0.02   12800/292162      set_element_style(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [8]
+                0.00    0.00   12800/13056       Fault_2d_4Node::~Fault_2d_4Node() [63]
+                0.00    0.00   12800/58275804     void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [13]
+                0.00    0.00   12800/25216       std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::vector(std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > > const&) [107]
+                0.00    0.00   12800/1372760     Eigen::internal::aligned_malloc(unsigned long) [91]
+-----------------------------------------------
+                0.00    0.08    6400/6400        Fem::update_time_dynamic_fault() [1]
+[25]     1.4    0.00    0.08    6400         Fault::update_time_fault() [25]
+                0.00    0.08   12800/12800       Element::mk_T(Eigen::Matrix<double, -1, 1, 0, -1, 1>) [24]
+-----------------------------------------------
+                0.00    0.01  110592/868864      Element::mk_local_matrix_init(unsigned long) [48]
+                0.00    0.01  110592/868864      Element::mk_local_vector() [33]
+                0.00    0.01  123392/868864      mk_inv_jacobi(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [49]
+                0.02    0.03  524288/868864      Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double) [4]
+[26]     1.4    0.03    0.05  868864         mk_jacobi(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [26]
+                0.03    0.00 2606592/2855552     Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1> const, -1, 1, true>, 0>::MapBase(double const*, long, long) [34]
+                0.02    0.00 2606592/2839424     Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1> const, 1, -1, false>, 0>::MapBase(double const*, long, long) [39]
+-----------------------------------------------
+                0.01    0.05    6400/6400        Fem::update_time_dynamic_fault() [1]
+[27]     1.0    0.01    0.05    6400         Fault::calc_traction(std::vector<Element, std::allocator<Element> >) [27]
+                0.02    0.00   12800/12800       Fault::stress_to_traction(Eigen::Matrix<double, -1, 1, 0, -1, 1>, Eigen::Matrix<double, -1, 1, 0, -1, 1>) [36]
+                0.00    0.02   12800/12800       Element::calc_stress_xi(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [37]
+-----------------------------------------------
+                0.00    0.00     128/337664      Fault::set_initial_condition0(std::vector<Element, std::allocator<Element> >&) [3]
+                0.01    0.01  110592/337664      Element::mk_local_vector() [33]
+                0.01    0.01  111744/337664      Element::mk_local_matrix() [7]
+                0.01    0.01  115200/337664      Element::mk_T(Eigen::Matrix<double, -1, 1, 0, -1, 1>) [24]
+[28]     1.0    0.03    0.02  337664         mk_n(unsigned long, unsigned long, Eigen::Matrix<double, -1, 1, 0, -1, 1>) [28]
+                0.02    0.00  337664/1735046     Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long) [22]
+-----------------------------------------------
+                0.00    0.00  524288/8048000     Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double) [4]
+                0.05    0.00 7523712/8048000     Solid_3d_8Node::Solid_3d_8Node() [9]
+[29]     0.9    0.05    0.00 8048000         Solid_3d_8Node::shape_function_n(double, double, double) [29]
+-----------------------------------------------
+                0.00    0.00   12800/461000      Element::mk_ku_cv() [57]
+                0.00    0.00   12800/461000      Element::calc_stress_xi(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [37]
+                0.00    0.00   12800/461000      Fault::calc_average_slip(double) [60]
+                0.05    0.00  422600/461000      Element::mk_ku() [15]
+[30]     0.9    0.05    0.00  461000         Element::mk_u_hstack() [30]
+-----------------------------------------------
+                0.05    0.00 4194304/4194304     Eigen::internal::partial_lu_impl<double, 0, int>::unblocked_lu(Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>&, int*, int&) [20]
+[31]     0.8    0.05    0.00 4194304         Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, 0>::MapBase(double*, long, long) [31]
+-----------------------------------------------
+                0.04    0.00  221184/221184      Eigen::internal::general_matrix_matrix_product<long, double, 1, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*) [17]
+[32]     0.7    0.04    0.00  221184         Eigen::internal::gemm_pack_lhs<double, long, Eigen::internal::const_blas_data_mapper<double, long, 1>, 4, 2, 1, false, false>::operator()(double*, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, long, long, long, long) [32]
+-----------------------------------------------
+                0.00    0.04    4482/4482        Fem::_set_initial_matrix() [6]
+[33]     0.6    0.00    0.04    4482         Element::mk_local_vector() [33]
+                0.01    0.01  110592/337664      mk_n(unsigned long, unsigned long, Eigen::Matrix<double, -1, 1, 0, -1, 1>) [28]
+                0.00    0.01  110592/868864      mk_jacobi(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [26]
+                0.00    0.01    4096/292162      set_element_style(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [8]
+                0.00    0.00  221184/1764736     Eigen::DenseStorage<double, -1, -1, -1, 0>::DenseStorage(Eigen::DenseStorage<double, -1, -1, -1, 0> const&) [40]
+                0.00    0.00    4096/278656      Solid_3d_8Node::~Solid_3d_8Node() [46]
+                0.00    0.00    4096/58275804     void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [13]
+                0.00    0.00  110592/110592      Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1, -1, false>, 0>::MapBase(double*, long, long) [104]
+                0.00    0.00    4096/8320        std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > >::vector(std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > > const&) [118]
+                0.00    0.00    4096/25216       std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::vector(std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > > const&) [107]
+                0.00    0.00    4096/12416       std::vector<double, std::allocator<double> >::vector(std::vector<double, std::allocator<double> > const&) [113]
+-----------------------------------------------
+                0.00    0.00     128/2855552     Fault::set_R() [78]
+                0.00    0.00   16128/2855552     void Eigen::internal::call_dense_assignment_loop<Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Product<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1>, Eigen::internal::assign_op<double, double> >(Eigen::Matrix<double, -1, -1, 0, -1, -1>&, Eigen::Product<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1> const&, Eigen::internal::assign_op<double, double> const&) [68]
+                0.00    0.00  232704/2855552     mk_q(unsigned long, Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [38]
+                0.03    0.00 2606592/2855552     mk_jacobi(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [26]
+[34]     0.5    0.03    0.00 2855552         Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1> const, -1, 1, true>, 0>::MapBase(double const*, long, long) [34]
+-----------------------------------------------
+                0.00    0.00   12800/123392      Element::calc_stress_xi(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [37]
+                0.00    0.02  110592/123392      Element::mk_local_matrix() [7]
+[35]     0.5    0.00    0.03  123392         mk_dnj(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [35]
+                0.00    0.01  123392/123392      mk_inv_jacobi(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [49]
+                0.01    0.00  123392/1735046     Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long) [22]
+                0.00    0.00  370176/1764736     Eigen::DenseStorage<double, -1, -1, -1, 0>::DenseStorage(Eigen::DenseStorage<double, -1, -1, -1, 0> const&) [40]
+                0.00    0.00  123392/124544      Eigen::PlainObjectBase<Eigen::Matrix<double, -1, 3, 0, -1, 3> >::resize(long, long) [101]
+-----------------------------------------------
+                0.02    0.00   12800/12800       Fault::calc_traction(std::vector<Element, std::allocator<Element> >) [27]
+[36]     0.4    0.02    0.00   12800         Fault::stress_to_traction(Eigen::Matrix<double, -1, 1, 0, -1, 1>, Eigen::Matrix<double, -1, 1, 0, -1, 1>) [36]
+                0.00    0.00   12800/1010952     Eigen::internal::general_matrix_vector_product<long, double, Eigen::internal::const_blas_data_mapper<double, long, 0>, 0, false, double, Eigen::internal::const_blas_data_mapper<double, long, 1>, false, 0>::run(long, long, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, double*, long, double) [10]
+-----------------------------------------------
+                0.00    0.02   12800/12800       Fault::calc_traction(std::vector<Element, std::allocator<Element> >) [27]
+[37]     0.4    0.00    0.02   12800         Element::calc_stress_xi(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [37]
+                0.00    0.01   12800/124544      Eigen::internal::general_matrix_matrix_product<long, double, 0, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*) [23]
+                0.00    0.00   12800/1010952     Eigen::internal::general_matrix_vector_product<long, double, Eigen::internal::const_blas_data_mapper<double, long, 0>, 0, false, double, Eigen::internal::const_blas_data_mapper<double, long, 1>, false, 0>::run(long, long, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, double*, long, double) [10]
+                0.00    0.00   12800/123392      mk_dnj(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [35]
+                0.00    0.00   12800/123392      mk_b(unsigned long, unsigned long, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [47]
+                0.00    0.00   12800/461000      Element::mk_u_hstack() [30]
+                0.00    0.00   12800/1735046     Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long) [22]
+                0.00    0.00   38400/1764736     Eigen::DenseStorage<double, -1, -1, -1, 0>::DenseStorage(Eigen::DenseStorage<double, -1, -1, -1, 0> const&) [40]
+                0.00    0.00   12800/345728      void Eigen::internal::evaluateProductBlockingSizesHeuristic<double, double, 1, long>(long&, long&, long&, long) [95]
+                0.00    0.00   12800/1372760     Eigen::internal::aligned_malloc(unsigned long) [91]
+-----------------------------------------------
+                0.00    0.00    1152/116352      Element::mk_local_matrix() [7]
+                0.00    0.02  115200/116352      Element::mk_T(Eigen::Matrix<double, -1, 1, 0, -1, 1>) [24]
+[38]     0.4    0.00    0.02  116352         mk_q(unsigned long, Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [38]
+                0.02    0.00  232704/1735046     Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long) [22]
+                0.00    0.00  232704/2855552     Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1> const, -1, 1, true>, 0>::MapBase(double const*, long, long) [34]
+                0.00    0.00  232704/2839424     Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1> const, 1, -1, false>, 0>::MapBase(double const*, long, long) [39]
+                0.00    0.00  232704/232832      Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1>, -1, 1, true>, 0>::MapBase(double*, long, long) [99]
+-----------------------------------------------
+                0.00    0.00     128/2839424     Fault::set_R() [78]
+                0.00    0.00  232704/2839424     mk_q(unsigned long, Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [38]
+                0.02    0.00 2606592/2839424     mk_jacobi(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [26]
+[39]     0.4    0.02    0.00 2839424         Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1> const, 1, -1, false>, 0>::MapBase(double const*, long, long) [39]
+-----------------------------------------------
+                0.00    0.00   38400/1764736     Element::calc_stress_xi(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [37]
+                0.00    0.00  221184/1764736     Element::mk_local_matrix_init(unsigned long) [48]
+                0.00    0.00  221184/1764736     Element::mk_local_vector() [33]
+                0.00    0.00  246784/1764736     mk_inv_jacobi(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [49]
+                0.00    0.00  370176/1764736     mk_dnj(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [35]
+                0.01    0.00  667008/1764736     Element::mk_local_matrix() [7]
+[40]     0.4    0.02    0.00 1764736         Eigen::DenseStorage<double, -1, -1, -1, 0>::DenseStorage(Eigen::DenseStorage<double, -1, -1, -1, 0> const&) [40]
+-----------------------------------------------
+                0.02    0.00 1048576/1048576     Eigen::internal::partial_lu_impl<double, 0, int>::unblocked_lu(Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>&, int*, int&) [20]
+[41]     0.4    0.02    0.00 1048576         void Eigen::internal::outer_product_selector_run<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, Eigen::internal::generic_product_impl<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, Eigen::DenseShape, Eigen::DenseShape, 5>::sub>(Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>&, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false> const&, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false> const&, Eigen::internal::generic_product_impl<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, Eigen::DenseShape, Eigen::DenseShape, 5>::sub const&, Eigen::internal::false_type const&) [41]
+                0.00    0.00 1572864/1572864     Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>, -1, 1, true>, 0>::MapBase(double*, long, long) [90]
+-----------------------------------------------
+                0.00    0.00     130/292098      Spring::~Spring() [75]
+                0.00    0.00     256/292098      Visco_2d_4Node::~Visco_2d_4Node() [74]
+                0.00    0.00   13056/292098      Fault_2d_4Node::~Fault_2d_4Node() [63]
+                0.02    0.00  278656/292098      Solid_3d_8Node::~Solid_3d_8Node() [46]
+[42]     0.4    0.02    0.00  292098         ElementStyle::~ElementStyle() [42]
+-----------------------------------------------
+                0.02    0.00  124544/124544      Eigen::internal::general_matrix_matrix_product<long, double, 0, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*) [23]
+[43]     0.4    0.02    0.00  124544         Eigen::internal::gemm_pack_lhs<double, long, Eigen::internal::const_blas_data_mapper<double, long, 0>, 4, 2, 0, false, false>::operator()(double*, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, long, long, long, long) [43]
+-----------------------------------------------
+                0.00    0.02  115200/115200      Element::mk_T(Eigen::Matrix<double, -1, 1, 0, -1, 1>) [24]
+[44]     0.4    0.00    0.02  115200         void Eigen::internal::gemv_dense_selector<2, 1, true>::run<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, 1, 0, -1, 1>, Eigen::Matrix<double, -1, 1, 0, -1, 1> >(Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> > const&, Eigen::Matrix<double, -1, 1, 0, -1, 1> const&, Eigen::Matrix<double, -1, 1, 0, -1, 1>&, Eigen::Matrix<double, -1, 1, 0, -1, 1>::Scalar const&) [44]
+                0.02    0.00  115200/115200      Eigen::internal::general_matrix_vector_product<long, double, Eigen::internal::const_blas_data_mapper<double, long, 1>, 1, false, double, Eigen::internal::const_blas_data_mapper<double, long, 0>, false, 0>::run(long, long, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, double*, long, double) [45]
+                0.00    0.00  115200/115200      Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, 1, 0, -1, 1>, -1, 1, true>, 0>::MapBase(double*, long, long) [103]
+-----------------------------------------------
+                0.02    0.00  115200/115200      void Eigen::internal::gemv_dense_selector<2, 1, true>::run<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, 1, 0, -1, 1>, Eigen::Matrix<double, -1, 1, 0, -1, 1> >(Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> > const&, Eigen::Matrix<double, -1, 1, 0, -1, 1> const&, Eigen::Matrix<double, -1, 1, 0, -1, 1>&, Eigen::Matrix<double, -1, 1, 0, -1, 1>::Scalar const&) [44]
+[45]     0.4    0.02    0.00  115200         Eigen::internal::general_matrix_vector_product<long, double, Eigen::internal::const_blas_data_mapper<double, long, 1>, 1, false, double, Eigen::internal::const_blas_data_mapper<double, long, 0>, false, 0>::run(long, long, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, double*, long, double) [45]
+-----------------------------------------------
+                0.00    0.00     128/278656      Fault::find_neighbour_element(std::vector<Element, std::allocator<Element> >) [5]
+                0.00    0.00    4096/278656      Element::set_style() [58]
+                0.00    0.00    4096/278656      Element::mk_local_matrix_init(unsigned long) [48]
+                0.00    0.00    4096/278656      Element::mk_local_vector() [33]
+                0.00    0.00    4096/278656      Element::mk_local_matrix() [7]
+                0.00    0.02  262144/278656      Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double) [4]
+[46]     0.3    0.00    0.02  278656         Solid_3d_8Node::~Solid_3d_8Node() [46]
+                0.02    0.00  278656/292098      ElementStyle::~ElementStyle() [42]
+-----------------------------------------------
+                0.00    0.00   12800/123392      Element::calc_stress_xi(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [37]
+                0.01    0.01  110592/123392      Element::mk_local_matrix() [7]
+[47]     0.3    0.01    0.01  123392         mk_b(unsigned long, unsigned long, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [47]
+                0.01    0.00  123392/1735046     Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long) [22]
+-----------------------------------------------
+                0.00    0.02    4482/4482        Fem::_set_initial_matrix() [6]
+[48]     0.3    0.00    0.02    4482         Element::mk_local_matrix_init(unsigned long) [48]
+                0.00    0.01  110592/868864      mk_jacobi(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [26]
+                0.00    0.01    4096/292162      set_element_style(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [8]
+                0.00    0.00  221184/1764736     Eigen::DenseStorage<double, -1, -1, -1, 0>::DenseStorage(Eigen::DenseStorage<double, -1, -1, -1, 0> const&) [40]
+                0.00    0.00    4482/1735046     Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long) [22]
+                0.00    0.00    4096/278656      Solid_3d_8Node::~Solid_3d_8Node() [46]
+                0.00    0.00     256/115072      void Eigen::internal::call_dense_assignment_loop<Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::internal::assign_op<double, double> >(Eigen::Matrix<double, -1, -1, 0, -1, -1>&, Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, Eigen::Matrix<double, -1, -1, 0, -1, -1> > const&, Eigen::internal::assign_op<double, double> const&) [52]
+                0.00    0.00    4096/58275804     void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [13]
+                0.00    0.00    8964/8964        Eigen::PlainObjectBase<Eigen::Matrix<double, -1, 1, 0, -1, 1> >::resize(long, long) [114]
+                0.00    0.00    4096/25216       std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::vector(std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > > const&) [107]
+                0.00    0.00    4096/12416       std::vector<double, std::allocator<double> >::vector(std::vector<double, std::allocator<double> > const&) [113]
+                0.00    0.00     256/256         Material::mk_imp(unsigned long) [132]
+                0.00    0.00     256/1372760     Eigen::internal::aligned_malloc(unsigned long) [91]
+-----------------------------------------------
+                0.00    0.01  123392/123392      mk_dnj(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [35]
+[49]     0.2    0.00    0.01  123392         mk_inv_jacobi(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [49]
+                0.00    0.01  123392/868864      mk_jacobi(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [26]
+                0.00    0.00  246784/1764736     Eigen::DenseStorage<double, -1, -1, -1, 0>::DenseStorage(Eigen::DenseStorage<double, -1, -1, -1, 0> const&) [40]
+-----------------------------------------------
+                0.00    0.00      14/300294      void std::vector<Element, std::allocator<Element> >::_M_realloc_insert<Element const&>(__gnu_cxx::__normal_iterator<Element*, std::vector<Element, std::allocator<Element> > >, Element const&) [79]
+                0.00    0.00    4482/300294      std::vector<Element, std::allocator<Element> >::operator=(std::vector<Element, std::allocator<Element> > const&) [67]
+                0.00    0.00    8950/300294      io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+                0.01    0.00  286848/300294      Fault::set_initial_condition0(std::vector<Element, std::allocator<Element> >&) [3]
+[50]     0.2    0.01    0.00  300294         Element::Element(Element const&) [50]
+                0.00    0.00  600588/58275804     void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [13]
+-----------------------------------------------
+                                                 <spontaneous>
+[51]     0.2    0.01    0.00                 io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+                0.00    0.00    4482/452682      Element::Element(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, std::vector<unsigned long, std::allocator<unsigned long> >) [21]
+                0.00    0.00    8950/300294      Element::Element(Element const&) [50]
+                0.00    0.00       1/1           Fem::Fem(unsigned long, std::vector<Node, std::allocator<Node> >, std::vector<Element, std::allocator<Element> >, std::vector<Fault, std::allocator<Fault> >, std::vector<Material, std::allocator<Material> >) [66]
+                0.00    0.00    4486/58275804     void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [13]
+                0.00    0.00      14/14          void std::vector<Element, std::allocator<Element> >::_M_realloc_insert<Element const&>(__gnu_cxx::__normal_iterator<Element*, std::vector<Element, std::allocator<Element> > >, Element const&) [79]
+                0.00    0.00       2/2           void std::vector<Material, std::allocator<Material> >::_M_realloc_insert<Material const&>(__gnu_cxx::__normal_iterator<Material*, std::vector<Material, std::allocator<Material> > >, Material const&) [80]
+                0.00    0.00   26257/26267       void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char const*>(char const*, char const*, std::forward_iterator_tag) [106]
+                0.00    0.00   17604/17737       void std::vector<unsigned long, std::allocator<unsigned long> >::_M_realloc_insert<unsigned long const&>(__gnu_cxx::__normal_iterator<unsigned long*, std::vector<unsigned long, std::allocator<unsigned long> > >, unsigned long const&) [108]
+                0.00    0.00    8580/8580        Node::Node(unsigned long, std::vector<double, std::allocator<double> >, std::vector<unsigned long, std::allocator<unsigned long> >) [117]
+                0.00    0.00     197/197         void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&) [133]
+                0.00    0.00     121/192         Fault::Fault(Fault const&) [134]
+                0.00    0.00      64/64          Fault::Fault(unsigned long, unsigned long, unsigned long, std::vector<unsigned long, std::allocator<unsigned long> >, std::vector<double, std::allocator<double> >) [142]
+                0.00    0.00      15/15          void std::vector<Node, std::allocator<Node> >::_M_realloc_insert<Node const&>(__gnu_cxx::__normal_iterator<Node*, std::vector<Node, std::allocator<Node> > >, Node const&) [144]
+                0.00    0.00       7/7           void std::vector<Fault, std::allocator<Fault> >::_M_realloc_insert<Fault const&>(__gnu_cxx::__normal_iterator<Fault*, std::vector<Fault, std::allocator<Fault> > >, Fault const&) [146]
+                0.00    0.00       2/2           Material::Material(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<double, std::allocator<double> >) [148]
+-----------------------------------------------
+                0.00    0.00     256/115072      Element::mk_local_matrix_init(unsigned long) [48]
+                0.00    0.00    4224/115072      Element::mk_local_matrix() [7]
+                0.01    0.00  110592/115072      mk_k(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [11]
+[52]     0.2    0.01    0.00  115072         void Eigen::internal::call_dense_assignment_loop<Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::internal::assign_op<double, double> >(Eigen::Matrix<double, -1, -1, 0, -1, -1>&, Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, Eigen::Matrix<double, -1, -1, 0, -1, -1> > const&, Eigen::internal::assign_op<double, double> const&) [52]
+                0.00    0.00     256/1735046     Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long) [22]
+-----------------------------------------------
+                0.00    0.00     130/292162      Line_1d_2Node::Line_1d_2Node() [76]
+                0.00    0.00   13376/292162      Solid_2d_4Node::Solid_2d_4Node() [64]
+                0.01    0.00  278656/292162      Solid_3d_8Node::Solid_3d_8Node() [9]
+[53]     0.2    0.01    0.00  292162         std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > >::_M_default_append(unsigned long) [53]
+-----------------------------------------------
+                0.01    0.00 1048576/1048576     Eigen::internal::partial_lu_impl<double, 0, int>::unblocked_lu(Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>&, int*, int&) [20]
+[54]     0.2    0.01    0.00 1048576         Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 0>::MapBase(double*, long, long) [54]
+-----------------------------------------------
+                0.01    0.00     100/100         Fem::update_time_dynamic_fault() [1]
+[55]     0.2    0.01    0.00     100         Fem::_update_time_set_fixed_nodes() [55]
+-----------------------------------------------
+                                                 <spontaneous>
+[56]     0.2    0.01    0.00                 Line_1d_3Node::shape_function_dn(double, double, double) [56]
+-----------------------------------------------
+                0.00    0.01   12800/12800       Fem::update_time_dynamic_fault() [1]
+[57]     0.2    0.00    0.01   12800         Element::mk_ku_cv() [57]
+                0.00    0.01   25600/452682      Element::Element(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, std::vector<unsigned long, std::allocator<unsigned long> >) [21]
+                0.00    0.00   12800/461000      Element::mk_u_hstack() [30]
+                0.00    0.00   51200/1372760     Eigen::internal::aligned_malloc(unsigned long) [91]
+                0.00    0.00   12800/12800       Element::mk_v_hstack() [112]
+-----------------------------------------------
+                0.00    0.01    4482/4482        Element::Element(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, std::vector<unsigned long, std::allocator<unsigned long> >) [21]
+[58]     0.1    0.00    0.01    4482         Element::set_style() [58]
+                0.00    0.01    4482/292162      set_element_style(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [8]
+                0.00    0.00    4482/1735046     Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long) [22]
+                0.00    0.00    4096/278656      Solid_3d_8Node::~Solid_3d_8Node() [46]
+                0.00    0.00    4482/58275804     void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [13]
+                0.00    0.00     130/130         Spring::~Spring() [75]
+                0.00    0.00     128/13056       Fault_2d_4Node::~Fault_2d_4Node() [63]
+                0.00    0.00     128/256         Visco_2d_4Node::~Visco_2d_4Node() [74]
+-----------------------------------------------
+                0.00    0.01    6400/6400        Fem::update_time_dynamic_fault() [1]
+[59]     0.1    0.00    0.01    6400         Fault::update_friction(double) [59]
+                0.00    0.01    6400/6400        Fault::calc_average_slip(double) [60]
+-----------------------------------------------
+                0.00    0.01    6400/6400        Fault::update_friction(double) [59]
+[60]     0.1    0.00    0.01    6400         Fault::calc_average_slip(double) [60]
+                0.00    0.00   12800/1010952     Eigen::internal::general_matrix_vector_product<long, double, Eigen::internal::const_blas_data_mapper<double, long, 0>, 0, false, double, Eigen::internal::const_blas_data_mapper<double, long, 1>, false, 0>::run(long, long, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, double*, long, double) [10]
+                0.00    0.00   12800/461000      Element::mk_u_hstack() [30]
+-----------------------------------------------
+                                                 <spontaneous>
+[61]     0.1    0.01    0.00                 void Eigen::TriangularViewImpl<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>, 5u, Eigen::Dense>::solveInPlace<1, Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false> >(Eigen::MatrixBase<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false> > const&) const [61]
+-----------------------------------------------
+                0.00    0.00    1152/1152        Element::mk_local_matrix() [7]
+[62]     0.1    0.00    0.00    1152         mk_nqn(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, 3, 3, 0, 3, 3>, Eigen::Matrix<double, 3, 3, 0, 3, 3>) [62]
+                0.00    0.00    1152/263296      Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double) [4]
+                0.00    0.00    1152/124544      Eigen::internal::general_matrix_matrix_product<long, double, 0, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*) [23]
+                0.00    0.00    2304/1735046     Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long) [22]
+                0.00    0.00    1152/124544      Eigen::PlainObjectBase<Eigen::Matrix<double, -1, 3, 0, -1, 3> >::resize(long, long) [101]
+                0.00    0.00    1152/345728      void Eigen::internal::evaluateProductBlockingSizesHeuristic<double, double, 1, long>(long&, long&, long&, long) [95]
+-----------------------------------------------
+                0.00    0.00      64/13056       Fault::find_neighbour_element(std::vector<Element, std::allocator<Element> >) [5]
+                0.00    0.00      64/13056       Fault::set_initial_condition0(std::vector<Element, std::allocator<Element> >&) [3]
+                0.00    0.00     128/13056       Element::set_style() [58]
+                0.00    0.00   12800/13056       Element::mk_T(Eigen::Matrix<double, -1, 1, 0, -1, 1>) [24]
+[63]     0.0    0.00    0.00   13056         Fault_2d_4Node::~Fault_2d_4Node() [63]
+                0.00    0.00   13056/292098      ElementStyle::~ElementStyle() [42]
+-----------------------------------------------
+                0.00    0.00   13376/13376       set_element_style(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [8]
+[64]     0.0    0.00    0.00   13376         Solid_2d_4Node::Solid_2d_4Node() [64]
+                0.00    0.00   13376/292162      std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > >::_M_default_append(unsigned long) [53]
+                0.00    0.00  133760/133760      Solid_2d_4Node::shape_function_dn(double, double, double) [100]
+                0.00    0.00  120384/120576      Solid_2d_4Node::shape_function_n(double, double, double) [102]
+                0.00    0.00   13376/292162      set_gauss_points(unsigned long, Eigen::Matrix<double, -1, 1, 0, -1, 1>&, Eigen::Matrix<double, -1, 1, 0, -1, 1>&) [96]
+                0.00    0.00   13376/292162      std::vector<double, std::allocator<double> >::_M_default_append(unsigned long) [98]
+                0.00    0.00   13376/292162      std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::_M_default_append(unsigned long) [97]
+-----------------------------------------------
+                0.00    0.00    4482/4482        Fem::_set_initial_matrix() [6]
+[65]     0.0    0.00    0.00    4482         Element::set_xn() [65]
+                0.00    0.00    4482/1735046     Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long) [22]
+-----------------------------------------------
+                0.00    0.00       1/1           io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+[66]     0.0    0.00    0.00       1         Fem::Fem(unsigned long, std::vector<Node, std::allocator<Node> >, std::vector<Element, std::allocator<Element> >, std::vector<Fault, std::allocator<Fault> >, std::vector<Material, std::allocator<Material> >) [66]
+                0.00    0.00       1/1           std::vector<Element, std::allocator<Element> >::operator=(std::vector<Element, std::allocator<Element> > const&) [67]
+                0.00    0.00       1/1           std::vector<Material, std::allocator<Material> >::operator=(std::vector<Material, std::allocator<Material> > const&) [81]
+                0.00    0.00       1/1           std::vector<Node, std::allocator<Node> >::operator=(std::vector<Node, std::allocator<Node> > const&) [161]
+                0.00    0.00       1/1           std::vector<Fault, std::allocator<Fault> >::operator=(std::vector<Fault, std::allocator<Fault> > const&) [162]
+-----------------------------------------------
+                0.00    0.00       1/1           Fem::Fem(unsigned long, std::vector<Node, std::allocator<Node> >, std::vector<Element, std::allocator<Element> >, std::vector<Fault, std::allocator<Fault> >, std::vector<Material, std::allocator<Material> >) [66]
+[67]     0.0    0.00    0.00       1         std::vector<Element, std::allocator<Element> >::operator=(std::vector<Element, std::allocator<Element> > const&) [67]
+                0.00    0.00    4482/300294      Element::Element(Element const&) [50]
+-----------------------------------------------
+                0.00    0.00     192/448         Fault::set_spring_kvkh(std::vector<Element, std::allocator<Element> >&) [70]
+                0.00    0.00     256/448         Fault::set_spring_kv(std::vector<Element, std::allocator<Element> >&) [69]
+[68]     0.0    0.00    0.00     448         void Eigen::internal::call_dense_assignment_loop<Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Product<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1>, Eigen::internal::assign_op<double, double> >(Eigen::Matrix<double, -1, -1, 0, -1, -1>&, Eigen::Product<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1> const&, Eigen::internal::assign_op<double, double> const&) [68]
+                0.00    0.00   16128/2855552     Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1> const, -1, 1, true>, 0>::MapBase(double const*, long, long) [34]
+                0.00    0.00   16128/16128       Eigen::MapBase<Eigen::Block<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> > const, 1, -1, true>, 0>::MapBase(double const*, long, long) [109]
+-----------------------------------------------
+                0.00    0.00      64/64          Fault::set_initial_condition0(std::vector<Element, std::allocator<Element> >&) [3]
+[69]     0.0    0.00    0.00      64         Fault::set_spring_kv(std::vector<Element, std::allocator<Element> >&) [69]
+                0.00    0.00     256/448         void Eigen::internal::call_dense_assignment_loop<Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Product<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1>, Eigen::internal::assign_op<double, double> >(Eigen::Matrix<double, -1, -1, 0, -1, -1>&, Eigen::Product<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1> const&, Eigen::internal::assign_op<double, double> const&) [68]
+                0.00    0.00     256/256         Material::mk_d_slider() [131]
+-----------------------------------------------
+                0.00    0.00      48/48          Fem::set_initial_fault() [2]
+[70]     0.0    0.00    0.00      48         Fault::set_spring_kvkh(std::vector<Element, std::allocator<Element> >&) [70]
+                0.00    0.00     192/448         void Eigen::internal::call_dense_assignment_loop<Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Product<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1>, Eigen::internal::assign_op<double, double> >(Eigen::Matrix<double, -1, -1, 0, -1, -1>&, Eigen::Product<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1> const&, Eigen::internal::assign_op<double, double> const&) [68]
+                0.00    0.00     192/192         Material::mk_d_spring() [135]
+-----------------------------------------------
+                0.00    0.00    4482/4482        Fem::_set_mesh() [72]
+[71]     0.0    0.00    0.00    4482         Element::set_material(Material*) [71]
+                0.00    0.00    8964/58275804     void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [13]
+                0.00    0.00    4482/4484        Material::set_param() [120]
+                0.00    0.00    4482/4482        Material::set_init(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<double, std::allocator<double> >) [122]
+-----------------------------------------------
+                0.00    0.00       1/1           Fem::set_init() [73]
+[72]     0.0    0.00    0.00       1         Fem::_set_mesh() [72]
+                0.00    0.00    4482/4482        Element::set_material(Material*) [71]
+                0.00    0.00    4482/4482        std::vector<Node*, std::allocator<Node*> >::operator=(std::vector<Node*, std::allocator<Node*> > const&) [124]
+                0.00    0.00    4482/4482        Element::set_nodes(std::vector<Node*, std::allocator<Node*> >) [121]
+                0.00    0.00    4482/4482        Element*& std::vector<Element*, std::allocator<Element*> >::emplace_back<Element*>(Element*&&) [125]
+-----------------------------------------------
+                                                 <spontaneous>
+[73]     0.0    0.00    0.00                 Fem::set_init() [73]
+                0.00    0.00       1/1           Fem::_set_mesh() [72]
+                0.00    0.00       1/1           Fem::_set_initial_condition() [159]
+-----------------------------------------------
+                0.00    0.00     128/256         Element::set_style() [58]
+                0.00    0.00     128/256         Element::mk_local_matrix() [7]
+[74]     0.0    0.00    0.00     256         Visco_2d_4Node::~Visco_2d_4Node() [74]
+                0.00    0.00     256/292098      ElementStyle::~ElementStyle() [42]
+-----------------------------------------------
+                0.00    0.00     130/130         Element::set_style() [58]
+[75]     0.0    0.00    0.00     130         Spring::~Spring() [75]
+                0.00    0.00     130/292098      ElementStyle::~ElementStyle() [42]
+-----------------------------------------------
+                0.00    0.00     130/130         Connect::Connect() [77]
+[76]     0.0    0.00    0.00     130         Line_1d_2Node::Line_1d_2Node() [76]
+                0.00    0.00     130/292162      std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > >::_M_default_append(unsigned long) [53]
+                0.00    0.00     520/520         Line_1d_2Node::shape_function_dn(double, double, double) [129]
+                0.00    0.00     390/390         Line_1d_2Node::shape_function_n(double, double, double) [130]
+                0.00    0.00     130/292162      set_gauss_points(unsigned long, Eigen::Matrix<double, -1, 1, 0, -1, 1>&, Eigen::Matrix<double, -1, 1, 0, -1, 1>&) [96]
+                0.00    0.00     130/292162      std::vector<double, std::allocator<double> >::_M_default_append(unsigned long) [98]
+                0.00    0.00     130/292162      std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::_M_default_append(unsigned long) [97]
+-----------------------------------------------
+                0.00    0.00     130/130         set_element_style(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [8]
+[77]     0.0    0.00    0.00     130         Connect::Connect() [77]
+                0.00    0.00     130/130         Line_1d_2Node::Line_1d_2Node() [76]
+-----------------------------------------------
+                0.00    0.00      64/64          Fault::set_initial_condition0(std::vector<Element, std::allocator<Element> >&) [3]
+[78]     0.0    0.00    0.00      64         Fault::set_R() [78]
+                0.00    0.00     128/2855552     Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1> const, -1, 1, true>, 0>::MapBase(double const*, long, long) [34]
+                0.00    0.00     128/2839424     Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1> const, 1, -1, false>, 0>::MapBase(double const*, long, long) [39]
+                0.00    0.00     128/232832      Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1>, -1, 1, true>, 0>::MapBase(double*, long, long) [99]
+-----------------------------------------------
+                0.00    0.00      14/14          io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+[79]     0.0    0.00    0.00      14         void std::vector<Element, std::allocator<Element> >::_M_realloc_insert<Element const&>(__gnu_cxx::__normal_iterator<Element*, std::vector<Element, std::allocator<Element> > >, Element const&) [79]
+                0.00    0.00      14/300294      Element::Element(Element const&) [50]
+-----------------------------------------------
+                0.00    0.00       2/2           io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+[80]     0.0    0.00    0.00       2         void std::vector<Material, std::allocator<Material> >::_M_realloc_insert<Material const&>(__gnu_cxx::__normal_iterator<Material*, std::vector<Material, std::allocator<Material> > >, Material const&) [80]
+                0.00    0.00       2/58275804     void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [13]
+-----------------------------------------------
+                0.00    0.00       1/1           Fem::Fem(unsigned long, std::vector<Node, std::allocator<Node> >, std::vector<Element, std::allocator<Element> >, std::vector<Fault, std::allocator<Fault> >, std::vector<Material, std::allocator<Material> >) [66]
+[81]     0.0    0.00    0.00       1         std::vector<Material, std::allocator<Material> >::operator=(std::vector<Material, std::allocator<Material> > const&) [81]
+                0.00    0.00       2/58275804     void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [13]
+-----------------------------------------------
+                0.00    0.00 4194304/4194304     Eigen::internal::partial_lu_impl<double, 0, int>::unblocked_lu(Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>&, int*, int&) [20]
+[89]     0.0    0.00    0.00 4194304         Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, 0>::MapBase(double*, long, long) [89]
+-----------------------------------------------
+                0.00    0.00 1572864/1572864     void Eigen::internal::outer_product_selector_run<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, Eigen::internal::generic_product_impl<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, Eigen::DenseShape, Eigen::DenseShape, 5>::sub>(Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>&, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false> const&, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false> const&, Eigen::internal::generic_product_impl<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, Eigen::DenseShape, Eigen::DenseShape, 5>::sub const&, Eigen::internal::false_type const&) [41]
+[90]     0.0    0.00    0.00 1572864         Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>, -1, 1, true>, 0>::MapBase(double*, long, long) [90]
+-----------------------------------------------
+                0.00    0.00     256/1372760     Element::mk_local_matrix_init(unsigned long) [48]
+                0.00    0.00    2304/1372760     Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double) [4]
+                0.00    0.00   12800/1372760     Element::calc_stress_xi(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [37]
+                0.00    0.00   12800/1372760     Element::mk_T(Eigen::Matrix<double, -1, 1, 0, -1, 1>) [24]
+                0.00    0.00   51200/1372760     Element::mk_ku_cv() [57]
+                0.00    0.00  448200/1372760     Element::Element(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, std::vector<unsigned long, std::allocator<unsigned long> >) [21]
+                0.00    0.00  845200/1372760     Element::mk_ku() [15]
+[91]     0.0    0.00    0.00 1372760         Eigen::internal::aligned_malloc(unsigned long) [91]
+-----------------------------------------------
+                0.00    0.00 1048576/1048576     Eigen::internal::partial_lu_impl<double, 0, int>::unblocked_lu(Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>&, int*, int&) [20]
+[92]     0.0    0.00    0.00 1048576         Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, 0>::MapBase(double*, long, long) [92]
+-----------------------------------------------
+                0.00    0.00  524288/524288      Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double) [4]
+[93]     0.0    0.00    0.00  524288         Eigen::PartialPivLU<Eigen::Matrix<double, 3, 3, 0, 3, 3> >::PartialPivLU<Eigen::Matrix<double, 3, 3, 0, 3, 3> >(Eigen::EigenBase<Eigen::Matrix<double, 3, 3, 0, 3, 3> > const&) [93]
+-----------------------------------------------
+                0.00    0.00  124544/345728      Eigen::internal::general_matrix_matrix_product<long, double, 0, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*) [23]
+                0.00    0.00  221184/345728      Eigen::internal::general_matrix_matrix_product<long, double, 1, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*) [17]
+[94]     0.0    0.00    0.00  345728         Eigen::internal::gemm_pack_rhs<double, long, Eigen::internal::const_blas_data_mapper<double, long, 0>, 4, 0, false, false>::operator()(double*, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, long, long, long, long) [94]
+-----------------------------------------------
+                0.00    0.00    1152/345728      mk_nqn(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, 3, 3, 0, 3, 3>, Eigen::Matrix<double, 3, 3, 0, 3, 3>) [62]
+                0.00    0.00   12800/345728      Element::calc_stress_xi(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [37]
+                0.00    0.00  110592/345728      mk_m(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [16]
+                0.00    0.00  221184/345728      mk_k(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [11]
+[95]     0.0    0.00    0.00  345728         void Eigen::internal::evaluateProductBlockingSizesHeuristic<double, double, 1, long>(long&, long&, long&, long) [95]
+                0.00    0.00       1/1           Eigen::internal::queryCacheSizes(int&, int&, int&) [160]
+-----------------------------------------------
+                0.00    0.00     130/292162      Line_1d_2Node::Line_1d_2Node() [76]
+                0.00    0.00   13376/292162      Solid_2d_4Node::Solid_2d_4Node() [64]
+                0.00    0.00  278656/292162      Solid_3d_8Node::Solid_3d_8Node() [9]
+[96]     0.0    0.00    0.00  292162         set_gauss_points(unsigned long, Eigen::Matrix<double, -1, 1, 0, -1, 1>&, Eigen::Matrix<double, -1, 1, 0, -1, 1>&) [96]
+-----------------------------------------------
+                0.00    0.00     130/292162      Line_1d_2Node::Line_1d_2Node() [76]
+                0.00    0.00   13376/292162      Solid_2d_4Node::Solid_2d_4Node() [64]
+                0.00    0.00  278656/292162      Solid_3d_8Node::Solid_3d_8Node() [9]
+[97]     0.0    0.00    0.00  292162         std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::_M_default_append(unsigned long) [97]
+-----------------------------------------------
+                0.00    0.00     130/292162      Line_1d_2Node::Line_1d_2Node() [76]
+                0.00    0.00   13376/292162      Solid_2d_4Node::Solid_2d_4Node() [64]
+                0.00    0.00  278656/292162      Solid_3d_8Node::Solid_3d_8Node() [9]
+[98]     0.0    0.00    0.00  292162         std::vector<double, std::allocator<double> >::_M_default_append(unsigned long) [98]
+-----------------------------------------------
+                0.00    0.00     128/232832      Fault::set_R() [78]
+                0.00    0.00  232704/232832      mk_q(unsigned long, Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [38]
+[99]     0.0    0.00    0.00  232832         Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1>, -1, 1, true>, 0>::MapBase(double*, long, long) [99]
+-----------------------------------------------
+                0.00    0.00  133760/133760      Solid_2d_4Node::Solid_2d_4Node() [64]
+[100]    0.0    0.00    0.00  133760         Solid_2d_4Node::shape_function_dn(double, double, double) [100]
+-----------------------------------------------
+                0.00    0.00    1152/124544      mk_nqn(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, 3, 3, 0, 3, 3>, Eigen::Matrix<double, 3, 3, 0, 3, 3>) [62]
+                0.00    0.00  123392/124544      mk_dnj(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [35]
+[101]    0.0    0.00    0.00  124544         Eigen::PlainObjectBase<Eigen::Matrix<double, -1, 3, 0, -1, 3> >::resize(long, long) [101]
+-----------------------------------------------
+                0.00    0.00      64/120576      Fault::find_neighbour_element(std::vector<Element, std::allocator<Element> >) [5]
+                0.00    0.00     128/120576      Fault::set_initial_condition0(std::vector<Element, std::allocator<Element> >&) [3]
+                0.00    0.00  120384/120576      Solid_2d_4Node::Solid_2d_4Node() [64]
+[102]    0.0    0.00    0.00  120576         Solid_2d_4Node::shape_function_n(double, double, double) [102]
+-----------------------------------------------
+                0.00    0.00  115200/115200      void Eigen::internal::gemv_dense_selector<2, 1, true>::run<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, 1, 0, -1, 1>, Eigen::Matrix<double, -1, 1, 0, -1, 1> >(Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> > const&, Eigen::Matrix<double, -1, 1, 0, -1, 1> const&, Eigen::Matrix<double, -1, 1, 0, -1, 1>&, Eigen::Matrix<double, -1, 1, 0, -1, 1>::Scalar const&) [44]
+[103]    0.0    0.00    0.00  115200         Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, 1, 0, -1, 1>, -1, 1, true>, 0>::MapBase(double*, long, long) [103]
+-----------------------------------------------
+                0.00    0.00  110592/110592      Element::mk_local_vector() [33]
+[104]    0.0    0.00    0.00  110592         Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1, -1, false>, 0>::MapBase(double*, long, long) [104]
+-----------------------------------------------
+                0.00    0.00   41472/41472       Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double) [4]
+[105]    0.0    0.00    0.00   41472         Eigen::MapBase<Eigen::Block<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> const> const, 1, -1, true>, 0>::MapBase(double const*, long, long) [105]
+-----------------------------------------------
+                0.00    0.00      10/26267       io_data::input_outputs(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [234]
+                0.00    0.00   26257/26267       io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+[106]    0.0    0.00    0.00   26267         void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char const*>(char const*, char const*, std::forward_iterator_tag) [106]
+-----------------------------------------------
+                0.00    0.00    4096/25216       Element::mk_local_matrix_init(unsigned long) [48]
+                0.00    0.00    4096/25216       Element::mk_local_vector() [33]
+                0.00    0.00    4224/25216       Element::mk_local_matrix() [7]
+                0.00    0.00   12800/25216       Element::mk_T(Eigen::Matrix<double, -1, 1, 0, -1, 1>) [24]
+[107]    0.0    0.00    0.00   25216         std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::vector(std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > > const&) [107]
+-----------------------------------------------
+                0.00    0.00       5/17737       io_data::input_outputs(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [234]
+                0.00    0.00     128/17737       Fault::find_neighbour_element(std::vector<Element, std::allocator<Element> >) [5]
+                0.00    0.00   17604/17737       io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+[108]    0.0    0.00    0.00   17737         void std::vector<unsigned long, std::allocator<unsigned long> >::_M_realloc_insert<unsigned long const&>(__gnu_cxx::__normal_iterator<unsigned long*, std::vector<unsigned long, std::allocator<unsigned long> > >, unsigned long const&) [108]
+-----------------------------------------------
+                0.00    0.00   16128/16128       void Eigen::internal::call_dense_assignment_loop<Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Product<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1>, Eigen::internal::assign_op<double, double> >(Eigen::Matrix<double, -1, -1, 0, -1, -1>&, Eigen::Product<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1> const&, Eigen::internal::assign_op<double, double> const&) [68]
+[109]    0.0    0.00    0.00   16128         Eigen::MapBase<Eigen::Block<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> > const, 1, -1, true>, 0>::MapBase(double const*, long, long) [109]
+-----------------------------------------------
+                0.00    0.00       2/13128       Material::Material(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<double, std::allocator<double> >) [148]
+                0.00    0.00      64/13128       Fault::Fault(unsigned long, unsigned long, unsigned long, std::vector<unsigned long, std::allocator<unsigned long> >, std::vector<double, std::allocator<double> >) [142]
+                0.00    0.00    4482/13128       Material::set_init(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<double, std::allocator<double> >) [122]
+                0.00    0.00    8580/13128       Node::Node(unsigned long, std::vector<double, std::allocator<double> >, std::vector<unsigned long, std::allocator<unsigned long> >) [117]
+[110]    0.0    0.00    0.00   13128         std::vector<double, std::allocator<double> >::operator=(std::vector<double, std::allocator<double> > const&) [110]
+-----------------------------------------------
+                0.00    0.00      64/13126       Fault::Fault(unsigned long, unsigned long, unsigned long, std::vector<unsigned long, std::allocator<unsigned long> >, std::vector<double, std::allocator<double> >) [142]
+                0.00    0.00    4482/13126       Element::Element(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, std::vector<unsigned long, std::allocator<unsigned long> >) [21]
+                0.00    0.00    8580/13126       Node::Node(unsigned long, std::vector<double, std::allocator<double> >, std::vector<unsigned long, std::allocator<unsigned long> >) [117]
+[111]    0.0    0.00    0.00   13126         std::vector<unsigned long, std::allocator<unsigned long> >::operator=(std::vector<unsigned long, std::allocator<unsigned long> > const&) [111]
+-----------------------------------------------
+                0.00    0.00   12800/12800       Element::mk_ku_cv() [57]
+[112]    0.0    0.00    0.00   12800         Element::mk_v_hstack() [112]
+-----------------------------------------------
+                0.00    0.00    4096/12416       Element::mk_local_matrix_init(unsigned long) [48]
+                0.00    0.00    4096/12416       Element::mk_local_vector() [33]
+                0.00    0.00    4224/12416       Element::mk_local_matrix() [7]
+[113]    0.0    0.00    0.00   12416         std::vector<double, std::allocator<double> >::vector(std::vector<double, std::allocator<double> > const&) [113]
+-----------------------------------------------
+                0.00    0.00    8964/8964        Element::mk_local_matrix_init(unsigned long) [48]
+[114]    0.0    0.00    0.00    8964         Eigen::PlainObjectBase<Eigen::Matrix<double, -1, 1, 0, -1, 1> >::resize(long, long) [114]
+-----------------------------------------------
+                0.00    0.00       1/8581        Fem::set_output(std::tuple<std::vector<unsigned long, std::allocator<unsigned long> >, std::vector<unsigned long, std::allocator<unsigned long> >, std::vector<unsigned long, std::allocator<unsigned long> > >) [201]
+                0.00    0.00    8580/8581        Fem::_set_initial_condition() [159]
+[115]    0.0    0.00    0.00    8581         Node*& std::vector<Node*, std::allocator<Node*> >::emplace_back<Node*>(Node*&&) [115]
+-----------------------------------------------
+                0.00    0.00    8580/8580        Fem::_set_initial_condition() [159]
+[116]    0.0    0.00    0.00    8580         Node::set_initial_condition() [116]
+-----------------------------------------------
+                0.00    0.00    8580/8580        io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+[117]    0.0    0.00    0.00    8580         Node::Node(unsigned long, std::vector<double, std::allocator<double> >, std::vector<unsigned long, std::allocator<unsigned long> >) [117]
+                0.00    0.00    8580/13126       std::vector<unsigned long, std::allocator<unsigned long> >::operator=(std::vector<unsigned long, std::allocator<unsigned long> > const&) [111]
+                0.00    0.00    8580/13128       std::vector<double, std::allocator<double> >::operator=(std::vector<double, std::allocator<double> > const&) [110]
+-----------------------------------------------
+                0.00    0.00    4096/8320        Element::mk_local_vector() [33]
+                0.00    0.00    4224/8320        Element::mk_local_matrix() [7]
+[118]    0.0    0.00    0.00    8320         std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > >::vector(std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > > const&) [118]
+-----------------------------------------------
+                0.00    0.00    6400/6400        Fem::update_time_dynamic_fault() [1]
+[119]    0.0    0.00    0.00    6400         Fault::update_rupture(std::vector<Element, std::allocator<Element> >&) [119]
+-----------------------------------------------
+                0.00    0.00       2/4484        Material::Material(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<double, std::allocator<double> >) [148]
+                0.00    0.00    4482/4484        Element::set_material(Material*) [71]
+[120]    0.0    0.00    0.00    4484         Material::set_param() [120]
+-----------------------------------------------
+                0.00    0.00    4482/4482        Fem::_set_mesh() [72]
+[121]    0.0    0.00    0.00    4482         Element::set_nodes(std::vector<Node*, std::allocator<Node*> >) [121]
+-----------------------------------------------
+                0.00    0.00    4482/4482        Element::set_material(Material*) [71]
+[122]    0.0    0.00    0.00    4482         Material::set_init(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<double, std::allocator<double> >) [122]
+                0.00    0.00    4482/13128       std::vector<double, std::allocator<double> >::operator=(std::vector<double, std::allocator<double> > const&) [110]
+-----------------------------------------------
+                0.00    0.00    4482/4482        Element::Element(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, std::vector<unsigned long, std::allocator<unsigned long> >) [21]
+[123]    0.0    0.00    0.00    4482         Material::Material() [123]
+-----------------------------------------------
+                0.00    0.00    4482/4482        Fem::_set_mesh() [72]
+[124]    0.0    0.00    0.00    4482         std::vector<Node*, std::allocator<Node*> >::operator=(std::vector<Node*, std::allocator<Node*> > const&) [124]
+-----------------------------------------------
+                0.00    0.00    4482/4482        Fem::_set_mesh() [72]
+[125]    0.0    0.00    0.00    4482         Element*& std::vector<Element*, std::allocator<Element*> >::emplace_back<Element*>(Element*&&) [125]
+                0.00    0.00      38/38          void std::vector<Element*, std::allocator<Element*> >::_M_realloc_insert<Element*>(__gnu_cxx::__normal_iterator<Element**, std::vector<Element*, std::allocator<Element*> > >, Element*&&) [143]
+-----------------------------------------------
+                0.00    0.00    4224/4224        Element::mk_local_matrix() [7]
+[126]    0.0    0.00    0.00    4224         std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > >::~vector() [126]
+-----------------------------------------------
+                0.00    0.00    4224/4224        Element::mk_local_matrix() [7]
+[127]    0.0    0.00    0.00    4224         std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::~vector() [127]
+-----------------------------------------------
+                0.00    0.00    4096/4096        Element::mk_local_matrix() [7]
+[128]    0.0    0.00    0.00    4096         Material::mk_d(unsigned long) [128]
+-----------------------------------------------
+                0.00    0.00     520/520         Line_1d_2Node::Line_1d_2Node() [76]
+[129]    0.0    0.00    0.00     520         Line_1d_2Node::shape_function_dn(double, double, double) [129]
+-----------------------------------------------
+                0.00    0.00     390/390         Line_1d_2Node::Line_1d_2Node() [76]
+[130]    0.0    0.00    0.00     390         Line_1d_2Node::shape_function_n(double, double, double) [130]
+-----------------------------------------------
+                0.00    0.00     256/256         Fault::set_spring_kv(std::vector<Element, std::allocator<Element> >&) [69]
+[131]    0.0    0.00    0.00     256         Material::mk_d_slider() [131]
+-----------------------------------------------
+                0.00    0.00     256/256         Element::mk_local_matrix_init(unsigned long) [48]
+[132]    0.0    0.00    0.00     256         Material::mk_imp(unsigned long) [132]
+-----------------------------------------------
+                0.00    0.00     197/197         io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+[133]    0.0    0.00    0.00     197         void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&) [133]
+-----------------------------------------------
+                0.00    0.00       7/192         void std::vector<Fault, std::allocator<Fault> >::_M_realloc_insert<Fault const&>(__gnu_cxx::__normal_iterator<Fault*, std::vector<Fault, std::allocator<Fault> > >, Fault const&) [146]
+                0.00    0.00      64/192         std::vector<Fault, std::allocator<Fault> >::operator=(std::vector<Fault, std::allocator<Fault> > const&) [162]
+                0.00    0.00     121/192         io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+[134]    0.0    0.00    0.00     192         Fault::Fault(Fault const&) [134]
+-----------------------------------------------
+                0.00    0.00     192/192         Fault::set_spring_kvkh(std::vector<Element, std::allocator<Element> >&) [70]
+[135]    0.0    0.00    0.00     192         Material::mk_d_spring() [135]
+-----------------------------------------------
+                0.00    0.00     128/128         Fault::find_neighbour_element(std::vector<Element, std::allocator<Element> >) [5]
+[136]    0.0    0.00    0.00     128         void std::vector<Eigen::Matrix<double, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<double, 3, 1, 0, 3, 1> > >::_M_realloc_insert<Eigen::Matrix<double, 3, 1, 0, 3, 1> const&>(__gnu_cxx::__normal_iterator<Eigen::Matrix<double, 3, 1, 0, 3, 1>*, std::vector<Eigen::Matrix<double, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<double, 3, 1, 0, 3, 1> > > >, Eigen::Matrix<double, 3, 1, 0, 3, 1> const&) [136]
+-----------------------------------------------
+                0.00    0.00     128/128         Fault::find_neighbour_element(std::vector<Element, std::allocator<Element> >) [5]
+[137]    0.0    0.00    0.00     128         void std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::_M_realloc_insert<Eigen::Matrix<double, -1, -1, 0, -1, -1> const&>(__gnu_cxx::__normal_iterator<Eigen::Matrix<double, -1, -1, 0, -1, -1>*, std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > > >, Eigen::Matrix<double, -1, -1, 0, -1, -1> const&) [137]
+-----------------------------------------------
+                0.00    0.00     100/100         Fem::update_time_dynamic_fault() [1]
+[138]    0.0    0.00    0.00     100         Fem::_update_time_set_free_nodes() [138]
+-----------------------------------------------
+                0.00    0.00     100/100         Fem::update_time_dynamic_fault() [1]
+[139]    0.0    0.00    0.00     100         Fem::_update_time_set_connected_elements() [139]
+-----------------------------------------------
+                0.00    0.00      64/64          Fem::set_initial_fault() [2]
+[140]    0.0    0.00    0.00      64         Fault::set_initial_condition1(std::vector<Element, std::allocator<Element> >&) [140]
+-----------------------------------------------
+                0.00    0.00      64/64          Fault::Fault(unsigned long, unsigned long, unsigned long, std::vector<unsigned long, std::allocator<unsigned long> >, std::vector<double, std::allocator<double> >) [142]
+[141]    0.0    0.00    0.00      64         Fault::set_param() [141]
+-----------------------------------------------
+                0.00    0.00      64/64          io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+[142]    0.0    0.00    0.00      64         Fault::Fault(unsigned long, unsigned long, unsigned long, std::vector<unsigned long, std::allocator<unsigned long> >, std::vector<double, std::allocator<double> >) [142]
+                0.00    0.00      64/13128       std::vector<double, std::allocator<double> >::operator=(std::vector<double, std::allocator<double> > const&) [110]
+                0.00    0.00      64/13126       std::vector<unsigned long, std::allocator<unsigned long> >::operator=(std::vector<unsigned long, std::allocator<unsigned long> > const&) [111]
+                0.00    0.00      64/64          Fault::set_param() [141]
+-----------------------------------------------
+                0.00    0.00      38/38          Element*& std::vector<Element*, std::allocator<Element*> >::emplace_back<Element*>(Element*&&) [125]
+[143]    0.0    0.00    0.00      38         void std::vector<Element*, std::allocator<Element*> >::_M_realloc_insert<Element*>(__gnu_cxx::__normal_iterator<Element**, std::vector<Element*, std::allocator<Element*> > >, Element*&&) [143]
+-----------------------------------------------
+                0.00    0.00      15/15          io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+[144]    0.0    0.00    0.00      15         void std::vector<Node, std::allocator<Node> >::_M_realloc_insert<Node const&>(__gnu_cxx::__normal_iterator<Node*, std::vector<Node, std::allocator<Node> > >, Node const&) [144]
+-----------------------------------------------
+                0.00    0.00      14/14          Fem::set_initial_fault() [2]
+[145]    0.0    0.00    0.00      14         void std::vector<Element*, std::allocator<Element*> >::_M_realloc_insert<Element* const&>(__gnu_cxx::__normal_iterator<Element**, std::vector<Element*, std::allocator<Element*> > >, Element* const&) [145]
+-----------------------------------------------
+                0.00    0.00       7/7           io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+[146]    0.0    0.00    0.00       7         void std::vector<Fault, std::allocator<Fault> >::_M_realloc_insert<Fault const&>(__gnu_cxx::__normal_iterator<Fault*, std::vector<Fault, std::allocator<Fault> > >, Fault const&) [146]
+                0.00    0.00       7/192         Fault::Fault(Fault const&) [134]
+-----------------------------------------------
+                0.00    0.00       4/4           Fem::set_output(std::tuple<std::vector<unsigned long, std::allocator<unsigned long> >, std::vector<unsigned long, std::allocator<unsigned long> >, std::vector<unsigned long, std::allocator<unsigned long> > >) [201]
+[147]    0.0    0.00    0.00       4         void std::vector<Fault*, std::allocator<Fault*> >::_M_realloc_insert<Fault*>(__gnu_cxx::__normal_iterator<Fault**, std::vector<Fault*, std::allocator<Fault*> > >, Fault*&&) [147]
+-----------------------------------------------
+                0.00    0.00       2/2           io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [51]
+[148]    0.0    0.00    0.00       2         Material::Material(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<double, std::allocator<double> >) [148]
+                0.00    0.00       2/13128       std::vector<double, std::allocator<double> >::operator=(std::vector<double, std::allocator<double> > const&) [110]
+                0.00    0.00       2/4484        Material::set_param() [120]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [254]
+[149]    0.0    0.00    0.00       1         _GLOBAL__sub_I__Z10set_sourceSt6vectorI7ElementSaIS0_EEddddddddmm [149]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [254]
+[150]    0.0    0.00    0.00       1         _GLOBAL__sub_I__Z17set_element_styleNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE [150]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [254]
+[151]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN10input_wave8linspaceEddm [151]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [254]
+[152]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN3FemC2EmSt6vectorI4NodeSaIS1_EES0_I7ElementSaIS4_EES0_I5FaultSaIS7_EES0_I8MaterialSaISA_EE [152]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [254]
+[153]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN4NodeC2Ev [153]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [254]
+[154]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN5FaultC2EmmmSt6vectorImSaImEES0_IdSaIdEE [154]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [254]
+[155]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN7ElementC2EmNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEiSt6vectorImSaImEE [155]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [254]
+[156]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN7io_data10input_meshENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE [156]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [254]
+[157]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN8MaterialC2Ev [157]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [254]
+[158]    0.0    0.00    0.00       1         _GLOBAL__sub_I_main [158]
+-----------------------------------------------
+                0.00    0.00       1/1           Fem::set_init() [73]
+[159]    0.0    0.00    0.00       1         Fem::_set_initial_condition() [159]
+                0.00    0.00    8580/8580        Node::set_initial_condition() [116]
+                0.00    0.00    8580/8581        Node*& std::vector<Node*, std::allocator<Node*> >::emplace_back<Node*>(Node*&&) [115]
+-----------------------------------------------
+                0.00    0.00       1/1           void Eigen::internal::evaluateProductBlockingSizesHeuristic<double, double, 1, long>(long&, long&, long&, long) [95]
+[160]    0.0    0.00    0.00       1         Eigen::internal::queryCacheSizes(int&, int&, int&) [160]
+-----------------------------------------------
+                0.00    0.00       1/1           Fem::Fem(unsigned long, std::vector<Node, std::allocator<Node> >, std::vector<Element, std::allocator<Element> >, std::vector<Fault, std::allocator<Fault> >, std::vector<Material, std::allocator<Material> >) [66]
+[161]    0.0    0.00    0.00       1         std::vector<Node, std::allocator<Node> >::operator=(std::vector<Node, std::allocator<Node> > const&) [161]
+-----------------------------------------------
+                0.00    0.00       1/1           Fem::Fem(unsigned long, std::vector<Node, std::allocator<Node> >, std::vector<Element, std::allocator<Element> >, std::vector<Fault, std::allocator<Fault> >, std::vector<Material, std::allocator<Material> >) [66]
+[162]    0.0    0.00    0.00       1         std::vector<Fault, std::allocator<Fault> >::operator=(std::vector<Fault, std::allocator<Fault> > const&) [162]
+                0.00    0.00      64/192         Fault::Fault(Fault const&) [134]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+ [149] _GLOBAL__sub_I__Z10set_sourceSt6vectorI7ElementSaIS0_EEddddddddmm [34] Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1> const, -1, 1, true>, 0>::MapBase(double const*, long, long) [33] Element::mk_local_vector()
+ [150] _GLOBAL__sub_I__Z17set_element_styleNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE [105] Eigen::MapBase<Eigen::Block<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> const> const, 1, -1, true>, 0>::MapBase(double const*, long, long) [48] Element::mk_local_matrix_init(unsigned long)
+ [151] _GLOBAL__sub_I__ZN10input_wave8linspaceEddm [109] Eigen::MapBase<Eigen::Block<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> > const, 1, -1, true>, 0>::MapBase(double const*, long, long) [24] Element::mk_T(Eigen::Matrix<double, -1, 1, 0, -1, 1>)
+ [152] _GLOBAL__sub_I__ZN3FemC2EmSt6vectorI4NodeSaIS1_EES0_I7ElementSaIS4_EES0_I5FaultSaIS7_EES0_I8MaterialSaISA_EE [92] Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, 0>::MapBase(double*, long, long) [15] Element::mk_ku()
+ [153] _GLOBAL__sub_I__ZN4NodeC2Ev [89] Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, 0>::MapBase(double*, long, long) [65] Element::set_xn()
+ [154] _GLOBAL__sub_I__ZN5FaultC2EmmmSt6vectorImSaImEES0_IdSaIdEE [90] Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>, -1, 1, true>, 0>::MapBase(double*, long, long) [57] Element::mk_ku_cv()
+ [155] _GLOBAL__sub_I__ZN7ElementC2EmNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEiSt6vectorImSaImEE [54] Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 0>::MapBase(double*, long, long) [121] Element::set_nodes(std::vector<Node*, std::allocator<Node*> >)
+ [156] _GLOBAL__sub_I__ZN7io_data10input_meshENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE [31] Eigen::MapBase<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, 0>::MapBase(double*, long, long) [58] Element::set_style()
+ [157] _GLOBAL__sub_I__ZN8MaterialC2Ev [103] Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, 1, 0, -1, 1>, -1, 1, true>, 0>::MapBase(double*, long, long) [50] Element::Element(Element const&)
+ [158] _GLOBAL__sub_I_main   [104] Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1, -1, false>, 0>::MapBase(double*, long, long) [21] Element::Element(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, std::vector<unsigned long, std::allocator<unsigned long> >)
+  [49] mk_inv_jacobi(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [99] Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1>, -1, 1, true>, 0>::MapBase(double*, long, long) [51] io_data::input_mesh(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)
+  [96] set_gauss_points(unsigned long, Eigen::Matrix<double, -1, 1, 0, -1, 1>&, Eigen::Matrix<double, -1, 1, 0, -1, 1>&) [14] Eigen::internal::gebp_kernel<double, double, long, Eigen::internal::blas_data_mapper<double, long, 0, 0>, 4, 4, false, false>::operator()(Eigen::internal::blas_data_mapper<double, long, 0, 0> const&, double const*, double const*, long, long, long, double, long, long, long, long) [131] Material::mk_d_slider()
+   [8] set_element_style(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [43] Eigen::internal::gemm_pack_lhs<double, long, Eigen::internal::const_blas_data_mapper<double, long, 0>, 4, 2, 0, false, false>::operator()(double*, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, long, long, long, long) [135] Material::mk_d_spring()
+  [47] mk_b(unsigned long, unsigned long, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [32] Eigen::internal::gemm_pack_lhs<double, long, Eigen::internal::const_blas_data_mapper<double, long, 1>, 4, 2, 1, false, false>::operator()(double*, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, long, long, long, long) [128] Material::mk_d(unsigned long)
+  [11] mk_k(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [94] Eigen::internal::gemm_pack_rhs<double, long, Eigen::internal::const_blas_data_mapper<double, long, 0>, 4, 0, false, false>::operator()(double*, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, long, long, long, long) [132] Material::mk_imp(unsigned long)
+  [16] mk_m(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [91] Eigen::internal::aligned_malloc(unsigned long) [122] Material::set_init(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<double, std::allocator<double> >)
+  [28] mk_n(unsigned long, unsigned long, Eigen::Matrix<double, -1, 1, 0, -1, 1>) [19] Eigen::internal::partial_lu_impl<double, 0, int>::blocked_lu(long, long, double*, long, int*, int&, long) [120] Material::set_param()
+  [38] mk_q(unsigned long, Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [20] Eigen::internal::partial_lu_impl<double, 0, int>::unblocked_lu(Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>&, int*, int&) [148] Material::Material(unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<double, std::allocator<double> >)
+  [35] mk_dnj(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [160] Eigen::internal::queryCacheSizes(int&, int&, int&) [123] Material::Material()
+  [62] mk_nqn(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, 3, 3, 0, 3, 3>, Eigen::Matrix<double, 3, 3, 0, 3, 3>) [44] void Eigen::internal::gemv_dense_selector<2, 1, true>::run<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, 1, 0, -1, 1>, Eigen::Matrix<double, -1, 1, 0, -1, 1> >(Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> > const&, Eigen::Matrix<double, -1, 1, 0, -1, 1> const&, Eigen::Matrix<double, -1, 1, 0, -1, 1>&, Eigen::Matrix<double, -1, 1, 0, -1, 1>::Scalar const&) [61] void Eigen::TriangularViewImpl<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>, 5u, Eigen::Dense>::solveInPlace<1, Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false> >(Eigen::MatrixBase<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false> > const&) const
+  [26] mk_jacobi(Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Matrix<double, -1, -1, 0, -1, -1>) [52] void Eigen::internal::call_dense_assignment_loop<Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::internal::assign_op<double, double> >(Eigen::Matrix<double, -1, -1, 0, -1, -1>&, Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, Eigen::Matrix<double, -1, -1, 0, -1, -1> > const&, Eigen::internal::assign_op<double, double> const&) [144] void std::vector<Node, std::allocator<Node> >::_M_realloc_insert<Node const&>(__gnu_cxx::__normal_iterator<Node*, std::vector<Node, std::allocator<Node> > >, Node const&)
+  [42] ElementStyle::~ElementStyle() [68] void Eigen::internal::call_dense_assignment_loop<Eigen::Matrix<double, -1, -1, 0, -1, -1>, Eigen::Product<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1>, Eigen::internal::assign_op<double, double> >(Eigen::Matrix<double, -1, -1, 0, -1, -1>&, Eigen::Product<Eigen::Transpose<Eigen::Matrix<double, -1, -1, 0, -1, -1> >, Eigen::Matrix<double, -1, -1, 0, -1, -1>, 1> const&, Eigen::internal::assign_op<double, double> const&) [161] std::vector<Node, std::allocator<Node> >::operator=(std::vector<Node, std::allocator<Node> > const&)
+ [130] Line_1d_2Node::shape_function_n(double, double, double) [41] void Eigen::internal::outer_product_selector_run<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, Eigen::internal::generic_product_impl<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, Eigen::DenseShape, Eigen::DenseShape, 5>::sub>(Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, -1, false>&, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false> const&, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false> const&, Eigen::internal::generic_product_impl<Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, -1, 1, true>, -1, 1, false>, Eigen::Block<Eigen::Block<Eigen::Block<Eigen::Map<Eigen::Matrix<double, -1, -1, 0, -1, -1>, 0, Eigen::Stride<0, 0> >, -1, -1, false>, 1, -1, false>, 1, -1, false>, Eigen::DenseShape, Eigen::DenseShape, 5>::sub const&, Eigen::internal::false_type const&) [146] void std::vector<Fault, std::allocator<Fault> >::_M_realloc_insert<Fault const&>(__gnu_cxx::__normal_iterator<Fault*, std::vector<Fault, std::allocator<Fault> > >, Fault const&)
+ [129] Line_1d_2Node::shape_function_dn(double, double, double) [23] Eigen::internal::general_matrix_matrix_product<long, double, 0, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*) [162] std::vector<Fault, std::allocator<Fault> >::operator=(std::vector<Fault, std::allocator<Fault> > const&)
+  [76] Line_1d_2Node::Line_1d_2Node() [17] Eigen::internal::general_matrix_matrix_product<long, double, 1, false, double, 0, false, 0>::run(long, long, long, double const*, long, double const*, long, double*, long, double, Eigen::internal::level3_blocking<double, double>&, Eigen::internal::GemmParallelInfo<long>*) [79] void std::vector<Element, std::allocator<Element> >::_M_realloc_insert<Element const&>(__gnu_cxx::__normal_iterator<Element*, std::vector<Element, std::allocator<Element> > >, Element const&)
+  [56] Line_1d_3Node::shape_function_dn(double, double, double) [10] Eigen::internal::general_matrix_vector_product<long, double, Eigen::internal::const_blas_data_mapper<double, long, 0>, 0, false, double, Eigen::internal::const_blas_data_mapper<double, long, 1>, false, 0>::run(long, long, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, double*, long, double) [67] std::vector<Element, std::allocator<Element> >::operator=(std::vector<Element, std::allocator<Element> > const&)
+  [63] Fault_2d_4Node::~Fault_2d_4Node() [45] Eigen::internal::general_matrix_vector_product<long, double, Eigen::internal::const_blas_data_mapper<double, long, 1>, 1, false, double, Eigen::internal::const_blas_data_mapper<double, long, 0>, false, 0>::run(long, long, Eigen::internal::const_blas_data_mapper<double, long, 1> const&, Eigen::internal::const_blas_data_mapper<double, long, 0> const&, double*, long, double) [80] void std::vector<Material, std::allocator<Material> >::_M_realloc_insert<Material const&>(__gnu_cxx::__normal_iterator<Material*, std::vector<Material, std::allocator<Material> > >, Material const&)
+ [102] Solid_2d_4Node::shape_function_n(double, double, double) [95] void Eigen::internal::evaluateProductBlockingSizesHeuristic<double, double, 1, long>(long&, long&, long&, long) [81] std::vector<Material, std::allocator<Material> >::operator=(std::vector<Material, std::allocator<Material> > const&)
+ [100] Solid_2d_4Node::shape_function_dn(double, double, double) [27] Fault::calc_traction(std::vector<Element, std::allocator<Element> >) [136] void std::vector<Eigen::Matrix<double, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<double, 3, 1, 0, 3, 1> > >::_M_realloc_insert<Eigen::Matrix<double, 3, 1, 0, 3, 1> const&>(__gnu_cxx::__normal_iterator<Eigen::Matrix<double, 3, 1, 0, 3, 1>*, std::vector<Eigen::Matrix<double, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<double, 3, 1, 0, 3, 1> > > >, Eigen::Matrix<double, 3, 1, 0, 3, 1> const&)
+  [64] Solid_2d_4Node::Solid_2d_4Node() [69] Fault::set_spring_kv(std::vector<Element, std::allocator<Element> >&) [53] std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > >::_M_default_append(unsigned long)
+  [29] Solid_3d_8Node::shape_function_n(double, double, double) [119] Fault::update_rupture(std::vector<Element, std::allocator<Element> >&) [118] std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > >::vector(std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > > const&)
+  [12] Solid_3d_8Node::shape_function_dn(double, double, double) [70] Fault::set_spring_kvkh(std::vector<Element, std::allocator<Element> >&) [126] std::vector<Eigen::Matrix<double, -1, 1, 0, -1, 1>, std::allocator<Eigen::Matrix<double, -1, 1, 0, -1, 1> > >::~vector()
+   [9] Solid_3d_8Node::Solid_3d_8Node() [59] Fault::update_friction(double) [97] std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::_M_default_append(unsigned long)
+  [46] Solid_3d_8Node::~Solid_3d_8Node() [60] Fault::calc_average_slip(double) [137] void std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::_M_realloc_insert<Eigen::Matrix<double, -1, -1, 0, -1, -1> const&>(__gnu_cxx::__normal_iterator<Eigen::Matrix<double, -1, -1, 0, -1, -1>*, std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > > >, Eigen::Matrix<double, -1, -1, 0, -1, -1> const&)
+  [74] Visco_2d_4Node::~Visco_2d_4Node() [25] Fault::update_time_fault() [107] std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::vector(std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > > const&)
+ [159] Fem::_set_initial_condition() [36] Fault::stress_to_traction(Eigen::Matrix<double, -1, 1, 0, -1, 1>, Eigen::Matrix<double, -1, 1, 0, -1, 1>) [127] std::vector<Eigen::Matrix<double, -1, -1, 0, -1, -1>, std::allocator<Eigen::Matrix<double, -1, -1, 0, -1, -1> > >::~vector()
+   [1] Fem::update_time_dynamic_fault() [5] Fault::find_neighbour_element(std::vector<Element, std::allocator<Element> >) [115] Node*& std::vector<Node*, std::allocator<Node*> >::emplace_back<Node*>(Node*&&)
+ [138] Fem::_update_time_set_free_nodes() [3] Fault::set_initial_condition0(std::vector<Element, std::allocator<Element> >&) [124] std::vector<Node*, std::allocator<Node*> >::operator=(std::vector<Node*, std::allocator<Node*> > const&)
+  [55] Fem::_update_time_set_fixed_nodes() [140] Fault::set_initial_condition1(std::vector<Element, std::allocator<Element> >&) [147] void std::vector<Fault*, std::allocator<Fault*> >::_M_realloc_insert<Fault*>(__gnu_cxx::__normal_iterator<Fault**, std::vector<Fault*, std::allocator<Fault*> > >, Fault*&&)
+ [139] Fem::_update_time_set_connected_elements() [78] Fault::set_R() [125] Element*& std::vector<Element*, std::allocator<Element*> >::emplace_back<Element*>(Element*&&)
+  [72] Fem::_set_mesh()      [141] Fault::set_param()    [145] void std::vector<Element*, std::allocator<Element*> >::_M_realloc_insert<Element* const&>(__gnu_cxx::__normal_iterator<Element**, std::vector<Element*, std::allocator<Element*> > >, Element* const&)
+  [66] Fem::Fem(unsigned long, std::vector<Node, std::allocator<Node> >, std::vector<Element, std::allocator<Element> >, std::vector<Fault, std::allocator<Fault> >, std::vector<Material, std::allocator<Material> >) [134] Fault::Fault(Fault const&) [143] void std::vector<Element*, std::allocator<Element*> >::_M_realloc_insert<Element*>(__gnu_cxx::__normal_iterator<Element**, std::vector<Element*, std::allocator<Element*> > >, Element*&&)
+ [116] Node::set_initial_condition() [142] Fault::Fault(unsigned long, unsigned long, unsigned long, std::vector<unsigned long, std::allocator<unsigned long> >, std::vector<double, std::allocator<double> >) [98] std::vector<double, std::allocator<double> >::_M_default_append(unsigned long)
+ [117] Node::Node(unsigned long, std::vector<double, std::allocator<double> >, std::vector<unsigned long, std::allocator<unsigned long> >) [75] Spring::~Spring() [133] void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&)
+  [40] Eigen::DenseStorage<double, -1, -1, -1, 0>::DenseStorage(Eigen::DenseStorage<double, -1, -1, -1, 0> const&) [77] Connect::Connect() [113] std::vector<double, std::allocator<double> >::vector(std::vector<double, std::allocator<double> > const&)
+  [18] Eigen::PartialPivLU<Eigen::Matrix<double, 3, 3, 0, 3, 3> >::compute() [30] Element::mk_u_hstack() [110] std::vector<double, std::allocator<double> >::operator=(std::vector<double, std::allocator<double> > const&)
+  [93] Eigen::PartialPivLU<Eigen::Matrix<double, 3, 3, 0, 3, 3> >::PartialPivLU<Eigen::Matrix<double, 3, 3, 0, 3, 3> >(Eigen::EigenBase<Eigen::Matrix<double, 3, 3, 0, 3, 3> > const&) [112] Element::mk_v_hstack() [108] void std::vector<unsigned long, std::allocator<unsigned long> >::_M_realloc_insert<unsigned long const&>(__gnu_cxx::__normal_iterator<unsigned long*, std::vector<unsigned long, std::allocator<unsigned long> > >, unsigned long const&)
+ [114] Eigen::PlainObjectBase<Eigen::Matrix<double, -1, 1, 0, -1, 1> >::resize(long, long) [4] Element::check_inside(Eigen::Matrix<double, 3, 1, 0, 3, 1>, double) [111] std::vector<unsigned long, std::allocator<unsigned long> >::operator=(std::vector<unsigned long, std::allocator<unsigned long> > const&)
+ [101] Eigen::PlainObjectBase<Eigen::Matrix<double, -1, 3, 0, -1, 3> >::resize(long, long) [71] Element::set_material(Material*) [106] void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char const*>(char const*, char const*, std::forward_iterator_tag)
+  [22] Eigen::PlainObjectBase<Eigen::Matrix<double, -1, -1, 0, -1, -1> >::resize(long, long) [37] Element::calc_stress_xi(Eigen::Matrix<double, -1, -1, 0, -1, -1>) [13] void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag)
+  [39] Eigen::MapBase<Eigen::Block<Eigen::Matrix<double, -1, -1, 0, -1, -1> const, 1, -1, false>, 0>::MapBase(double const*, long, long) [7] Element::mk_local_matrix()
