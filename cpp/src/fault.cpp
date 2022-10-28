@@ -36,67 +36,63 @@ void Fault::set_param() {
 // ------------------------------------------------------------------- //
 // ------------------------------------------------------------------- //
 void Fault::set_initial_condition0(std::vector<Element>& elements) {
-  ElementStyle* estyle_p;
-  EV n;
+  ElementStyle *estyle_pp, *estyle_mp;
+  EV np, nm;
 
   this->pelement_p = &elements[this->pelem_id];
   this->melement_p = &elements[this->melem_id];
 
-  estyle_p = set_element_style(this->pelement_p->style);
-  n = estyle_p->shape_function_n(0.0,0.0,0.0);
-  this->Np = mk_n(this->pelement_p->dof,this->pelement_p->nnode,n);
-  this->NTp = this->pelement_p->mk_T_init();
+  estyle_pp = set_element_style(this->pelement_p->style);
+  estyle_mp = set_element_style(this->melement_p->style);
+  np = estyle_pp->shape_function_n(0.0,0.0,0.0);
+  nm = estyle_mp->shape_function_n(0.0,0.0,0.0);
 
-  estyle_p = set_element_style(this->melement_p->style);
-  n = estyle_p->shape_function_n(0.0,0.0,0.0);
-  this->Nm = mk_n(this->melement_p->dof,this->melement_p->nnode,n);
+  this->Np = mk_n(this->pelement_p->dof,this->pelement_p->nnode,np);
+  this->Nm = mk_n(this->melement_p->dof,this->melement_p->nnode,nm);
+  this->NTp = this->pelement_p->mk_T_init();
   this->NTm = this->melement_p->mk_T_init();
+
+  this->xc = this->pelement_p->xnT*np;
+  this->rupture_time = 9999.9;
 
   this->find_neighbour_element(elements);
   this->set_R();
   this->slip = 0.0;
 
   this->traction_force = 0.0;
-  // this->rupture = true;
-  // this->set_spring_kv(elements);
-  this->rupture = false;
-  this->set_spring_kvkh(elements);
-
+  this->rupture = true;
+  this->set_spring_kv(elements);
   this->set_spring_c(elements);
 
-  delete estyle_p;
+  delete estyle_pp;
+  delete estyle_mp;
 }
 
 void Fault::set_initial_condition1(std::vector<Element>& elements) {
   if (this->p0 > this->tp) {
     this->traction_force = this->tp - this->p0;
-    this->rupture = true;
-    this->set_spring_kv(elements);
+    this->rupture_time = 0.0;
   } else {
-    // this->rupture = false;
-    // this->set_spring_kvkh(elements);
+    this->rupture = false;
+    this->set_spring_kvkh(elements);
   }
 }
 
 // ------------------------------------------------------------------- //
 void Fault::find_neighbour_element(std::vector<Element>& elements) {
-  ElementStyle* estyle_p = set_element_style(this->pelement_p->style);
-  EV n = estyle_p->shape_function_n(0.0,0.0,0.0);
-  EV3 xc = this->pelement_p->xnT*n;
+  ElementStyle* estyle_p;
   EM dn, DB;
 
   for (auto& element : elements) {
     if (element.style.find("3d") != std::string::npos) {
-      auto [is_inside, xi] = element.check_inside(xc,0.01);
+      auto [is_inside, xi] = element.check_inside(this->xc,0.01);
       if (is_inside) {
         this->neighbour_elements_id.push_back(element.id);
 
-        ElementStyle* estyle_p1 = set_element_style(element.style);
-        dn = estyle_p1->shape_function_dn(xi(0),xi(1),xi(2));
+        estyle_p = set_element_style(element.style);
+        dn = estyle_p->shape_function_dn(xi(0),xi(1),xi(2));
         DB = element.calc_stress_xi_init(dn);
         this->neighbour_elements_DB.push_back(DB);
-
-        delete estyle_p1;
       }
     }
   }
@@ -180,13 +176,28 @@ void Fault::calc_traction() {
 }
 
 // ------------------------------------------------------------------- //
-void Fault::update_rupture(std::vector<Element>& elements) {
+bool Fault::update_rupture(const double tim) {
   if (!this->rupture) {
     double t = this->traction + this->p0;
     if (t > this->tp) {
       this->rupture = true;
-      this->set_spring_kv(elements);
+      this->rupture_time = tim;
+      return true;
     }
+  }
+  return false;
+}
+
+// ------------------------------------------------------------------- //
+void Fault::update_spring0(std::vector<Element>& elements) {
+  if (this->rupture) {
+      this->set_spring_kv(elements);
+  }
+}
+
+void Fault::update_spring1(std::vector<Element>& elements) {
+  if (!this->rupture) {
+      this->set_spring_kvkh(elements);
   }
 }
 
@@ -227,7 +238,13 @@ void Fault::set_spring_kvkh(std::vector<Element>& elements) {
 
 void Fault::set_spring_c(std::vector<Element>& elements) {
   for (auto& id : this->spring_id) {
-    EM C = elements[id].K * 1.e-5;        // reduce oscillation
+    EM D = elements[id].material.mk_d_spring();
+    EM R_spring = EM::Zero(6,6);
+
+    R_spring.block(0,0,3,3) = this->R;
+    R_spring.block(3,3,3,3) = this->R;
+
+    EM C = R_spring.transpose() * D * R_spring * 1.e-6;        // reduce oscillation
     elements[id].C_diag = C.diagonal();
     elements[id].C_off_diag = elements[id].C_diag.asDiagonal();
     elements[id].C_off_diag = C - elements[id].C_off_diag;

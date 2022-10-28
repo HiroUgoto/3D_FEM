@@ -21,7 +21,8 @@ class Fault {
     EM Np, Nm;
     EM NTp, NTm;
 
-    double slip, sliprate, traction, traction_force;
+    EV3 xc;
+    double slip, sliprate, traction, traction_force, rupture_time;
     bool rupture;
 
     Fault (size_t id, size_t pelem_id, size_t melem_id, std::vector<size_t> spring_id, std::vector<double> param);
@@ -46,7 +47,9 @@ class Fault {
 
   public:
     void calc_traction();
-    void update_rupture(std::vector<Element>& elements);
+    bool update_rupture(const double tim);
+    void update_spring0(std::vector<Element>& elements);
+    void update_spring1(std::vector<Element>& elements);
 
   private:
     EV stress_to_traction(const EV& stress, const EV& n);

@@ -256,7 +256,7 @@ void Fem::_update_time_source(const std::vector<Source> sources, const double sl
 }
 
 // ------------------------------------------------------------------- //
-void Fem::update_time_dynamic_fault() {
+void Fem::update_time_dynamic_fault(const double tim) {
   for (auto& node : this->nodes) {
     node.force = EV::Zero(this->dof);
   }
@@ -279,17 +279,36 @@ void Fem::update_time_dynamic_fault() {
   this->_update_time_set_fixed_nodes();
   this->_update_time_set_connected_elements();
 
-  for (auto& fault : this->faults) {
-    fault.update_friction(this->dt);
-    fault.calc_traction();
-    fault.update_rupture(this->elements);
-  }
+  this->_update_time_fault(tim);
 
   for (auto& element_p : this->output_elements_p) {
     element_p->calc_stress();
   }
-
 }
+
+void Fem::_update_time_fault(const double tim) {
+  bool is_rupture_propagation = false;
+  bool isr;
+
+  // std::cout << "---" << std::endl;
+  for (auto& fault : this->faults) {
+    fault.update_friction(this->dt);
+    fault.calc_traction();
+    isr = fault.update_rupture(tim);
+    is_rupture_propagation = is_rupture_propagation || isr;
+    // std::cout << fault.id << " " << fault.rupture << " " << fault.traction + fault.p0 << std::endl;
+  }
+
+  if (is_rupture_propagation) {
+    for (auto& fault : this->faults) {
+      fault.update_spring0(this->elements);
+    }
+    for (auto& fault : this->faults) {
+      fault.update_spring1(this->elements);
+    }
+  }
+}
+
 
 // ------------------------------------------------------------------- //
 // ------------------------------------------------------------------- //

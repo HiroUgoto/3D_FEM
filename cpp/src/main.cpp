@@ -29,7 +29,7 @@ int main() {
 
   // ----- Define source ----- //
   size_t fsamp = 2500;
-  double duration = 4.0;
+  double duration = 2.0;
 
   auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
   size_t ntim = tim.size();
@@ -50,7 +50,7 @@ int main() {
 
   // ----- time iteration ----- //
   for (size_t it = 0 ; it < ntim ; it++) {
-    fem.update_time_dynamic_fault();
+    fem.update_time_dynamic_fault(tim(it));
 
     for (size_t i = 0 ; i < fem.output_nnode ; i++) {
       Node* node_p = fem.output_nodes_p[i];
@@ -67,18 +67,18 @@ int main() {
     }
 
     if (it%200 == 0) {
-      std::cout << it << " t= " << it*dt << std::endl;
+      std::cout << it << " t= " << tim(it) << std::endl;
       std::cout << "  sliprate: " ;
       std::cout << output_sliprate(it,0) << " ";
       std::cout << output_sliprate(it,1) << " ";
-      std::cout << output_sliprate(it,2) << " ";
-      std::cout << output_sliprate(it,3) << std::endl;
+      std::cout << output_sliprate(it,2) << "\n";
+      // std::cout << output_sliprate(it,3) << std::endl;
 
       std::cout << "  traction: " ;
       std::cout << output_traction(it,0) << " ";
       std::cout << output_traction(it,1) << " ";
-      std::cout << output_traction(it,2) << " ";
-      std::cout << output_traction(it,3) << std::endl;
+      std::cout << output_traction(it,2) << "\n";
+      // std::cout << output_traction(it,3) << std::endl;
     }
   }
 

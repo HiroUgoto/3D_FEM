@@ -1,11 +1,11 @@
 import numpy as np
 import os
 
-ndiv = 200
+ndiv = 200 
 
-area_x = 15000.0
-area_y =   500.0
-area_z = 15000.0
+area_x = 10000.0
+area_y =   100.0
+area_z = 10000.0
 
 nx = ndiv
 ny = 1

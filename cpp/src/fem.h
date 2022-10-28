@@ -49,11 +49,12 @@ class Fem {
     void update_time_MD(const EV acc0);
     void update_time_input_MD(const EV vel0);
     void update_time_source(const std::vector<Source> sources, const double slip0);
-    void update_time_dynamic_fault();
+    void update_time_dynamic_fault(const double tim);
 
   private:
     void _update_time_source(const std::vector<Source> sources, const double slip0);
-    void _update_time_fault_elements();
+    void _update_time_fault(const double tim);
+
     void _update_time_set_free_nodes();
     void _update_time_set_fixed_nodes();
     void _update_time_set_connected_elements();
