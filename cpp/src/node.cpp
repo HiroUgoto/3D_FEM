@@ -34,4 +34,6 @@ void Node::set_initial_condition() {
 
   this->mass = EV3::Zero(this->dof);
   this->c    = EV3::Zero(this->dof);
+
+  this->mc   = EV3::Zero(this->dof);
 }

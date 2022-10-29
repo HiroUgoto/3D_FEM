@@ -47,7 +47,7 @@ class Fault {
 
   public:
     void calc_traction();
-    bool update_rupture(const double tim);
+    void update_rupture(const double tim);
     void update_spring0(std::vector<Element>& elements);
     void update_spring1(std::vector<Element>& elements);
 
@@ -55,6 +55,8 @@ class Fault {
     EV stress_to_traction(const EV& stress, const EV& n);
 
   public:
+    void set_slip_connect_nodes(std::vector<Element>& elements);
+
     void set_spring_kv(std::vector<Element>& elements);
     void set_spring_kvkh(std::vector<Element>& elements);
     void set_spring_c(std::vector<Element>& elements);

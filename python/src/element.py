@@ -95,7 +95,8 @@ class Element:
                     self.gauss_points += [gp]
 
         elif self.dim == 0 and "spring" in self.style:
-            self.K = None
+            pass
+            # self.K = None
 
     # ---------------------------------------------------------
     def mk_local_matrix(self):

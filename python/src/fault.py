@@ -28,50 +28,39 @@ class Fault:
         self.pelement = elements[self.pelem_id] # pointer???
         self.melement = elements[self.melem_id] # pointer???
 
+        self.rupture_time = 9999.9
+
         self.find_neighbour_element(elements)
         self.set_R()
         self.slip = 0.0
 
-        self.area = 0.0
-        for gp in self.pelement.gauss_points:
-            dn = self.pelement.estyle.shape_function_dn(gp.xi,gp.eta)
-
-            det,_ = element.mk_q(self.pelement.dof,self.pelement.xnT,dn)
-            detJ = gp.w*det
-            self.area += detJ
-
-        self.pelement.traction = 0.0
-        self.melement.traction = 0.0
         self.traction_force = 0.0
         self.rupture = True
-        self.set_spring_kv(elements)
-        # self.rupture = False
-        # self.set_spring_kvkh(elements)
+        # self.set_spring_kv(elements)
+        # self.set_spring_c(elements)
 
     def set_initial_condition1(self,elements):
         if self.p0 > self.tp:
-            self.pelement.traction = self.tp - self.p0
-            self.melement.traction = self.tp - self.p0
             self.traction_force = self.tp - self.p0
-            # self.rupture = True
-            # self.set_spring_kv(elements)
+            self.rupture_time = 0.0
         else:
             self.rupture = False
-            self.set_spring_kvkh(elements)
+            # self.set_spring_kvkh(elements)
 
     # ===================================================================== #
     def find_neighbour_element(self,elements):
         n = self.pelement.estyle.shape_function_n(0.0,0.0)
-        xc = self.pelement.xnT @ n
+        self.xc = self.pelement.xnT @ n
 
         self.neighbour_elements_id = []
         self.neighbour_elements_xi = []
         for element in elements:
             if "3d" in element.style:
-                is_inside,xi = element.check_inside(xc,margin=0.01)
+                is_inside,xi = element.check_inside(self.xc,margin=0.01)
                 if is_inside:
                     self.neighbour_elements_id += [element.id]
                     self.neighbour_elements_xi += [xi]
+
 
     # ===================================================================== #
     def set_R(self):
@@ -105,8 +94,6 @@ class Fault:
                 else:
                     f = self.tr - self.p0
 
-        self.pelement.traction = f
-        self.melement.traction = f
         self.traction_force = f
 
     # ===================================================================== #
@@ -137,15 +124,21 @@ class Fault:
         self.traction /= 2.0
 
     # ===================================================================== #
-    def update_rupture(self,elements):
+    def update_rupture(self,tim):
         t = self.traction + self.p0
         if not self.rupture:
             if t > self.tp:
                 self.rupture = True
-                self.set_spring_kv(elements)
-            # else:
-                # self.pelement.traction = 0.0
-                # self.melement.traction = 0.0
+                self.rupture_time = tim
+
+    # ===================================================================== #
+    def update_spring0(self,elements):
+        if self.rupture:
+            self.set_spring_kv(elements)
+
+    def update_spring1(self,elements):
+        if not self.rupture:
+            self.set_spring_kvkh(elements)
 
     # ===================================================================== #
     def stress_to_traction(self,stress,n):
@@ -157,6 +150,36 @@ class Fault:
 
         traction = stress_mat @ n
         return traction
+
+    # ===================================================================== #
+    def set_connect_nodes(self,elements):
+        if not self.rupture:
+            for id in self.spring_id:
+                Ru0 = self.R @ elements[id].nodes[0].u[:]
+                Ru1 = self.R @ elements[id].nodes[1].u[:]
+
+                mc0 = elements[id].nodes[0].mc[:]
+                mc1 = elements[id].nodes[1].mc[:]
+                u = (Ru0 * mc0 + Ru1 * mc1) / (mc0+mc1)
+
+                elements[id].nodes[0].u[:] = self.R.T @ u
+                elements[id].nodes[1].u[:] = self.R.T @ u
+
+    def set_slip_nodes(self,elements):
+        if self.rupture:
+            for id in self.spring_id:
+                Ru0 = self.R @ elements[id].nodes[0].u[:]
+                Ru1 = self.R @ elements[id].nodes[1].u[:]
+
+                mc0 = elements[id].nodes[0].mc[:]
+                mc1 = elements[id].nodes[1].mc[:]
+                u = (Ru0 * mc0 + Ru1 * mc1) / (mc0+mc1)
+
+                Ru0[0],Ru0[2] = u[0],u[2]
+                Ru1[0],Ru1[2] = u[0],u[2]
+
+                elements[id].nodes[0].u[:] = self.R.T @ Ru0
+                elements[id].nodes[1].u[:] = self.R.T @ Ru1
 
     # ===================================================================== #
     def set_spring_kv(self,elements):
@@ -174,3 +197,14 @@ class Fault:
             R_spring[0:3,0:3] = self.R[0:3,0:3]
             R_spring[3:6,3:6] = self.R[0:3,0:3]
             elements[id].K = R_spring.T @ D @ R_spring
+
+    def set_spring_c(self,elements):
+        for id in self.spring_id:
+            D = elements[id].material.mk_d_spring()
+            R_spring = np.zeros([6,6], dtype=np.float64)
+            R_spring[0:3,0:3] = self.R[0:3,0:3]
+            R_spring[3:6,3:6] = self.R[0:3,0:3]
+
+            C = R_spring.T @ D @ R_spring * 1.e-6
+            elements[id].C_diag = np.diag(C)
+            elements[id].C_off_diag = C - np.diag(elements[id].C_diag)

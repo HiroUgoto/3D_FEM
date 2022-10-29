@@ -178,6 +178,14 @@ void Fem::set_initial_fault() {
 // ------------------------------------------------------------------- //
 // ------------------------------------------------------------------- //
 void Fem::update_init(const double dt) {
+    for (auto& node : this->nodes) {
+      for (size_t i = 0 ; i < node.dof ; i++) {
+        double inv_mc = 1.0 / (node.mass[i] + 0.5*dt*node.c[i]);
+        double dtdt_inv_mc = dt*dt*inv_mc;
+        node.mc[i] = 1.0 / dtdt_inv_mc;
+      }
+    }
+
     this->dt = dt;
     this->inv_dt2 = 1.0/(2.0*dt);
     this->inv_dtdt = 1.0/(dt*dt);
@@ -267,9 +275,9 @@ void Fem::update_time_dynamic_fault(const double tim) {
   for (auto& element_p : this->visco_elements_p) {
     element_p->mk_ku_cv();
   }
-  for (auto& element_p : this->spring_elements_p) {
-    element_p->mk_ku_cv();
-  }
+  // for (auto& element_p : this->spring_elements_p) {
+  //   element_p->mk_ku_cv();
+  // }
 
   for (auto& fault : this->faults) {
     fault.update_time_fault();
@@ -277,35 +285,18 @@ void Fem::update_time_dynamic_fault(const double tim) {
 
   this->_update_time_set_free_nodes();
   this->_update_time_set_fixed_nodes();
-  this->_update_time_set_connected_elements();
 
-  this->_update_time_fault(tim);
-
-  for (auto& element_p : this->output_elements_p) {
-    element_p->calc_stress();
+  for (auto& fault : this->faults) {
+    fault.set_slip_connect_nodes(this->elements);
   }
-}
-
-void Fem::_update_time_fault(const double tim) {
-  bool is_rupture_propagation = false;
-  bool isr;
-
-  // std::cout << "---" << std::endl;
   for (auto& fault : this->faults) {
     fault.update_friction(this->dt);
     fault.calc_traction();
-    isr = fault.update_rupture(tim);
-    is_rupture_propagation = is_rupture_propagation || isr;
-    // std::cout << fault.id << " " << fault.rupture << " " << fault.traction + fault.p0 << std::endl;
+    fault.update_rupture(tim);
   }
 
-  if (is_rupture_propagation) {
-    for (auto& fault : this->faults) {
-      fault.update_spring0(this->elements);
-    }
-    for (auto& fault : this->faults) {
-      fault.update_spring1(this->elements);
-    }
+  for (auto& element_p : this->output_elements_p) {
+    element_p->calc_stress();
   }
 }
 
@@ -316,13 +307,11 @@ void Fem::_update_time_set_free_nodes() {
     for (auto& node_p : this->free_nodes_p) {
       EV u = node_p->u;
       for (size_t i = 0 ; i < node_p->dof ; i++) {
-        double inv_mc = 1.0 / (node_p->mass[i] + 0.5*this->dt*node_p->c[i]);
-        double mass_inv_mc = node_p->mass[i] * inv_mc;
-        double c_inv_mc = node_p->c[i] * inv_mc * 0.5*this->dt;
-        double dtdt_inv_mc = this->dt*this->dt*inv_mc;
+        double mass_inv_mc = node_p->mass[i] * this->inv_dtdt;
+        double c_inv_mc = node_p->c[i] * this->inv_dt2;
 
-        node_p->u[i] = mass_inv_mc*(2.0*u[i] - node_p->um[i])
-                + c_inv_mc*node_p->um[i] - dtdt_inv_mc*node_p->force[i];
+        node_p->u[i] = (mass_inv_mc*(2.0*u[i] - node_p->um[i])
+                + c_inv_mc*node_p->um[i] - node_p->force[i] ) / node_p->mc[i];
 
       }
       node_p->v = (node_p->u - node_p->um) * this->inv_dt2;
@@ -337,13 +326,11 @@ void Fem::_update_time_set_fixed_nodes() {
         if (node_p->freedom[i] == 0) {
           node_p->u[i] = 0.0;
         } else {
-          double inv_mc = 1.0 / (node_p->mass[i] + 0.5*this->dt*node_p->c[i]);
-          double mass_inv_mc = node_p->mass[i] * inv_mc;
-          double c_inv_mc = node_p->c[i] * inv_mc * 0.5*this->dt;
-          double dtdt_inv_mc = this->dt*this->dt*inv_mc;
+          double mass_inv_mc = node_p->mass[i] * this->inv_dtdt;
+          double c_inv_mc = node_p->c[i] * this->inv_dt2;
 
-          node_p->u[i] = mass_inv_mc*(2.0*u[i] - node_p->um[i])
-                  + c_inv_mc*node_p->um[i] - dtdt_inv_mc*node_p->force[i];
+          node_p->u[i] = (mass_inv_mc*(2.0*u[i] - node_p->um[i])
+                  + c_inv_mc*node_p->um[i] - node_p->force[i] ) / node_p->mc[i];
         }
       }
       node_p->v = (node_p->u - node_p->um) * this->inv_dt2;

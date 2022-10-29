@@ -109,13 +109,8 @@ class Fem():
 
     # ======================================================================= #
     def set_initial_fault(self):
-        self.fault_p_elements = []
-        self.fault_m_elements = []
-
         for fault in self.faults:
             fault.set_initial_condition0(self.elements)
-            self.fault_p_elements += [fault.pelement]
-            self.fault_m_elements += [fault.melement]
 
         for fault in self.faults:
             fault.set_initial_condition1(self.elements)
@@ -128,6 +123,7 @@ class Fem():
             node.mass_inv_mc = node.mass[:]*node.inv_mc[:]
             node.c_inv_mc = node.c[:]*node.inv_mc[:]*0.5*dt
             node.dtdt_inv_mc = dt*dt*node.inv_mc[:]
+            node.mc = 1.0 / node.dtdt_inv_mc[:]
 
         self.dt = dt
         self.inv_dt2 = 1./(2.*dt)
@@ -242,7 +238,7 @@ class Fem():
             element.calc_stress()
 
     # ======================================================================= #
-    def update_time_dynamic_fault(self):
+    def update_time_dynamic_fault(self,tim):
         for node in self.nodes:
             node.dynamic_force = np.zeros(self.dof,dtype=np.float64)
             self._update_time_node_init(node)
@@ -252,10 +248,6 @@ class Fem():
 
         for fault in self.faults:
             fault.update_time_fault(self.elements)
-        # for element in self.fault_m_elements:
-        #     self._update_time_fault_m_elements(element)
-        # for element in self.fault_p_elements:
-        #     self._update_time_fault_p_elements(element)
 
         for node in self.free_nodes:
             self._update_time_set_free_nodes(node)
@@ -263,11 +255,19 @@ class Fem():
             self._update_time_set_fixed_nodes(node)
 
         for fault in self.faults:
+            fault.set_slip_nodes(self.elements)
+        for fault in self.faults:
+            fault.set_connect_nodes(self.elements)
+
+        for fault in self.faults:
             fault.update_friction(self.dt)
-        for fault in self.faults:
             fault.calc_traction(self.elements)
-        for fault in self.faults:
-            fault.update_rupture(self.elements)
+            fault.update_rupture(tim)
+
+        # for fault in self.faults:
+        #     fault.update_spring0(self.elements)
+        # for fault in self.faults:
+        #     fault.update_spring1(self.elements)
 
         for element in self.output_elements:
             element.calc_stress()
@@ -330,15 +330,6 @@ class Fem():
         element.nodes[0].u[:] =  element.R.T @ slip
         element.nodes[1].u[:] = -element.R.T @ slip
 
-    def _update_time_fault_p_elements(self,element):
-        Tinput = np.array([0.0,-element.traction,0.0])
-        T = element.R.T @ Tinput
-        element.mk_T(T)
-
-    def _update_time_fault_m_elements(self,element):
-        Tinput = np.array([0.0,element.traction,0.0])
-        T = element.R.T @ Tinput
-        element.mk_T(T)
 
     # ======================================================================= #
     def print_all(self):

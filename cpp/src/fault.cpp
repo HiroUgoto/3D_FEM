@@ -61,8 +61,6 @@ void Fault::set_initial_condition0(std::vector<Element>& elements) {
 
   this->traction_force = 0.0;
   this->rupture = true;
-  this->set_spring_kv(elements);
-  this->set_spring_c(elements);
 
   delete estyle_pp;
   delete estyle_mp;
@@ -74,30 +72,31 @@ void Fault::set_initial_condition1(std::vector<Element>& elements) {
     this->rupture_time = 0.0;
   } else {
     this->rupture = false;
-    this->set_spring_kvkh(elements);
   }
 }
 
 // ------------------------------------------------------------------- //
 void Fault::find_neighbour_element(std::vector<Element>& elements) {
-  ElementStyle* estyle_p;
   EM dn, DB;
 
   for (auto& element : elements) {
     if (element.style.find("3d") != std::string::npos) {
       auto [is_inside, xi] = element.check_inside(this->xc,0.01);
       if (is_inside) {
+        ElementStyle* estyle_p;
+
         this->neighbour_elements_id.push_back(element.id);
 
         estyle_p = set_element_style(element.style);
         dn = estyle_p->shape_function_dn(xi(0),xi(1),xi(2));
         DB = element.calc_stress_xi_init(dn);
         this->neighbour_elements_DB.push_back(DB);
+
+        delete estyle_p;
       }
     }
   }
 
-  delete estyle_p;
 }
 
 // ------------------------------------------------------------------- //
@@ -176,16 +175,14 @@ void Fault::calc_traction() {
 }
 
 // ------------------------------------------------------------------- //
-bool Fault::update_rupture(const double tim) {
+void Fault::update_rupture(const double tim) {
   if (!this->rupture) {
     double t = this->traction + this->p0;
     if (t > this->tp) {
       this->rupture = true;
       this->rupture_time = tim;
-      return true;
     }
   }
-  return false;
 }
 
 // ------------------------------------------------------------------- //
@@ -212,6 +209,37 @@ EV Fault::stress_to_traction(const EV& stress, const EV& n) {
   EV traction = stress_mat * n;
   return traction;
 }
+
+// ------------------------------------------------------------------- //
+void Fault::set_slip_connect_nodes(std::vector<Element>& elements) {
+  EV3 Ru0, Ru1, Ru, u;
+  double mc0, mc1;
+
+  for (auto& id : this->spring_id) {
+    Ru0 = this->R * elements[id].nodes_p[0]->u;
+    Ru1 = this->R * elements[id].nodes_p[1]->u;
+    for (size_t i=0 ; i<3 ; i++) {
+      mc0 = elements[id].nodes_p[0]->mc(i);
+      mc1 = elements[id].nodes_p[1]->mc(i);
+      u(i) = (Ru0(i)*mc0 + Ru1(i)*mc1) / (mc0+mc1);
+    }
+
+    if (this->rupture) {
+      Ru0(0) = u(0); Ru0(2) = u(2);
+      Ru1(0) = u(0); Ru1(2) = u(2);
+    } else {
+      Ru0 = u ; Ru1 = u;
+    }
+
+    Ru0 = this->R.transpose() * Ru0;
+    Ru1 = this->R.transpose() * Ru1;
+    for (size_t i=0 ; i<3 ; i++) {
+      elements[id].nodes_p[0]->u(i) = Ru0(i);
+      elements[id].nodes_p[1]->u(i) = Ru1(i);
+    }
+  }
+}
+
 
 // ------------------------------------------------------------------- //
 void Fault::set_spring_kv(std::vector<Element>& elements) {

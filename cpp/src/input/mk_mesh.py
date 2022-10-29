@@ -1,13 +1,13 @@
 import numpy as np
 import os
 
-ndiv = 200 
+ndiv = 200
 
-area_x = 10000.0
+area_x = 20000.0
 area_y =   100.0
-area_z = 10000.0
+area_z = 20000.0
 
-nx = ndiv
+nx = 100
 ny = 1
 nz = ndiv
 dof = 3
@@ -66,11 +66,16 @@ for k in range(nz):
             element_lines += [param_line + style_line + "\n"]
             ielem += 1
 
-
 # for j in range(ny):
 #     for i in range(nx):
 #         im = 0
 #         style = "2d4visco"
+#
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[i,j,0],node[i,j+1,0],node[i+1,j+1,0],node[i+1,j,0])
+#
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
 #
 #         param_line = "{} {} {} ".format(ielem,style,im)
 #         style_line = "{} {} {} {}".format(node[i,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node[i,j+1,-1])
@@ -150,14 +155,14 @@ for k in range(nz):
 
         y = (yg[j] + yg[j+1])/2
         z = (zg[k] + zg[k+1])/2
-        # if (np.abs(z-area_z/2) <= 1500) and (np.abs(y-area_y/2) <= 1500):
-        if np.abs(z-area_z/2) <= 500:
+        if (np.abs(z-area_z/2) <= 1500) and (np.abs(y-area_y/2) <= 1500):
+        # if np.abs(z-area_z/2) <= 500:
             p0 = 81.6e6  # [Pa]
             tp = 81.24e6 # [Pa]
             tr = 63.0e6  # [Pa]
             dc = 0.4     # [m]
-        # elif (np.abs(z-area_z/2) <= 7500) and (np.abs(y-area_y/2) <= 7500):
-        elif np.abs(z-area_z/2) <= 5000:
+        elif (np.abs(z-area_z/2) <= 7500) and (np.abs(y-area_y/2) <= 7500):
+        # elif np.abs(z-area_z/2) <= 5000:
             p0 = 70.0e6  # [Pa]
             tp = 81.24e6 # [Pa]
             tr = 63.0e6  # [Pa]
@@ -188,7 +193,7 @@ dw = zg[1]-zg[0]
 ### Set material ###
 material_lines = []
 material_lines += ["{} {} {} {} {}\n".format(0,"vs_vp_rho",3464.0,6000.0,2670.0)]
-material_lines += ["{} {} {} {}\n".format(1,"spring",1.5e11*dl*dw,0.5e11*dl*dw)]
+material_lines += ["{} {} {} {}\n".format(1,"spring",1.e15,1.e15)]
 
 nmaterial = len(material_lines)
 

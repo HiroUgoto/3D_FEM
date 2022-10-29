@@ -9,6 +9,7 @@ class Node {
     EV3 u, um, v;
     EV3 mass, c;
     EV3 force;
+    EV3 mc;
 
     Node ();
     Node (size_t id, std::vector<double> xyz, std::vector<size_t> freedom);
