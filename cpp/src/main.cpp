@@ -28,7 +28,7 @@ int main() {
   // exit(1);
 
   // ----- Define source ----- //
-  size_t fsamp = 1000;
+  size_t fsamp = 500;
   double duration = 4.0;
 
   auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
@@ -66,7 +66,7 @@ int main() {
       output_traction(it,i) = fault_p->traction + fault_p->p0;
     }
 
-    if (it%200 == 0) {
+    if (it%100 == 0) {
       std::cout << it << " t= " << tim(it) << std::endl;
       std::cout << "  sliprate: " ;
       std::cout << output_sliprate(it,0) << " ";

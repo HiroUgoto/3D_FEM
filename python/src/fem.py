@@ -249,6 +249,13 @@ class Fem():
         for fault in self.faults:
             fault.update_time_fault(self.elements)
 
+        # for node in self.nodes:
+        #     if node.id == 1 or node.id == 11 or node.id == 6 or node.id == 16:
+        #         print(node.id,node.xyz)
+        #         print("u",node.u)
+        #         print("f",node.force)
+
+
         for node in self.free_nodes:
             self._update_time_set_free_nodes(node)
         for node in self.fixed_nodes:
@@ -301,6 +308,11 @@ class Fem():
         node.v[:] = (node.u - node.um) * self.inv_dt2
         node.a[:] = (node.u - 2.*u + node.um) * self.inv_dtdt
         node.um = u
+
+        # if node.id == 1 or node.id == 11 or node.id == 6 or node.id == 16:
+        #     print(node.id,node.xyz)
+        #     print("u",node.u)
+        #     print("f",node.force)
 
     def _update_time_set_fixed_nodes(self,node):
         u = np.copy(node.u)

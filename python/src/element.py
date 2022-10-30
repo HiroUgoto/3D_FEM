@@ -192,6 +192,34 @@ class Element:
 
     def mk_ku_cv(self):
         f = self.K @ np.hstack(self.u) + self.C_off_diag @ np.hstack(self.v)
+
+        # if self.id == 1:
+        #     print("u1",self.u[1])
+        #     print("K1",self.K[0:3,3:6])
+        #
+        #     print("u2",self.u[2])
+        #     print("K2",self.K[0:3,6:9])
+        #
+        #     print("u5",self.u[5])
+        #     print("K5",self.K[0:3,15:18])
+        #
+        #     print("u6",self.u[6])
+        #     print("K6",self.K[0:3,18:21])
+        #
+        #     f1 = self.K[0:3,3:6] @ self.u[1]
+        #     f2 = self.K[0:3,6:9] @ self.u[2]
+        #     f5 = self.K[0:3,15:18] @ self.u[5]
+        #     f6 = self.K[0:3,18:21] @ self.u[6]
+        #
+        #     print(" f1",self.K[0:3,3:6] @ self.u[1])
+        #     print(" f2",self.K[0:3,6:9] @ self.u[2])
+        #     print(" f5",self.K[0:3,15:18] @ self.u[5])
+        #     print(" f6",self.K[0:3,18:21] @ self.u[6])
+        #
+        #     print("fall",f1+f2+f5+f6)
+        #
+        #     print("f0",f[0:3])
+
         for i in range(self.nnode):
             i0 = self.dof*i
             self.nodes[i].force[:] += f[i0:i0+self.dof]

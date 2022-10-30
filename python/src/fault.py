@@ -80,6 +80,8 @@ class Fault:
     def update_time_fault(self,elements):
         Tinput = np.array([0.0,self.traction_force,0.0])
         T = self.R.T @ Tinput
+        # print("T",T)
+
         self.pelement.mk_T(-T)
         self.melement.mk_T( T)
 
@@ -109,6 +111,7 @@ class Fault:
         slip = (self.R @ (up-um))[1]
         self.sliprate = (slip-self.slip)/dt
         self.slip = slip
+        # print("s",self.slip)
 
     # ===================================================================== #
     def calc_traction(self,elements):
@@ -122,6 +125,8 @@ class Fault:
             self.traction += traction[1]
 
         self.traction /= 2.0
+
+        # print("t",self.traction)
 
     # ===================================================================== #
     def update_rupture(self,tim):
@@ -152,24 +157,27 @@ class Fault:
         return traction
 
     # ===================================================================== #
-    def set_connect_nodes(self,elements):
-        if not self.rupture:
+    def check_slip_faults(self,elements):
+        if self.rupture:
+            self.u = np.zeros(3)
             for id in self.spring_id:
                 Ru0 = self.R @ elements[id].nodes[0].u[:]
                 Ru1 = self.R @ elements[id].nodes[1].u[:]
 
                 mc0 = elements[id].nodes[0].mc[:]
                 mc1 = elements[id].nodes[1].mc[:]
-                u = (Ru0 * mc0 + Ru1 * mc1) / (mc0+mc1)
-
-                elements[id].nodes[0].u[:] = self.R.T @ u
-                elements[id].nodes[1].u[:] = self.R.T @ u
+                self.u += (Ru0 * mc0 + Ru1 * mc1) / (mc0+mc1)
+            self.u /= len(self.spring_id)
 
     def set_slip_nodes(self,elements):
         if self.rupture:
+            # print("---",self.id)
             for id in self.spring_id:
                 Ru0 = self.R @ elements[id].nodes[0].u[:]
                 Ru1 = self.R @ elements[id].nodes[1].u[:]
+
+                # print("u0",elements[id].nodes[0].u)
+                # print("u1",elements[id].nodes[1].u)
 
                 mc0 = elements[id].nodes[0].mc[:]
                 mc1 = elements[id].nodes[1].mc[:]
@@ -180,6 +188,30 @@ class Fault:
 
                 elements[id].nodes[0].u[:] = self.R.T @ Ru0
                 elements[id].nodes[1].u[:] = self.R.T @ Ru1
+
+                # print("u0new",elements[id].nodes[0].u)
+                # print("u1new",elements[id].nodes[1].u)
+
+    def set_connect_nodes(self,elements):
+        if not self.rupture:
+            # print("+++",self.id)
+            for id in self.spring_id:
+                Ru0 = self.R @ elements[id].nodes[0].u[:]
+                Ru1 = self.R @ elements[id].nodes[1].u[:]
+
+                # print("u0",elements[id].nodes[0].u)
+                # print("u1",elements[id].nodes[1].u)
+
+                mc0 = elements[id].nodes[0].mc[:]
+                mc1 = elements[id].nodes[1].mc[:]
+                u = (Ru0 * mc0 + Ru1 * mc1) / (mc0+mc1)
+
+                elements[id].nodes[0].u[:] = self.R.T @ u
+                elements[id].nodes[1].u[:] = self.R.T @ u
+
+                # print("u0new",elements[id].nodes[0].u)
+                # print("u1new",elements[id].nodes[1].u)
+
 
     # ===================================================================== #
     def set_spring_kv(self,elements):

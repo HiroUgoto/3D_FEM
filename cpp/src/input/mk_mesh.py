@@ -1,14 +1,14 @@
 import numpy as np
 import os
 
-ndiv = 200
+ndiv = 100
 
-area_x = 20000.0
-area_y =   100.0
-area_z = 20000.0
+area_x = 60 * ndiv
+area_y = 60 * ndiv
+area_z = 60 * ndiv
 
-nx = 100
-ny = 1
+nx = ndiv // 5
+ny = ndiv
 nz = ndiv
 dof = 3
 
@@ -25,7 +25,27 @@ inode = 0
 for k in range(len(zg)):
     for j in range(len(yg)):
         for i in range(len(xg)):
-            dofx,dofy,dofz = 0,1,0
+            dofx,dofy,dofz = 1,1,1
+
+            if (k == 0) or (k == len(zg)-1):
+                if i == 0:
+                    dofx,dofz = 0,0
+                elif i == len(xg)-1:
+                    dofx,dofz = 0,0
+                elif j == 0:
+                    dofy,dofz = 0,0
+                elif j == len(yg)-1:
+                    dofy,dofz = 0,0
+            if i == 0:
+                if j == 0:
+                    dofx,dofy = 0,0
+                elif j == len(yg)-1:
+                    dofx,dofy = 0,0
+            if i == len(xg)-1:
+                if j == 0:
+                    dofx,dofy = 0,0
+                elif j == len(yg)-1:
+                    dofx,dofy = 0,0
 
             node[i,j,k] = inode
             node_lines += [ "{} {} {} {} {} {} {}\n".format(inode,xg[i],yg[j],zg[k],dofx,dofy,dofz)]
@@ -37,7 +57,13 @@ node_fault = np.empty([1,len(yg),len(zg)],dtype=np.int32)
 
 for k in range(len(zg)):
     for j in range(len(yg)):
-        dofx,dofy,dofz = 0,1,0
+        dofx,dofy,dofz = 1,1,1
+
+        if (k == 0) or (k == len(zg)-1):
+            if j == 0:
+                dofy,dofz = 0,0
+            elif j == len(yg)-1:
+                dofy,dofz = 0,0
 
         node_fault[0,j,k] = inode
         node_lines += [ "{} {} {} {} {} {} {}\n".format(inode,xg[i_fault],yg[j],zg[k],dofx,dofy,dofz)]
@@ -66,22 +92,22 @@ for k in range(nz):
             element_lines += [param_line + style_line + "\n"]
             ielem += 1
 
-# for j in range(ny):
-#     for i in range(nx):
-#         im = 0
-#         style = "2d4visco"
-#
-#         param_line = "{} {} {} ".format(ielem,style,im)
-#         style_line = "{} {} {} {}".format(node[i,j,0],node[i,j+1,0],node[i+1,j+1,0],node[i+1,j,0])
-#
-#         element_lines += [param_line + style_line + "\n"]
-#         ielem += 1
-#
-#         param_line = "{} {} {} ".format(ielem,style,im)
-#         style_line = "{} {} {} {}".format(node[i,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node[i,j+1,-1])
-#
-#         element_lines += [param_line + style_line + "\n"]
-#         ielem += 1
+for j in range(ny):
+    for i in range(nx):
+        im = 0
+        style = "2d4visco"
+
+        param_line = "{} {} {} ".format(ielem,style,im)
+        style_line = "{} {} {} {}".format(node[i,j,0],node[i,j+1,0],node[i+1,j+1,0],node[i+1,j,0])
+
+        element_lines += [param_line + style_line + "\n"]
+        ielem += 1
+
+        param_line = "{} {} {} ".format(ielem,style,im)
+        style_line = "{} {} {} {}".format(node[i,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node[i,j+1,-1])
+
+        element_lines += [param_line + style_line + "\n"]
+        ielem += 1
 
 for k in range(nz):
     for j in range(ny):
@@ -100,22 +126,22 @@ for k in range(nz):
         element_lines += [param_line + style_line + "\n"]
         ielem += 1
 
-# for k in range(nz):
-#     for i in range(nx):
-#         im = 0
-#         style = "2d4visco"
-#
-#         param_line = "{} {} {} ".format(ielem,style,im)
-#         style_line = "{} {} {} {}".format(node[i,0,k],node[i+1,0,k],node[i+1,0,k+1],node[i,0,k+1])
-#
-#         element_lines += [param_line + style_line + "\n"]
-#         ielem += 1
-#
-#         param_line = "{} {} {} ".format(ielem,style,im)
-#         style_line = "{} {} {} {}".format(node[i,-1,k],node[i,-1,k+1],node[i+1,-1,k+1],node[i+1,-1,k])
-#
-#         element_lines += [param_line + style_line + "\n"]
-#         ielem += 1
+for k in range(nz):
+    for i in range(nx):
+        im = 0
+        style = "2d4visco"
+
+        param_line = "{} {} {} ".format(ielem,style,im)
+        style_line = "{} {} {} {}".format(node[i,0,k],node[i+1,0,k],node[i+1,0,k+1],node[i,0,k+1])
+
+        element_lines += [param_line + style_line + "\n"]
+        ielem += 1
+
+        param_line = "{} {} {} ".format(ielem,style,im)
+        style_line = "{} {} {} {}".format(node[i,-1,k],node[i,-1,k+1],node[i+1,-1,k+1],node[i+1,-1,k])
+
+        element_lines += [param_line + style_line + "\n"]
+        ielem += 1
 
 spring_id = np.empty([len(yg),len(zg)],dtype=np.int32)
 for k in range(len(zg)):
