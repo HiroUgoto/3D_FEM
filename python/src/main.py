@@ -24,7 +24,7 @@ fem.set_output(outputs)
 
 ## --- Define EQ source --- ##
 fsamp = 250
-duration = 3.0
+duration = 2.0
 
 tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
 ntim = len(tim)
@@ -58,7 +58,7 @@ for it in range(len(tim)):
     output_traction[it,:] = [fault.traction + fault.p0 for fault in fem.output_faults]
 
     if it%20 == 0:
-        plot_model.plot_mesh_update(ax,fem,50.)
+        # plot_model.plot_mesh_update(ax,fem,50.)
         print(it,"t=",tim[it],output_sliprate[it,:])
         print("     ",output_slip[it,:])
         print("     ",output_traction[it,:])
