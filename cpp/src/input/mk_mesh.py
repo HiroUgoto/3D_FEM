@@ -1,20 +1,31 @@
 import numpy as np
 import os
 
-ndiv = 100
+ndiv = 500
 
-area_x = 60 * ndiv
-area_y = 60 * ndiv
-area_z = 60 * ndiv
+area_x = 50 * 50
+area_y = 50 * ndiv
+area_z = 50
 
-nx = ndiv // 5
+nx = 50
 ny = ndiv
-nz = ndiv
+nz = 1
 dof = 3
 
-xg = np.linspace(0,area_x,nx+1,endpoint=True)
-yg = np.linspace(0,area_y,ny+1,endpoint=True)
+print("area x[m]:",-area_x/2,area_x/2)
+print("area y[m]:",-area_y/2,area_y/2)
+print("area z[m]:",0,area_z)
+
+xg = np.linspace(-area_x/2,area_x/2,nx+1,endpoint=True)
+yg = np.linspace(-area_y/2,area_y/2,ny+1,endpoint=True)
 zg = np.linspace(0,area_z,nz+1,endpoint=True)
+z0 = area_z/2
+
+output_space_l = 1000.0
+output_space_w = 500.0
+
+output_point_l = np.linspace(0,area_y/2,int(area_y/2/output_space_l)+1)
+output_point_w = np.linspace(z0,0,int(z0/output_space_w)+1)
 
 
 ### Set node ###
@@ -25,27 +36,7 @@ inode = 0
 for k in range(len(zg)):
     for j in range(len(yg)):
         for i in range(len(xg)):
-            dofx,dofy,dofz = 1,1,1
-
-            if (k == 0) or (k == len(zg)-1):
-                if i == 0:
-                    dofx,dofz = 0,0
-                elif i == len(xg)-1:
-                    dofx,dofz = 0,0
-                elif j == 0:
-                    dofy,dofz = 0,0
-                elif j == len(yg)-1:
-                    dofy,dofz = 0,0
-            if i == 0:
-                if j == 0:
-                    dofx,dofy = 0,0
-                elif j == len(yg)-1:
-                    dofx,dofy = 0,0
-            if i == len(xg)-1:
-                if j == 0:
-                    dofx,dofy = 0,0
-                elif j == len(yg)-1:
-                    dofx,dofy = 0,0
+            dofx,dofy,dofz = 1,1,0
 
             node[i,j,k] = inode
             node_lines += [ "{} {} {} {} {} {} {}\n".format(inode,xg[i],yg[j],zg[k],dofx,dofy,dofz)]
@@ -57,13 +48,7 @@ node_fault = np.empty([1,len(yg),len(zg)],dtype=np.int32)
 
 for k in range(len(zg)):
     for j in range(len(yg)):
-        dofx,dofy,dofz = 1,1,1
-
-        if (k == 0) or (k == len(zg)-1):
-            if j == 0:
-                dofy,dofz = 0,0
-            elif j == len(yg)-1:
-                dofy,dofz = 0,0
+        dofx,dofy,dofz = 1,1,0
 
         node_fault[0,j,k] = inode
         node_lines += [ "{} {} {} {} {} {} {}\n".format(inode,xg[i_fault],yg[j],zg[k],dofx,dofy,dofz)]
@@ -92,22 +77,22 @@ for k in range(nz):
             element_lines += [param_line + style_line + "\n"]
             ielem += 1
 
-for j in range(ny):
-    for i in range(nx):
-        im = 0
-        style = "2d4visco"
-
-        param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[i,j,0],node[i,j+1,0],node[i+1,j+1,0],node[i+1,j,0])
-
-        element_lines += [param_line + style_line + "\n"]
-        ielem += 1
-
-        param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[i,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node[i,j+1,-1])
-
-        element_lines += [param_line + style_line + "\n"]
-        ielem += 1
+# for j in range(ny):
+#     for i in range(nx):
+#         im = 0
+#         style = "2d4visco"
+#
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[i,j,0],node[i,j+1,0],node[i+1,j+1,0],node[i+1,j,0])
+#
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
+#
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[i,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node[i,j+1,-1])
+#
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
 
 for k in range(nz):
     for j in range(ny):
@@ -181,14 +166,16 @@ for k in range(nz):
 
         y = (yg[j] + yg[j+1])/2
         z = (zg[k] + zg[k+1])/2
-        if (np.abs(z-area_z/2) <= 1500) and (np.abs(y-area_y/2) <= 1500):
-        # if np.abs(z-area_z/2) <= 500:
+        # if (np.abs(z-area_z/2) <= 1500) and (np.abs(y-area_y/2) <= 1500):
+        if np.abs(y) <= 1500:
+        # if np.abs(y) <= 500:
             p0 = 81.6e6  # [Pa]
             tp = 81.24e6 # [Pa]
             tr = 63.0e6  # [Pa]
             dc = 0.4     # [m]
-        elif (np.abs(z-area_z/2) <= 7500) and (np.abs(y-area_y/2) <= 7500):
-        # elif np.abs(z-area_z/2) <= 5000:
+        # elif (np.abs(z-area_z/2) <= 7500) and (np.abs(y-area_y/2) <= 7500):
+        elif np.abs(y) <= 15000:
+        # elif np.abs(y) <= 2000:
             p0 = 70.0e6  # [Pa]
             tp = 81.24e6 # [Pa]
             tr = 63.0e6  # [Pa]
@@ -237,8 +224,6 @@ output_element_lines = []
 #     output_element_lines += ["{} \n".format(i)]
 
 # ---- fault output ---- #
-output_point_l = np.linspace(area_y/2,area_y,int(area_y/2/1000)+1)
-output_point_w = np.linspace(area_z/2,area_z,int(area_z/2/1000)+1)
 dl = yg[1]-yg[0]
 dw = zg[1]-zg[0]
 print("+++ output fault id (id, y, z)")

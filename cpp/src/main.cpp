@@ -29,7 +29,7 @@ int main() {
 
   // ----- Define source ----- //
   size_t fsamp = 500;
-  double duration = 4.0;
+  double duration = 6.0;
 
   auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
   size_t ntim = tim.size();
