@@ -19,11 +19,11 @@ output_dir = "result/"
 ## --- FEM Set up --- ##
 fem.set_init()
 fem.set_output(outputs)
-# plot_model.plot_mesh(fem)
+plot_model.plot_mesh(fem)
 # exit()
 
 ## --- Define EQ source --- ##
-fsamp = 250
+fsamp = 200
 duration = 2.0
 
 tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
@@ -58,7 +58,7 @@ for it in range(len(tim)):
     output_traction[it,:] = [fault.traction + fault.p0 for fault in fem.output_faults]
 
     if it%20 == 0:
-        plot_model.plot_mesh_update(ax,fem,50.)
+        # plot_model.plot_mesh_update(ax,fem,50.)
         print(it,"t=",tim[it],output_sliprate[it,:])
         print("     ",output_slip[it,:])
         print("     ",output_traction[it,:])
@@ -66,7 +66,7 @@ for it in range(len(tim)):
 elapsed_time = time.time() - start
 print ("elapsed_time: {0}".format(elapsed_time) + "[sec]")
 
-plot_model.plot_mesh_update(ax,fem,50.,fin=True)
+# plot_model.plot_mesh_update(ax,fem,50.,fin=True)
 
 ## --- Write output file --- ##
 output_line = np.vstack([tim,output_velx.T]).T

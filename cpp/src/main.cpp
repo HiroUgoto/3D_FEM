@@ -51,7 +51,7 @@ int main() {
   EM output_traction(ntim,fem.output_nfault);
 
   size_t snap_samp = 1;   // snapshot per 1sec
-  size_t snap_id = 0;
+  size_t snap_id = 1;
   std::ofstream fsnap;
 
   // ----- time iteration ----- //

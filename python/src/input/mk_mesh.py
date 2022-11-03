@@ -58,25 +58,21 @@ def variable_mesh_layout_z(nz,dz0,z0,zh):
 
 
 nx = 4
-ny = 400//10
-nz = 200//10
+ny = 20
+nz = 10
 
 dx = 100
 dy = 100
 dz = 100
 
-zh = 7500
+# zh = 7500
+zh = 3000
 
+x0 = 500
+xg = variable_mesh_layout(nx,dx,x0)
 # xg = uniform_mesh_layout(nx,dx)
 yg = uniform_mesh_layout(ny,dy)
 zg = uniform_mesh_layout_z(nz,dz,zh)
-
-x0 = 500
-# y0 = 3000
-# z0 = 3000
-xg = variable_mesh_layout(nx,dx,x0)
-# yg = variable_mesh_layout(ny,dy,y0)
-# zg = variable_mesh_layout_z(nz,dz,z0,zh)
 
 area_x = xg[-1]-xg[0]
 area_y = yg[-1]-yg[0]
@@ -88,17 +84,18 @@ print("area x[m]:",xg[0],xg[-1])
 print("area y[m]:",yg[0],yg[-1])
 print("area z[m]:",zg[0],zg[-1])
 
+# output_space_l = 1000.0
+output_space_w = 1000.0
 
-output_space_l = 1000.0
-# output_space_w = 1000.0
+# nl = int(area_y/2/output_space_l)
+nl = 1
+nw = int(zh/output_space_w)
+# nw = 1
 
-nl = int(area_y/2/output_space_l)
-# nw = int(zh/output_space_w)
-nw = 1
-
-output_point_l = np.linspace(0,nl*output_space_l,nl+1)
-# output_point_w = np.linspace(zh,zh-nw*output_space_w,nw+1)
-output_point_w = np.array([zh])
+# output_point_l = np.linspace(0,nl*output_space_l,nl+1)
+output_point_l = np.array([0.0])
+output_point_w = np.linspace(zh,zh-nw*output_space_w,nw+1)
+# output_point_w = np.array([zh])
 
 ### Set node ###
 node = np.empty([len(xg),len(yg),len(zg)],dtype=np.int32)
@@ -126,7 +123,6 @@ for k in range(len(zg)):
         node_lines += [ "{} {} {} {} {} {} {}\n".format(inode,xg[i_fault],yg[j],zg[k],dofx,dofy,dofz)]
         inode += 1
 
-
 ### Set element ###
 element_lines = []
 
@@ -147,8 +143,10 @@ for k in range(nz):
                 fault_neighbour_element[1,j,k] = ielem
 
             if i == i_fault:
-                style_line = "{} {} {} {} {} {} {} {}".format(node_fault[0,j,k],node[i+1,j,k],node[i+1,j+1,k],node_fault[0,j+1,k],
-                                                                 node_fault[0,j,k+1],node[i+1,j,k+1],node[i+1,j+1,k+1],node_fault[0,j+1,k+1])
+                style_line = "{} {} {} {} {} {} {} {}".format(node_fault[0,j,k],node[i+1,j,k],
+                                                              node[i+1,j+1,k],node_fault[0,j+1,k],
+                                                              node_fault[0,j,k+1],node[i+1,j,k+1],
+                                                              node[i+1,j+1,k+1],node_fault[0,j+1,k+1])
             else:
                 style_line = "{} {} {} {} {} {} {} {}".format(node[i,j,k],node[i+1,j,k],node[i+1,j+1,k],node[i,j+1,k],
                                                                  node[i,j,k+1],node[i+1,j,k+1],node[i+1,j+1,k+1],node[i,j+1,k+1])
@@ -167,7 +165,10 @@ for j in range(ny):
         # ielem += 1
 
         param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[i,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node[i,j+1,-1])
+        if i == i_fault:
+            style_line = "{} {} {} {}".format(node_fault[0,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node_fault[0,j+1,-1])
+        else:
+            style_line = "{} {} {} {}".format(node[i,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node[i,j+1,-1])
 
         element_lines += [param_line + style_line + "\n"]
         ielem += 1
@@ -195,13 +196,19 @@ for k in range(nz):
         style = "2d4visco"
 
         param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[i,0,k],node[i+1,0,k],node[i+1,0,k+1],node[i,0,k+1])
+        if i == i_fault:
+            style_line = "{} {} {} {}".format(node_fault[0,0,k],node[i+1,0,k],node[i+1,0,k+1],node_fault[0,0,k+1])
+        else:
+            style_line = "{} {} {} {}".format(node[i,0,k],node[i+1,0,k],node[i+1,0,k+1],node[i,0,k+1])
 
         element_lines += [param_line + style_line + "\n"]
         ielem += 1
 
         param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[i,-1,k],node[i,-1,k+1],node[i+1,-1,k+1],node[i+1,-1,k])
+        if i == i_fault:
+            style_line = "{} {} {} {}".format(node_fault[0,-1,k],node_fault[0,-1,k+1],node[i+1,-1,k+1],node[i+1,-1,k])
+        else:
+            style_line = "{} {} {} {}".format(node[i,-1,k],node[i,-1,k+1],node[i+1,-1,k+1],node[i+1,-1,k])
 
         element_lines += [param_line + style_line + "\n"]
         ielem += 1
@@ -250,7 +257,8 @@ for k in range(nz):
             tp = 81.24e6 # [Pa]
             tr = 63.0e6  # [Pa]
             dc = 0.4     # [m]
-        elif (np.abs(z-zh) <= 7500) and (np.abs(y) <= 15000):
+        # elif (np.abs(z-zh) <= 7500) and (np.abs(y) <= 15000):
+        elif (np.abs(z-zh) <= 3000) and (np.abs(y) <= 6000):
         # elif np.abs(y) <= 15000:
             p0 = 70.0e6  # [Pa]
             tp = 81.24e6 # [Pa]

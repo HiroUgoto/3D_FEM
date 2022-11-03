@@ -59,14 +59,14 @@ z0 = 3000
 zh = 7500
 
 L = 15     # [km]
-W = 15     # [km]
+W =  6     # [km]
 
 # ny = 400
 # nz = 200
 ny = 150
 nz = 70
 
-snap_name = "007"
+snap_name = "008"
 
 yn = variable_mesh_layout(ny,dy,y0) / 1000.0
 # yn = np.linspace(-L/2,L/2,ny+1)
