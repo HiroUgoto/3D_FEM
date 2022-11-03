@@ -20,6 +20,7 @@ class Element {
     EM xnT;
     EM dn_center;
     EV3 xc;
+    double r0;
 
     EV M_diag, C_diag;
     EM K, C_off_diag;

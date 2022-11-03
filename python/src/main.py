@@ -58,7 +58,7 @@ for it in range(len(tim)):
     output_traction[it,:] = [fault.traction + fault.p0 for fault in fem.output_faults]
 
     if it%20 == 0:
-        # plot_model.plot_mesh_update(ax,fem,50.)
+        plot_model.plot_mesh_update(ax,fem,50.)
         print(it,"t=",tim[it],output_sliprate[it,:])
         print("     ",output_slip[it,:])
         print("     ",output_traction[it,:])

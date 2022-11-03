@@ -2,10 +2,11 @@ import numpy as np
 import element
 
 class Fault:
-    def __init__(self,id,pelem_id,melem_id,spring_id,param):
+    def __init__(self,id,pelem_id,melem_id,neighbour_elements_id,spring_id,param):
         self.id = id
         self.pelem_id = pelem_id
         self.melem_id = melem_id
+        self.neighbour_elements_id = neighbour_elements_id
         self.spring_id = spring_id
 
         self.set_param(param)
@@ -30,7 +31,8 @@ class Fault:
 
         self.rupture_time = 9999.9
 
-        self.find_neighbour_element(elements)
+        # self.find_neighbour_element(elements)
+        self.set_neighbour_element(elements)
         self.set_R()
         self.slip = 0.0
 
@@ -60,6 +62,16 @@ class Fault:
                 if is_inside:
                     self.neighbour_elements_id += [element.id]
                     self.neighbour_elements_xi += [xi]
+
+    # ===================================================================== #
+    def set_neighbour_element(self,elements):
+        n = self.pelement.estyle.shape_function_n(0.0,0.0)
+        self.xc = self.pelement.xnT @ n
+
+        self.neighbour_elements_xi = []
+        for id in self.neighbour_elements_id:
+            is_inside,xi = elements[id].check_inside(self.xc,margin=0.01)
+            self.neighbour_elements_xi += [xi]
 
 
     # ===================================================================== #

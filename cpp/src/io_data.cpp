@@ -80,6 +80,7 @@ Fem io_data::input_mesh (const std::string mesh_file) {
     for (size_t ifault = 0 ; ifault < nfault ; ifault++) {
       size_t id;
       size_t pelem_id, melem_id;
+      std::vector<size_t> neighbour_elements_id;
       std::vector<size_t> spring_id;
       std::vector<double> param;
 
@@ -92,6 +93,11 @@ Fem io_data::input_mesh (const std::string mesh_file) {
       size_t e = line.find_last_not_of(' ');
       std::istringstream iss(line.substr(s,e-s+1));
       iss >> id >> pelem_id >> melem_id ;
+      for (size_t i=0 ; i<2 ; i++) {
+        size_t nid;
+        iss >> nid;
+        neighbour_elements_id.push_back(nid);
+      }
       for (size_t i=0 ; i<4 ; i++) {
         size_t sid;
         iss >> sid;
@@ -103,7 +109,7 @@ Fem io_data::input_mesh (const std::string mesh_file) {
         param.push_back(ip);
       }
 
-      Fault fault(id,pelem_id,melem_id,spring_id,param);
+      Fault fault(id,pelem_id,melem_id,neighbour_elements_id,spring_id,param);
       faults.push_back(fault);
     }
 

@@ -40,10 +40,11 @@ def input_mesh(mesh_file):
             id = int(items[0])
             pelem_id = int(items[1])
             melem_id = int(items[2])
-            spring_id = [int(s) for s in items[3:7]]
-            param = np.array([float(s) for s in items[7:]])
+            neighbour_elements_id = [int(s) for s in items[3:5]]
+            spring_id = [int(s) for s in items[5:9]]
+            param = np.array([float(s) for s in items[9:]])
 
-            faults[ifault] = fault.Fault(id,pelem_id,melem_id,spring_id,param)
+            faults[ifault] = fault.Fault(id,pelem_id,melem_id,neighbour_elements_id,spring_id,param)
 
         irec += nfault
         materials = [None] * nmaterial

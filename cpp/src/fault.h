@@ -25,7 +25,7 @@ class Fault {
     double slip, sliprate, traction, traction_force, rupture_time;
     bool rupture;
 
-    Fault (size_t id, size_t pelem_id, size_t melem_id, std::vector<size_t> spring_id, std::vector<double> param);
+    Fault (size_t id, size_t pelem_id, size_t melem_id, std::vector<size_t> neighbour_elements_id, std::vector<size_t> spring_id, std::vector<double> param);
 
   private:
     void set_param();
@@ -36,6 +36,7 @@ class Fault {
 
   private:
     void find_neighbour_element(std::vector<Element>& elements);
+    void set_neighbour_element(std::vector<Element>& elements);
     void set_R();
 
   public:
@@ -52,7 +53,7 @@ class Fault {
     void update_spring1(std::vector<Element>& elements);
 
   private:
-    EV stress_to_traction(const EV& stress, const EV& n);
+    EV3 stress_to_traction(const EV& stress, const EV3& n);
 
   public:
     void set_slip_connect_nodes(std::vector<Element>& elements);

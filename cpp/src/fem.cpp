@@ -163,6 +163,10 @@ void Fem::set_output(std::tuple<std::vector<size_t>, std::vector<size_t>, std::v
 // ------------------------------------------------------------------- //
 void Fem::set_initial_fault() {
   for (auto& fault : this->faults) {
+    if (fault.id%1000 == 0) {
+      std::cout << " " << fault.id << "/" << this->faults.size() << std::endl;
+    }
+
     fault.set_initial_condition0(this->elements);
     for (size_t i=0 ; i<fault.neighbour_elements_id.size() ; i++) {
       size_t id = fault.neighbour_elements_id[i];
@@ -275,9 +279,6 @@ void Fem::update_time_dynamic_fault(const double tim) {
   for (auto& element_p : this->visco_elements_p) {
     element_p->mk_ku_cv();
   }
-  // for (auto& element_p : this->spring_elements_p) {
-  //   element_p->mk_ku_cv();
-  // }
 
   for (auto& fault : this->faults) {
     fault.update_time_fault();
@@ -304,11 +305,13 @@ void Fem::update_time_dynamic_fault(const double tim) {
 // ------------------------------------------------------------------- //
 // ------------------------------------------------------------------- //
 void Fem::_update_time_set_free_nodes() {
+    double mass_inv_mc, c_inv_mc;
+
     for (auto& node_p : this->free_nodes_p) {
-      EV u = node_p->u;
+      EV3 u = node_p->u;
       for (size_t i = 0 ; i < node_p->dof ; i++) {
-        double mass_inv_mc = node_p->mass[i] * this->inv_dtdt;
-        double c_inv_mc = node_p->c[i] * this->inv_dt2;
+        mass_inv_mc = node_p->mass[i] * this->inv_dtdt;
+        c_inv_mc = node_p->c[i] * this->inv_dt2;
 
         node_p->u[i] = (mass_inv_mc*(2.0*u[i] - node_p->um[i])
                 + c_inv_mc*node_p->um[i] - node_p->force[i] ) / node_p->mc[i];
@@ -320,14 +323,16 @@ void Fem::_update_time_set_free_nodes() {
   }
 
 void Fem::_update_time_set_fixed_nodes() {
+    double mass_inv_mc, c_inv_mc;
+
     for (auto& node_p : this->fixed_nodes_p) {
-      EV u = node_p->u;
+      EV3 u = node_p->u;
       for (size_t i = 0 ; i < node_p->dof ; i++) {
         if (node_p->freedom[i] == 0) {
           node_p->u[i] = 0.0;
         } else {
-          double mass_inv_mc = node_p->mass[i] * this->inv_dtdt;
-          double c_inv_mc = node_p->c[i] * this->inv_dt2;
+          mass_inv_mc = node_p->mass[i] * this->inv_dtdt;
+          c_inv_mc = node_p->c[i] * this->inv_dt2;
 
           node_p->u[i] = (mass_inv_mc*(2.0*u[i] - node_p->um[i])
                   + c_inv_mc*node_p->um[i] - node_p->force[i] ) / node_p->mc[i];

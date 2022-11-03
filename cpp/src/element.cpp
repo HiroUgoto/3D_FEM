@@ -75,7 +75,8 @@ void Element::set_xn(){
 
     ElementStyle* estyle_p = set_element_style(this->style);
     EV n = estyle_p->shape_function_n(0.0,0.0,0.0);
-    this->xc = this->xnT*n;
+    this->xc.noalias() = this->xnT*n;
+    this->r0 = (this->xnT.col(0)-this->xc).norm();   // assume rectangular element
     delete estyle_p;
   }
 
@@ -141,8 +142,8 @@ void Element::mk_local_matrix() {
 
         detJ = det * w_list[i];
 
-        M += Me * detJ;
-        this->K += K * detJ;
+        M.noalias() += Me * detJ;
+        this->K.noalias() += K * detJ;
       }
 
       double tr_M = M.trace() / this->dof;
@@ -170,7 +171,7 @@ void Element::mk_local_matrix() {
           NqN = mk_nqn(N, q, this->imp);
 
           detJ = det * w_list[i];
-          C += NqN * detJ;
+          C.noalias() += NqN * detJ;
         }
 
         this->C_diag = C.diagonal();
@@ -213,10 +214,8 @@ void Element::mk_local_vector() {
 
 // ------------------------------------------------------------------- //
 void Element::mk_ku() {
-    EV u(this->ndof), ku(this->ndof);
-
-    u = this->mk_u_hstack();
-    ku = this->K * u;
+    EV ku(this->ndof);
+    ku.noalias() = this->K * this->mk_u_hstack();
 
     for (size_t inode = 0 ; inode < this->nnode ; inode++){
       size_t i0 = inode*this->dof;
@@ -227,10 +226,8 @@ void Element::mk_ku() {
   }
 
 void Element::mk_cv() {
-    EV v(this->ndof), cv(this->ndof);
-
-    v = this->mk_v_hstack();
-    cv = this->C_off_diag * v;
+    EV cv(this->ndof);
+    cv.noalias() = this->C_off_diag * this->mk_v_hstack();
 
     for (size_t inode = 0 ; inode < this->nnode ; inode++){
       size_t i0 = inode*this->dof;
@@ -246,8 +243,8 @@ void Element::mk_ku_cv() {
 
     u = this->mk_u_hstack();
     v = this->mk_v_hstack();
-    ku = this->K * u;
-    cv = this->C_off_diag * v;
+    ku.noalias() = this->K * u;
+    cv.noalias() = this->C_off_diag * v;
 
     for (size_t inode = 0 ; inode < this->nnode ; inode++){
       size_t i0 = inode*this->dof;
@@ -262,13 +259,11 @@ void Element::mk_ku_cv() {
 EV Element::mk_u_hstack() {
     EV u(this->ndof);
     size_t i0;
-    Node* node;
 
     for (size_t inode = 0 ; inode < this->nnode ; inode++){
       i0 = inode*this->dof;
-      node = this->nodes_p[inode];
       for (size_t i = 0 ; i < this->dof ; i++) {
-        u(i0+i) = node->u[i];
+        u(i0+i) = this->nodes_p[inode]->u[i];
       }
     }
     return u;
@@ -279,9 +274,8 @@ EV Element::mk_v_hstack() {
 
     for (size_t inode = 0 ; inode < this->nnode ; inode++){
       size_t i0 = inode*this->dof;
-      Node* node = this->nodes_p[inode];
       for (size_t i = 0 ; i < this->dof ; i++) {
-        v(i0+i) = node->v[i];
+        v(i0+i) = this->nodes_p[inode]->v[i];
       }
     }
     return v;
@@ -291,9 +285,8 @@ EM Element::mk_u_vstack() {
     EM u(this->nnode,this->dof);
 
     for (size_t inode = 0 ; inode < this->nnode ; inode++){
-      Node* node = this->nodes_p[inode];
       for (size_t i = 0 ; i < this->dof ; i++) {
-        u(inode,i) = node->u[i];
+        u(inode,i) = this->nodes_p[inode]->u[i];
       }
     }
     return u;
@@ -331,7 +324,7 @@ void Element::mk_source(const EM& dn, const EV& strain_tensor, const double slip
     auto [det, dnj] = mk_dnj(this->xnT, dn);
     BT = mk_b_T(this->dof, this->nnode, dnj);
     moment = this->material.rmu * strain_tensor * slip0;
-    this->force = BT * moment;
+    this->force.noalias() = BT * moment;
   }
 }
 
@@ -351,7 +344,7 @@ EM Element::mk_T_init() {
     N = mk_n(this->dof, this->nnode, n_list[i]);
 
     detJ = det * w_list[i];
-    NT += N.transpose() * detJ;
+    NT.noalias() += N.transpose() * detJ;
   }
 
   delete estyle_p;
@@ -359,7 +352,8 @@ EM Element::mk_T_init() {
 }
 
 void Element::mk_T(const EM& NT, const EV& T) {
-  EV integralNT = NT * T;
+  EV integralNT;
+  integralNT.noalias() = NT * T;
 
   for (size_t inode = 0 ; inode < this->nnode ; inode++){
     size_t i0 = inode*this->dof;
@@ -379,35 +373,40 @@ void Element::calc_stress() {
     B = mk_b(this->dof, this->nnode, dnj);
     u = this->mk_u_hstack();
 
-    this->strain = B * u;
-    this->stress = this->De * this->strain;
+    this->strain.noalias() = B * u;
+    this->stress.noalias() = this->De * this->strain;
   }
 
 EM Element::calc_stress_xi_init(const EM& dn) {
   auto [det, dnj] = mk_dnj(this->xnT, dn);
-  EM B = mk_b(this->dof, this->nnode, dnj);
-  return this->De * B;
+  EM B, DB;
+
+  B = mk_b(this->dof, this->nnode, dnj);
+  DB.noalias() = this->De * B;
+  return DB;
 }
 
 EV Element::calc_stress_xi(const EM& DB) {
-    EV u = this->mk_u_hstack();
-    return DB * u;
+    EV u, DBu;
+
+    u = this->mk_u_hstack();
+    DBu.noalias() = DB * u;
+    return DBu;
   }
 
 
 // ------------------------------------------------------------------- //
 std::tuple<bool, EV3>
   Element::check_inside(const EV3& x, double margin) {
-    EV3 xi, J_func, r;
+    EV3 J_func, r;
     EV n;
     EM dn;
 
-    xi = EV::Zero(3);
+    EV3 xi = EV::Zero(3);
     bool is_inside = false;
 
-    double rc = (x-this->xc).norm();
-    double r0 = (this->xnT.col(0)-xc).norm();   // assume rectangular element
-    if (r0 < rc) {
+    double rc = (x - this->xc).norm();
+    if (this->r0 < rc) {
       return {false, xi};
     }
 
@@ -417,11 +416,11 @@ std::tuple<bool, EV3>
       n = estyle_p->shape_function_n(xi[0],xi[1],xi[2]);
       dn = estyle_p->shape_function_dn(xi[0],xi[1],xi[2]);
 
-      J_func = this->xnT*n - x;
+      J_func.noalias() = this->xnT*n - x;
       auto [det,dJ_func] = mk_jacobi(this->xnT, dn);
 
       r = dJ_func.partialPivLu().solve(J_func);
-      if (r.norm() < 1e-8) break;
+      if (r.norm() < 1e-5) break;
 
       xi -= r;
     }
@@ -441,7 +440,7 @@ std::tuple<bool, EV3>
 EM mk_m(const EM& N) {
     EM M;
 
-    M = N.transpose() * N;
+    M.noalias() = N.transpose() * N;
     return M;
   }
 
@@ -480,7 +479,7 @@ EM mk_n(const size_t dof, const size_t nnode, const EV& n) {
 EM mk_nqn(const EM& N, const EM3& q, const EM3& imp) {
     EM nqn;
 
-    nqn = N.transpose() * q.transpose() * imp * q * N;
+    nqn.noalias() = N.transpose() * q.transpose() * imp * q * N;
     return nqn;
   }
 
@@ -513,7 +512,7 @@ std::tuple<double, EM3>
 EM mk_k(const EM& B, const EM& D) {
     EM K;
 
-    K = B.transpose() * D * B;
+    K.noalias() = B.transpose() * D * B;
     return K;
   }
 
@@ -575,7 +574,7 @@ std::tuple<double, EM>
     EM dnj;
 
     auto [det, jacobi_inv] = mk_inv_jacobi(xnT, dn);
-    dnj = dn * jacobi_inv;
+    dnj.noalias() = dn * jacobi_inv;
     return {det, dnj};
   }
 
@@ -591,8 +590,10 @@ std::tuple<double, EM3>
 
 std::tuple<double, EM3>
   mk_jacobi(const EM& xnT, const EM& dn) {
-    EM3 jacobi = xnT * dn;
+    EM3 jacobi;
+    double det;
 
-    double det = jacobi.determinant();
+    jacobi.noalias() = xnT * dn;
+    det = jacobi.determinant();
     return {det, jacobi};
   }

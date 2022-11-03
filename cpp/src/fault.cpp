@@ -14,11 +14,12 @@ using EM3 = Eigen::Matrix3d ;
 
 
 // ------------------------------------------------------------------- //
-Fault::Fault (size_t id, size_t pelem_id, size_t melem_id, std::vector<size_t> spring_id, std::vector<double> param)
+Fault::Fault (size_t id, size_t pelem_id, size_t melem_id, std::vector<size_t> neighbour_elements_id, std::vector<size_t> spring_id, std::vector<double> param)
   {
     this->id = id;
     this->pelem_id = pelem_id;
     this->melem_id = melem_id;
+    this->neighbour_elements_id = neighbour_elements_id;
     this->spring_id = spring_id;
     this->param = param;
 
@@ -55,7 +56,8 @@ void Fault::set_initial_condition0(std::vector<Element>& elements) {
   this->xc = this->pelement_p->xnT*np;
   this->rupture_time = 9999.9;
 
-  this->find_neighbour_element(elements);
+  // this->find_neighbour_element(elements);
+  this->set_neighbour_element(elements);
   this->set_R();
   this->slip = 0.0;
 
@@ -77,26 +79,39 @@ void Fault::set_initial_condition1(std::vector<Element>& elements) {
 
 // ------------------------------------------------------------------- //
 void Fault::find_neighbour_element(std::vector<Element>& elements) {
+  ElementStyle* estyle_p = set_element_style("3d8solid");
   EM dn, DB;
 
   for (auto& element : elements) {
     if (element.style.find("3d") != std::string::npos) {
       auto [is_inside, xi] = element.check_inside(this->xc,0.01);
       if (is_inside) {
-        ElementStyle* estyle_p;
-
         this->neighbour_elements_id.push_back(element.id);
-
-        estyle_p = set_element_style(element.style);
         dn = estyle_p->shape_function_dn(xi(0),xi(1),xi(2));
         DB = element.calc_stress_xi_init(dn);
         this->neighbour_elements_DB.push_back(DB);
-
-        delete estyle_p;
+        if (this->neighbour_elements_id.size() >= 2) { break; }
       }
     }
   }
 
+  delete estyle_p;
+}
+
+// ------------------------------------------------------------------- //
+void Fault::set_neighbour_element(std::vector<Element>& elements) {
+  ElementStyle* estyle_p;
+  EM dn, DB;
+
+  for (auto& id : this->neighbour_elements_id) {
+    estyle_p = set_element_style(elements[id].style);
+    auto [is_inside, xi] = elements[id].check_inside(this->xc,0.01);
+    dn = estyle_p->shape_function_dn(xi(0),xi(1),xi(2));
+    DB = elements[id].calc_stress_xi_init(dn);
+    this->neighbour_elements_DB.push_back(DB);
+  }
+
+  delete estyle_p;
 }
 
 // ------------------------------------------------------------------- //
@@ -105,7 +120,7 @@ void Fault::set_R() {
   EV3 t0, t1, n;
   double det;
 
-  t = this->pelement_p->xnT * this->pelement_p->dn_center;
+  t.noalias() = this->pelement_p->xnT * this->pelement_p->dn_center;
   t0 = t.col(0); t1 = t.col(1);
   n = t0.cross(t1);
   det = n.norm();
@@ -122,9 +137,11 @@ void Fault::set_R() {
 
 // ------------------------------------------------------------------- //
 void Fault::update_time_fault() {
-  EV3 Tinput = EV::Zero(3);
-  Tinput(1) = this->traction_force;
-  EV3 T = this->R.transpose() * Tinput;
+  EV3 Tinput, T;
+
+  Tinput << 0.0, this->traction_force, 0.0;
+  T.noalias() = this->R.transpose() * Tinput;
+
   this->pelement_p->mk_T(this->NTp,-T);
   this->melement_p->mk_T(this->NTm, T);
 }
@@ -151,8 +168,8 @@ void Fault::calc_average_slip(const double dt) {
   EV3 up, um;
   double slip;
 
-  up = this->Np * this->pelement_p->mk_u_hstack();
-  um = this->Nm * this->melement_p->mk_u_hstack();
+  up.noalias() = this->Np * this->pelement_p->mk_u_hstack();
+  um.noalias() = this->Nm * this->melement_p->mk_u_hstack();
 
   slip = (this->R * (up-um))(1);
   this->sliprate = (slip-this->slip)/dt;
@@ -161,7 +178,8 @@ void Fault::calc_average_slip(const double dt) {
 
 // ------------------------------------------------------------------- //
 void Fault::calc_traction() {
-  EV stress, traction;
+  EV stress;
+  EV3 traction;
 
   this->traction = 0.0;
   size_t num = this->neighbour_elements_id.size();
@@ -199,14 +217,15 @@ void Fault::update_spring1(std::vector<Element>& elements) {
 }
 
 // ------------------------------------------------------------------- //
-EV Fault::stress_to_traction(const EV& stress, const EV& n) {
+EV3 Fault::stress_to_traction(const EV& stress, const EV3& n) {
   EM stress_mat = EM::Zero(3,3);
+  EV3 traction;
 
   stress_mat(0,0) = stress(0); stress_mat(0,1) = stress(3); stress_mat(0,2) = stress(5);
   stress_mat(1,0) = stress(3); stress_mat(1,1) = stress(1); stress_mat(1,2) = stress(4);
   stress_mat(2,0) = stress(5); stress_mat(2,1) = stress(4); stress_mat(2,2) = stress(2);
 
-  EV traction = stress_mat * n;
+  traction.noalias() = stress_mat * n;
   return traction;
 }
 
@@ -249,7 +268,7 @@ void Fault::set_spring_kv(std::vector<Element>& elements) {
 
     R_spring.block(0,0,3,3) = this->R;
     R_spring.block(3,3,3,3) = this->R;
-    elements[id].K = R_spring.transpose() * D * R_spring;
+    elements[id].K.noalias() = R_spring.transpose() * D * R_spring;
   }
 }
 
@@ -260,7 +279,7 @@ void Fault::set_spring_kvkh(std::vector<Element>& elements) {
 
     R_spring.block(0,0,3,3) = this->R;
     R_spring.block(3,3,3,3) = this->R;
-    elements[id].K = R_spring.transpose() * D * R_spring;
+    elements[id].K.noalias() = R_spring.transpose() * D * R_spring;
   }
 }
 

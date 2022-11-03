@@ -23,18 +23,20 @@ int main() {
   std::string output_dir = "result/";
 
   // ----- FEM Set up ----- //
+  std::cout << "FEM Set up" << std::endl;
   fem.set_init();
   fem.set_output(outputs);
   // exit(1);
 
   // ----- Define source ----- //
-  size_t fsamp = 500;
-  double duration = 6.0;
+  size_t fsamp = 200;
+  double duration = 8.0;
 
   auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
   size_t ntim = tim.size();
 
   // ----- Fault setup ----- //
+  std::cout << "Fault Set up" << std::endl;
   fem.set_initial_fault();
 
   // ----- Prepare time solver ----- //
@@ -47,6 +49,10 @@ int main() {
   EM output_slip(ntim,fem.output_nfault);
   EM output_sliprate(ntim,fem.output_nfault);
   EM output_traction(ntim,fem.output_nfault);
+
+  size_t snap_samp = 1;   // snapshot per 1sec
+  size_t snap_id = 0;
+  std::ofstream fsnap;
 
   // ----- time iteration ----- //
   for (size_t it = 0 ; it < ntim ; it++) {
@@ -79,6 +85,23 @@ int main() {
       std::cout << output_traction(it,1) << " ";
       std::cout << output_traction(it,2) << " ";
       std::cout << output_traction(it,3) << std::endl;
+    }
+
+    if ((it+1)%int(fsamp/snap_samp) == 0) {
+      std::ostringstream so;
+      so << std::setfill('0') << std::setw(3) << snap_id;
+      std::string snap_file = output_dir + "snap/" + so.str();
+      std::cout << "+++ snapshot output => " << snap_file << " +++" <<std::endl;
+
+      fsnap.open(snap_file + ".dat");
+      for (auto& fault : fem.faults) {
+        fsnap << fault.xc(1) << " " << fault.xc(2);
+        fsnap << " " << fault.slip;
+        fsnap << " " << fault.sliprate;
+        fsnap << " " << fault.traction + fault.p0 << "\n";
+      }
+      fsnap.close();
+      snap_id++;
     }
   }
 
@@ -125,4 +148,10 @@ int main() {
   fs.close();
   fsr.close();
   ft.close();
+
+  std::ofstream frt(output_dir + "rupture_time.dat");
+  for (auto& fault : fem.faults) {
+    frt << fault.xc(1) << " " << fault.xc(2) << " " << fault.rupture_time << "\n";
+  }
+  frt.close();
 }
