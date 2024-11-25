@@ -258,29 +258,29 @@ class Fem():
 
     # ======================================================================= #
     def update_time(self,acc0,vel0=None,input_wave=False):
-        for node in self.node_set:
+        for node in self.nodes:
             node.dynamic_force = np.zeros(self.dof,dtype=np.float64)
             self._update_time_node_init(node)
 
         if input_wave:
-            for element in self.input_element_set:
+            for element in self.input_elements:
                 self._update_time_input_wave(element,vel0)
         else:
-            for element in self.element_set:
+            for element in self.elements:
                 self._update_bodyforce(element,acc0)
 
-        for element in self.element_set:
+        for element in self.elements:
             element.mk_ku_cv()
 
-        for node in self.free_node_set:
+        for node in self.free_nodes:
             self._update_time_set_free_nodes(node)
-        for node in self.fixed_node_set:
+        for node in self.fixed_nodes:
             self._update_time_set_fixed_nodes(node)
 
-        for element in self.connected_element_set:
+        for element in self.connected_elements:
             self._update_time_set_connected_elements_(element)
 
-        for element in self.output_element_set:
+        for element in self.output_elements:
             element.calc_stress()
 
     # ======================================================================= #

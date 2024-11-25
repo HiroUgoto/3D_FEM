@@ -14,6 +14,8 @@ def set_style(style):
         return Line_1d_2Node()
     elif style == "1d3line":
         return Line_1d_3Node()
+    elif style == "2d4input":
+        return Input_2d_4Node()
     elif style == "1d2input":
         return Input_1d_2Node()
     elif style == "1d3input":
@@ -300,6 +302,9 @@ class SlipJointNode:
 
 
 # ---------------------------------------------------------------------- #
+class Input_2d_4Node(Solid_2d_4Node):
+    pass
+
 class Input_1d_2Node(Line_1d_2Node):
     pass
 class Input_1d_3Node(Line_1d_3Node):

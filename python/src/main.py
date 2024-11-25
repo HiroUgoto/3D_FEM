@@ -22,26 +22,44 @@ fem.set_output(outputs)
 # plot_model.plot_mesh(fem)
 # exit()
 
-## --- Define EQ source --- ##
+## --- Define plane wave --- ##
 fsamp = 100
 
 fp = 0.5
 duration = 6
 
 tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
-slip_rate = input_wave.ricker(tim,fp,tp=1.0/fp,amp=1.0)
+wave_acc = input_wave.ricker(tim,fp,tp=1.0/fp,amp=1.0)
 ntim = len(tim)
 
+polarity = 30    # [deg] N[XX]E
+wave_accx = wave_acc * np.cos(np.deg2rad(polarity))
+wave_accy = wave_acc * np.sin(np.deg2rad(polarity))
 
-strike = 270.0   # degree
-dip = 30.0      # degree
-rake = 90.0     # degree
-
-width = 1000.0      # m
-length = 1000.0     # m
-nl,nw = 2,2
-sources = source.set_source(fem.elements,strike,dip,rake,length,width,2500,2500,2500,nl,nw)
+# plt.figure()
+# plt.plot(tim,wave_accx)
+# plt.plot(tim,wave_accy)
+# plt.show()
 # exit()
+
+## --- Define EQ source --- ##
+# fsamp = 100
+
+# fp = 0.5
+# duration = 6
+
+# tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
+# slip_rate = input_wave.ricker(tim,fp,tp=1.0/fp,amp=1.0)
+# ntim = len(tim)
+
+# strike = 270.0   # degree
+# dip = 30.0      # degree
+# rake = 90.0     # degree
+
+# width = 1000.0      # m
+# length = 1000.0     # m
+# nl,nw = 2,2
+# sources = source.set_source(fem.elements,strike,dip,rake,length,width,2500,2500,2500,nl,nw)
 
 # plt.figure()
 # plt.plot(tim,slip_rate)
@@ -65,11 +83,15 @@ output_accx = np.zeros((ntim,fem.output_nnode))
 output_accy = np.zeros((ntim,fem.output_nnode))
 output_accz = np.zeros((ntim,fem.output_nnode))
 
-slip0 = 0.0
+vel0 = np.array([0.0,0.0,0.0])
+# slip0 = 0.0
 for it in range(len(tim)):
-    slip0 += slip_rate[it]*dt
+    acc0 = np.array([wave_accx[it],wave_accy[it],0.0])
+    vel0 += acc0*dt
+    fem.update_time(acc0,vel0,input_wave=True)
 
-    fem.update_time_source(sources,slip0)
+    # slip0 += slip_rate[it]*dt
+    # fem.update_time_source(sources,slip0)
 
     output_dispx[it,:] = [node.u[0] for node in fem.output_nodes]
     output_dispy[it,:] = [node.u[1] for node in fem.output_nodes]
@@ -84,7 +106,7 @@ for it in range(len(tim)):
     output_accz[it,:] = [node.a[2] for node in fem.output_nodes]
 
     if it%40 == 0:
-        plot_model.plot_mesh_update(ax,fem,10000.)
+        plot_model.plot_mesh_update(ax,fem,500.)
         print(it,"t=",it*dt,output_dispx[it,0])
 
 elapsed_time = time.time() - start
@@ -107,6 +129,12 @@ output_line = np.vstack([tim,output_accx.T]).T
 np.savetxt(output_dir+"output_x.acc",output_line)
 output_line = np.vstack([tim,output_accy.T]).T
 np.savetxt(output_dir+"output_y.acc",output_line)
+
+output_line = np.vstack([tim,wave_accx,wave_accy]).T
+np.savetxt(output_dir+"input.acc",output_line)
+output_line = np.vstack([tim,np.cumsum(wave_accx)*dt,np.cumsum(wave_accy)*dt]).T
+np.savetxt(output_dir+"input.vel",output_line)
+
 
 ## Output result ##
 plt.figure()
