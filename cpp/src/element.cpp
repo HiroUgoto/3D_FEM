@@ -140,6 +140,9 @@ void Element::mk_local_matrix() {
       double tr_M = M.trace() / this->dof;
       this->M_diag = M.diagonal() * this->mass/tr_M;
 
+      this->C_diag = EV::Zero(this->ndof);
+      this->C_off_diag = EM::Zero(this->ndof,this->ndof);
+
       delete estyle_p;
 
     } else if (this->dim == 2) {

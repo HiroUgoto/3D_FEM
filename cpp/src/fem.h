@@ -40,8 +40,7 @@ class Fem {
     void update_init(const double dt);
 
     void update_time(const EV acc0, const EV vel0, const bool input_wave);
-    void update_time_MD(const EV acc0);
-    void update_time_input_MD(const EV vel0);
+    void update_time_input(const EV vel0);
     void update_time_source(const std::vector<Source> sources, const double slip0);
 
   private:

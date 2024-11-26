@@ -34,21 +34,63 @@ int main() {
 
   auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
   size_t ntim = tim.size();
-  EV slip_rate(ntim);
-  slip_rate = input_wave::ricker(tim,fp,1.0/fp,1.0);
+  EV wave_acc(ntim);
+  wave_acc = input_wave::ricker(tim,fp,1.0/fp,1.0);
+
+  double polarity = 30;  // [deg] N[XX]E
+  EV wave_accx(ntim);  
+  EV wave_accy(ntim); 
+
+  double polarity_rad = polarity * M_PI/180.0;
+  for (size_t it = 0 ; it < ntim ; it++) {
+    wave_accx[it] = wave_acc[it] * std::cos(polarity_rad); 
+    wave_accy[it] = wave_acc[it] * std::sin(polarity_rad); 
+  }
+
+  std::ofstream fa(output_dir + "input.acc");
+  std::ofstream fv(output_dir + "input.vel");
+  double velx = 0.0;
+  double vely = 0.0;
+  for (size_t it = 0 ; it < ntim ; it++) {
+    fa << tim(it) ;
+    fa << " " << wave_accx[it] ;
+    fa << " " << wave_accy[it] ;
+    fa << "\n";
+
+    velx += wave_accx[it]*dt;
+    vely += wave_accy[it]*dt;
+    fv << tim(it) ;
+    fv << " " << velx ;
+    fv << " " << vely ;
+    fv << "\n";
+  }
+  fa.close();
+  fv.close();
+  // exit(1);
+
+  // ----- Define EQ source ----- //
+  // size_t fsamp = 100;
+
+  // double fp = 0.5;
+  // double duration = 6.0;
+
+  // auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
+  // size_t ntim = tim.size();
+  // EV slip_rate(ntim);
+  // slip_rate = input_wave::ricker(tim,fp,1.0/fp,1.0);
 
 
-  double strike = 270.0;
-  double dip = 30.0;
-  double rake = 90.0;
+  // double strike = 270.0;
+  // double dip = 30.0;
+  // double rake = 90.0;
 
-  double length = 1000.0;
-  double width = 1000.0;
-  double sx = 2500.0;
-  double sy = 2500.0;
-  double sz = 2500.0;
+  // double length = 1000.0;
+  // double width = 1000.0;
+  // double sx = 2500.0;
+  // double sy = 2500.0;
+  // double sz = 2500.0;
 
-  auto sources = set_source(fem.elements,strike,dip,rake,length,width,sx,sy,sz,2,2);
+  // auto sources = set_source(fem.elements,strike,dip,rake,length,width,sx,sy,sz,2,2);
 
   // std::ofstream f0(output_dir + "slip_rate.dat");
   // for (size_t it = 0 ; it < ntim ; it++) {
@@ -67,12 +109,17 @@ int main() {
   EM output_velz(ntim,fem.output_nnode);
 
   // ----- time iteration ----- //
-  double slip0 = 0.0;
+  EV vel0(3);
+  vel0[0] = 0.0; vel0[1] = 0.0; vel0[2] = 0.0; 
+  // double slip0 = 0.0;
 
   for (size_t it = 0 ; it < ntim ; it++) {
-    slip0 += slip_rate[it]*dt;
+    vel0[0] += wave_accx[it]*dt;
+    vel0[1] += wave_accy[it]*dt;
+    fem.update_time_input(vel0);
 
-    fem.update_time_source(sources,slip0);
+    // slip0 += slip_rate[it]*dt;
+    // fem.update_time_source(sources,slip0);
 
     for (size_t i = 0 ; i < fem.output_nnode ; i++) {
       Node* node_p = fem.output_nodes_p[i];

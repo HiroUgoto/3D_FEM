@@ -80,6 +80,7 @@ class Line_1d_3Node: public ElementStyle {
 };
 
 // ----------------------------------------------------- //
+class Input_2d_4Node: public Solid_2d_4Node {};
 class Input_1d_2Node: public Line_1d_2Node {};
 class Input_1d_3Node: public Line_1d_3Node {};
 

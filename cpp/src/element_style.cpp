@@ -20,6 +20,8 @@ ElementStyle* set_element_style(const std::string style) {
     es_p = new Line_1d_2Node();
   } else if (style == "1d3line") {
     es_p = new Line_1d_3Node();
+  } else if (style == "2d4input") {
+    es_p = new Input_2d_4Node();
   } else if (style == "1d2input") {
     es_p = new Input_1d_2Node();
   } else if (style == "1d3input") {

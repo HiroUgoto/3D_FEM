@@ -109,19 +109,21 @@ void Fem::_set_initial_matrix(){
       for (size_t inode = 0 ; inode < element.nnode ; inode++) {
         for (size_t i = 0 ; i < this->dof ; i++) {
           element.nodes_p[inode]->mass[i] += element.M_diag[id];
+          element.nodes_p[inode]->c[i] += element.C_diag[id];
           id++;
         }
       }
 
-      if (element.style.find("visco") != std::string::npos) {
-        size_t id = 0;
-        for (size_t inode = 0 ; inode < element.nnode ; inode++) {
-          for (size_t i = 0 ; i < this->dof ; i++) {
-            element.nodes_p[inode]->c[i] += element.C_diag[id];
-            id++;
-          }
-        }
-      }
+      // if (element.style.find("input") != std::string::npos ||
+      //     element.style.find("visco") != std::string::npos) {
+      //   size_t id = 0;
+      //   for (size_t inode = 0 ; inode < element.nnode ; inode++) {
+      //     for (size_t i = 0 ; i < this->dof ; i++) {
+      //       element.nodes_p[inode]->c[i] += element.C_diag[id];
+      //       id++;
+      //     }
+      //   }
+      // }
     }
   }
 
@@ -155,14 +157,14 @@ void Fem::update_init(const double dt) {
 // ------------------------------------------------------------------- //
 void Fem::update_time(const EV acc0, const EV vel0, const bool input_wave) {
     if(input_wave) {
-      this->update_time_input_MD(vel0);
+      this->update_time_input(vel0);
     } else {
       exit(1);
     }
   }
 
 // ------------------------------------------------------------------- //
-void Fem::update_time_input_MD(const EV vel0) {
+void Fem::update_time_input(const EV vel0) {
     for (auto& node : this->nodes) {
       node.force = EV::Zero(this->dof);
     }
