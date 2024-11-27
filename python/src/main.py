@@ -6,6 +6,8 @@ import io_data
 import input_wave
 import source
 import plot_model
+import vtk
+
 import datetime
 
 
@@ -85,7 +87,8 @@ output_accz = np.zeros((ntim,fem.output_nnode))
 
 vel0 = np.array([0.0,0.0,0.0])
 # slip0 = 0.0
-for it in range(len(tim)):
+# for it in range(len(tim)):
+for it in range(len(tim)//4):
     acc0 = np.array([wave_accx[it],wave_accy[it],0.0])
     vel0 += acc0*dt
     fem.update_time(acc0,vel0,input_wave=True)
@@ -135,6 +138,8 @@ np.savetxt(output_dir+"input.acc",output_line)
 output_line = np.vstack([tim,np.cumsum(wave_accx)*dt,np.cumsum(wave_accy)*dt]).T
 np.savetxt(output_dir+"input.vel",output_line)
 
+## --- Write vtk file --- ##
+# vtk.output(fem,output_dir+"output.vtk")
 
 ## Output result ##
 plt.figure()
