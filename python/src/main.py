@@ -43,7 +43,7 @@ tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
 input_tim,input_disp = np.loadtxt("input/input_wave.txt",skiprows=1,unpack=True)
 
 input_fp = 100
-fp = 
+fp = 4
 
 scaling = input_fp/fp
 scaled_tim = input_tim*scaling
