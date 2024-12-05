@@ -9,7 +9,7 @@ import plot_model
 import vtk
 
 import datetime
-
+from scipy import interpolate
 
 start = time.time()
 
@@ -25,16 +25,45 @@ fem.set_output(outputs)
 # exit()
 
 ## --- Define plane wave --- ##
-fsamp = 100
+# fsamp = 1000
 
-fp = 0.5
-duration = 6
+# fp = 4.0
+# duration = 1
+
+# tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
+# wave_acc = input_wave.ricker(tim,fp,tp=1.0/fp,amp=1.0)
+# ntim = len(tim)
+
+# --- Read input wave --- #
+fsamp = 1000
+duration = 1.0
 
 tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
-wave_acc = input_wave.ricker(tim,fp,tp=1.0/fp,amp=1.0)
+
+input_tim,input_disp = np.loadtxt("input/input_wave.txt",skiprows=1,unpack=True)
+
+input_fp = 100
+fp = 
+
+scaling = input_fp/fp
+scaled_tim = input_tim*scaling
+
+fd = interpolate.interp1d(scaled_tim,input_disp,kind="cubic")
+wave_disp = fd(tim)
+
+wave_vel = np.diff(wave_disp)/dt
+wave_acc = np.diff(wave_vel)/dt
+
+# plt.figure()
+# plt.plot(tim,wave_disp)
+# plt.show()
+# exit()
+
+tim = tim[:-2]
 ntim = len(tim)
 
-polarity = 30    # [deg] N[XX]E
+
+polarity = 0    # [deg] N[XX]E
 wave_accx = wave_acc * np.cos(np.deg2rad(polarity))
 wave_accy = wave_acc * np.sin(np.deg2rad(polarity))
 
@@ -108,7 +137,7 @@ for it in range(len(tim)):
     output_accz[it,:] = [node.a[2] for node in fem.output_nodes]
 
     if it%40 == 0:
-        plot_model.plot_mesh_update(ax,fem,500.)
+        plot_model.plot_mesh_update(ax,fem,100.)
         print(it,"t=",it*dt,output_dispx[it,0])
 
 elapsed_time = time.time() - start
@@ -134,14 +163,23 @@ np.savetxt(output_dir+"output_y.acc",output_line)
 
 output_line = np.vstack([tim,wave_accx,wave_accy]).T
 np.savetxt(output_dir+"input.acc",output_line)
-output_line = np.vstack([tim,np.cumsum(wave_accx)*dt,np.cumsum(wave_accy)*dt]).T
+
+input_velx = np.cumsum(wave_accx)*dt
+input_vely = np.cumsum(wave_accy)*dt
+output_line = np.vstack([tim,input_velx,input_vely]).T
 np.savetxt(output_dir+"input.vel",output_line)
+
+input_dispx = np.cumsum(input_velx)*dt
+input_dispy = np.cumsum(input_vely)*dt
+output_line = np.vstack([tim,input_dispx,input_dispy]).T
+np.savetxt(output_dir+"input.disp",output_line)
+
 
 ## --- Write vtk file --- ##
 # vtk.output(fem,output_dir+"output.vtk")
 
 ## Output result ##
 plt.figure()
-# plt.plot(tim,slip_rate,c='k')
-plt.plot(tim,output_velx[:,0],c='r')
+plt.plot(tim,input_dispx,c='k')
+plt.plot(tim,output_dispx[:,0],c='r')
 plt.show()
