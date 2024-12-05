@@ -27,17 +27,21 @@ int main() {
   // exit(1);
 
   // ----- Define source ----- //
-  size_t fsamp = 100;
+  // size_t fsamp = 100;
 
-  double fp = 0.5;
-  double duration = 6.0;
+  // double fp = 0.5;
+  // double duration = 6.0;
 
-  auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
+  // auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
+  // size_t ntim = tim.size();
+  // EV wave_acc(ntim);
+  // wave_acc = input_wave::ricker(tim,fp,1.0/fp,1.0);
+
+  // ---- Read input wave //
+  auto [tim,wave_acc,dt] = input_wave::input_acc_file("input/scaled_input_acc.txt");
   size_t ntim = tim.size();
-  EV wave_acc(ntim);
-  wave_acc = input_wave::ricker(tim,fp,1.0/fp,1.0);
 
-  double polarity = 30;  // [deg] N[XX]E
+  double polarity = 0;  // [deg] N[XX]E
   EV wave_accx(ntim);  
   EV wave_accy(ntim); 
 

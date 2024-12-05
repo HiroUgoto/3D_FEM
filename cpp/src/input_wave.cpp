@@ -41,3 +41,28 @@ Eigen::VectorXd
 
     return wave;
   }
+
+// ------------------------------------------------------------------- //
+std::tuple<Eigen::VectorXd, Eigen::VectorXd, double>
+  input_wave::input_acc_file(const std::string input_file) {
+    size_t ntim;
+    std::string line;
+
+    std::ifstream f(input_file);
+    std::getline(f, line);
+    std::istringstream iss(line);
+    iss >> ntim;
+
+
+    Eigen::VectorXd tim  = Eigen::VectorXd::Zero(ntim);
+    Eigen::VectorXd wave = Eigen::VectorXd::Zero(ntim);
+
+    for (size_t it = 0 ; it < ntim ; it++) {
+      std::getline(f, line);
+      std::istringstream iss(line);
+      iss >> tim[it] >> wave[it] ;
+    }
+
+    double d = tim[1]-tim[0];
+    return std::forward_as_tuple(tim,wave,d);
+  }
