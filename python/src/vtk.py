@@ -4,6 +4,7 @@ def output(fem,output_file):
         ### Header ###
         f.write("# vtk DataFile Version 2.0 \n")
         f.write("FEM simulated result \n")
+        f.write("ASCII \n")
         f.write("DATASET UNSTRUCTURED_GRID \n")
 
         ### Nodes ###
@@ -20,7 +21,7 @@ def output(fem,output_file):
                 nsolid += 1
                 nnode_max = max(nnode_max,element.nnode)
 
-        f.write("CELLS {} {} \n".format(nsolid,nnode_max+1))
+        f.write("CELLS {} {} \n".format(nsolid,nsolid*(nnode_max+1)))
         for element in fem.elements:
             if "solid" in element.style:
                 f.write("{} ".format(element.nnode))
