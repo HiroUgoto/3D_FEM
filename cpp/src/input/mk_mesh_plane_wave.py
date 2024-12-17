@@ -3,11 +3,11 @@ import os
 
 area_x = 200.0
 area_y = 200.0
-area_z = 100.0
+area_z = 25.0
 
-nx = 10
-ny = 10
-nz = 5
+nx = 50
+ny = 50
+nz = 25
 dof = 3
 
 xg = np.linspace(-area_x/2,area_x/2,nx+1,endpoint=True)
