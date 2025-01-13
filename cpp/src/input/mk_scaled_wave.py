@@ -4,14 +4,14 @@ from scipy import interpolate
 
 # --- Read input wave --- #
 fsamp = 3000
-duration = 1.0
+duration = 0.05
 
 tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
 
 input_tim,input_disp = np.loadtxt("input_wave.txt",skiprows=1,unpack=True)
 
 input_fp = 100
-fp = 4
+fp = 100
 
 scaling = input_fp/fp
 scaled_tim = input_tim*scaling
