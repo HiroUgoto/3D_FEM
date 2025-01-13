@@ -24,7 +24,6 @@ int main() {
   // ----- FEM Set up ----- //
   fem.set_init();
   fem.set_output(outputs);
-  // exit(1);
 
   // ----- Define source ----- //
   // size_t fsamp = 100;
@@ -41,7 +40,7 @@ int main() {
   auto [tim,wave_acc,dt] = input_wave::input_acc_file("input/scaled_input_acc.txt");
   size_t ntim = tim.size();
 
-  double polarity = 0;  // [deg] N[XX]E
+  double polarity = 45;  // [deg] N[XX]E
   EV wave_accx(ntim);  
   EV wave_accy(ntim); 
 
@@ -112,6 +111,10 @@ int main() {
   EM output_vely(ntim,fem.output_nnode);
   EM output_velz(ntim,fem.output_nnode);
 
+  EM output_dispx(ntim,fem.output_nnode);
+  EM output_dispy(ntim,fem.output_nnode);
+  EM output_dispz(ntim,fem.output_nnode);
+
   // ----- time iteration ----- //
   EV vel0(3);
   vel0[0] = 0.0; vel0[1] = 0.0; vel0[2] = 0.0; 
@@ -130,6 +133,9 @@ int main() {
       output_velx(it,i) = node_p->v(0);
       output_vely(it,i) = node_p->v(1);
       output_velz(it,i) = node_p->v(2);
+      output_dispx(it,i) = node_p->u(0);
+      output_dispy(it,i) = node_p->u(1);
+      output_dispz(it,i) = node_p->u(2);
     }
 
     if (it%40 == 0) {
@@ -161,4 +167,24 @@ int main() {
   fvx.close();
   fvy.close();
   fvz.close();
+
+  std::ofstream fdx(output_dir + "output_x.disp");
+  std::ofstream fdy(output_dir + "output_y.disp");
+  std::ofstream fdz(output_dir + "output_z.disp");
+  for (size_t it = 0 ; it < ntim ; it++) {
+    fdx << tim(it) ;
+    fdy << tim(it) ;
+    fdz << tim(it) ;
+    for (size_t i = 0 ; i < fem.output_nnode ; i++) {
+      fdx << " " << output_dispx(it,i);
+      fdy << " " << output_dispy(it,i);
+      fdz << " " << output_dispz(it,i);
+    }
+    fdx << "\n";
+    fdy << "\n";
+    fdz << "\n";
+  }
+  fdx.close();
+  fdy.close();
+  fdz.close();
 }

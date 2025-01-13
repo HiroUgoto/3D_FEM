@@ -81,6 +81,7 @@ void Element::mk_local_matrix_init(const size_t dof){
 
     this->M_diag = EV::Zero(this->ndof);
     this->K = EM::Zero(this->ndof,this->ndof);
+    this->C_diag = EV::Zero(this->ndof);
 
     this->force = EV::Zero(this->ndof);
 

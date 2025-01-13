@@ -1,13 +1,13 @@
 import numpy as np
 import os
 
-area_x = 200.0
+area_x = 1.0
 area_y = 200.0
 area_z = 25.0
 
-nx = 50
-ny = 50
-nz = 25
+nx = 2
+ny = 400
+nz = 50
 dof = 3
 
 xg = np.linspace(-area_x/2,area_x/2,nx+1,endpoint=True)
@@ -25,10 +25,10 @@ for k in range(len(zg)):
         for i in range(len(xg)):
             dofx,dofy,dofz = 1,1,1
 
-            if i == 0:
-                dofz = 0
-            elif i == len(xg)-1:
-                dofz = 0    
+            # if i == 0:
+            #     dofz = 0
+            # elif i == len(xg)-1:
+            #     dofz = 0    
             if j == 0:
                 dofz = 0
             elif j == len(yg)-1:
@@ -69,6 +69,16 @@ for j in range(ny):
         element_lines += [param_line + style_line + "\n"]
         ielem += 1
 
+for k in range(nz):
+    for j in range(ny):
+        im = -1
+        style = "connect"
+
+        param_line = "{} {} {} ".format(ielem,style,im)
+        style_line = "{} {}".format(node[0,j,k],node[-1,j,k])
+
+        element_lines += [param_line + style_line + "\n"]
+        ielem += 1
 
 nnode = inode       #number of nodes
 nelem = ielem       #number of elements
@@ -83,7 +93,7 @@ nmaterial = len(material_lines)
 ### Set output ###
 output_node_lines = []
 output_node_lines += ["{}\n".format(node[len(xg)//2,len(yg)//2,0])]
-output_node_lines += ["{}\n".format(node[len(xg)-1,len(yg)-1,0])]
+output_node_lines += ["{}\n".format(node[len(xg)//2,len(yg)-1,0])]
 
 output_element_lines = []
 # for i in range(0,nelem-nx-len(zg)):

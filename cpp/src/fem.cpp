@@ -173,8 +173,14 @@ void Fem::update_time_input(const EV vel0) {
       element_p->update_inputwave(vel0);
     }
 
-    for (auto& element : this->elements) {
-      element.mk_ku_cv();
+    for (auto& element_p : this->solid_elements_p) {
+      element_p->mk_ku_cv();
+    }
+    for (auto& element_p : this->visco_elements_p) {
+      element_p->mk_ku_cv();
+    }
+    for (auto& element_p : this->input_elements_p) {
+      element_p->mk_ku_cv();
     }
 
     this->_update_time_set_free_nodes();
