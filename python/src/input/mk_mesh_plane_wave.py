@@ -1,13 +1,13 @@
 import numpy as np
 import os
 
-area_x = 200.0
+area_x = 10.0
 area_y = 200.0
 area_z = 100.0
 
-nx = 10
-ny = 10
-nz = 5
+nx = 2
+ny = 40
+nz = 20
 dof = 3
 
 xg = np.linspace(-area_x/2,area_x/2,nx+1,endpoint=True)
@@ -25,10 +25,10 @@ for k in range(len(zg)):
         for i in range(len(xg)):
             dofx,dofy,dofz = 1,1,1
 
-            if i == 0:
-                dofz = 0
-            elif i == len(xg)-1:
-                dofz = 0    
+            # if i == 0:
+            #     dofz = 0
+            # elif i == len(xg)-1:
+            #     dofz = 0    
             if j == 0:
                 dofz = 0
             elif j == len(yg)-1:
@@ -69,6 +69,16 @@ for j in range(ny):
         element_lines += [param_line + style_line + "\n"]
         ielem += 1
 
+for k in range(nz):
+    for j in range(ny):
+        im = -1
+        style = "connect"
+
+        param_line = "{} {} {} ".format(ielem,style,im)
+        style_line = "{} {}".format(node[0,j,k],node[-1,j,k])
+
+        element_lines += [param_line + style_line + "\n"]
+        ielem += 1
 
 nnode = inode       #number of nodes
 nelem = ielem       #number of elements
@@ -76,14 +86,15 @@ nelem = ielem       #number of elements
 
 ### Set material ###
 material_lines = []
-material_lines += ["{} {} {} {} {}\n".format(0,"vs_vp_rho",1000.0,2500.0,2100.0)]
+# material_lines += ["{} {} {} {} {}\n".format(0,"vs_vp_rho",1000.0,2500.0,2100.0)]
+material_lines += ["{} {} {} {} {} {}\n".format(0,"vs_vp_rho_Q",1000.0,2500.0,2100.0,100)]
 
 nmaterial = len(material_lines)
 
 ### Set output ###
 output_node_lines = []
 output_node_lines += ["{}\n".format(node[len(xg)//2,len(yg)//2,0])]
-output_node_lines += ["{}\n".format(node[len(xg)-1,len(yg)-1,0])]
+output_node_lines += ["{}\n".format(node[len(xg)//2,len(yg)-1,0])]
 
 output_element_lines = []
 # for i in range(0,nelem-nx-len(zg)):

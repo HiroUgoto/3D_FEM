@@ -36,7 +36,7 @@ fem.set_output(outputs)
 
 # --- Read input wave --- #
 fsamp = 1000
-duration = 1.0
+duration = 0.5
 
 tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
 
@@ -63,7 +63,7 @@ tim = tim[:-2]
 ntim = len(tim)
 
 
-polarity = 0    # [deg] N[XX]E
+polarity = 45    # [deg] N[XX]E
 wave_accx = wave_acc * np.cos(np.deg2rad(polarity))
 wave_accy = wave_acc * np.sin(np.deg2rad(polarity))
 
@@ -136,8 +136,8 @@ for it in range(len(tim)):
     output_accy[it,:] = [node.a[1] for node in fem.output_nodes]
     output_accz[it,:] = [node.a[2] for node in fem.output_nodes]
 
-    if it%40 == 0:
-        plot_model.plot_mesh_update(ax,fem,100.)
+    if it%20 == 0:
+        plot_model.plot_mesh_update(ax,fem,20.)
         print(it,"t=",it*dt,output_dispx[it,0])
 
 elapsed_time = time.time() - start

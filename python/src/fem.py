@@ -380,10 +380,10 @@ class Fem():
     def _update_time_set_connected_elements_(self,element):
         u = np.zeros_like(element.nodes[0].u)
         a = np.zeros_like(element.nodes[0].a)
-        for node in element.node_set:
+        for node in element.nodes:
             u[:] += node.u[:]
             a[:] += node.a[:]
-        for node in element.node_set:
+        for node in element.nodes:
             node.u[:] = u[:]/element.nnode
             node.a[:] = a[:]/element.nnode
 

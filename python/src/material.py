@@ -31,6 +31,16 @@ class Material:
             self.rlambda = 2*nu/(1-2*nu) * self.rmu
             self.rho = rho
 
+        elif self.style == "vs_vp_rho_Q":
+            # Biekal et al.(2011), BKT model only beta 
+            vs,vp,rho,Q = param
+            self.rmu = rho*vs*vs
+            self.rlambda = rho*vp*vp - 2.*self.rmu
+            self.rho = rho
+
+            wmax = 100
+            self.beta = 3.0 / (2*Q*wmax)
+
         elif self.style == "slip_joint_node_normal":
             self.rho = 0.0
             n0,n1,amp = param
@@ -56,12 +66,23 @@ class Material:
 
     # ---------------------------------------------------------
     def mk_visco(self,dof):
-        mu = 0.001 # [Pa s]
+        if "Q" in self.style:
+            # Biekal et al.(2011), BKT model only beta 
+            D = np.zeros([6,6],dtype=np.float64)
 
-        D = np.zeros([6,6],dtype=np.float64)
-        D[3,3] = mu
-        D[4,4] = mu
-        D[5,5] = mu
+            d0 =  4.0/3.0*self.rmu
+            d1 = -2.0/3.0*self.rmu
+            D[0,0],D[0,1],D[0,2] = d0, d1, d1
+            D[1,0],D[1,1],D[1,2] = d1, d0, d1
+            D[2,0],D[2,1],D[2,2] = d1, d1, d0
+            D[3,3] = self.rmu
+            D[4,4] = self.rmu
+            D[5,5] = self.rmu
+
+            D = D*self.beta
+
+        else:
+            D = np.zeros([6,6],dtype=np.float64)
 
         return D
 
