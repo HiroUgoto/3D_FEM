@@ -4,7 +4,7 @@ from scipy import interpolate
 
 # --- Read input wave --- #
 fsamp = 6000
-duration = 0.25
+duration = 0.5
 
 tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
 
