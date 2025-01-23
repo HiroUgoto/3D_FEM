@@ -33,12 +33,12 @@ class Material:
 
         elif self.style == "vs_vp_rho_Q":
             # Biekal et al.(2011), BKT model only beta 
-            vs,vp,rho,Q = param
+            vs,vp,rho,Q,fmax = param
             self.rmu = rho*vs*vs
             self.rlambda = rho*vp*vp - 2.*self.rmu
             self.rho = rho
 
-            wmax = 100
+            wmax = 2*np.pi*fmax
             self.beta = 3.0 / (2*Q*wmax)
 
         elif self.style == "slip_joint_node_normal":

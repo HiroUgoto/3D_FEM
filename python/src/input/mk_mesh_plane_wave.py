@@ -86,8 +86,8 @@ nelem = ielem       #number of elements
 
 ### Set material ###
 material_lines = []
-# material_lines += ["{} {} {} {} {}\n".format(0,"vs_vp_rho",1000.0,2500.0,2100.0)]
-material_lines += ["{} {} {} {} {} {}\n".format(0,"vs_vp_rho_Q",1000.0,2500.0,2100.0,100)]
+material_lines += ["{} {} {} {} {}\n".format(0,"vs_vp_rho",1000.0,2500.0,2100.0)]
+# material_lines += ["{} {} {} {} {} {} {}\n".format(0,"vs_vp_rho_Q",1000.0,2500.0,2100.0,100,200)]
 
 nmaterial = len(material_lines)
 

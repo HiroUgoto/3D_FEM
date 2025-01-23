@@ -23,7 +23,8 @@ wave_vel = np.diff(wave_disp)/dt
 wave_acc = np.diff(wave_vel)/dt
 
 plt.figure()
-plt.plot(tim,wave_disp)
+# plt.plot(tim,wave_disp)
+plt.plot(tim[:-1],wave_vel)
 plt.show()
 
 with open("scaled_input_acc.txt","w") as f:

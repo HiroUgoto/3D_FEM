@@ -3,11 +3,11 @@ import os
 
 area_x = 1.0
 area_y = 200.0
-area_z = 25.0
+area_z = 100.0
 
 nx = 2
 ny = 400
-nz = 50
+nz = 200
 dof = 3
 
 xg = np.linspace(-area_x/2,area_x/2,nx+1,endpoint=True)
@@ -86,7 +86,8 @@ nelem = ielem       #number of elements
 
 ### Set material ###
 material_lines = []
-material_lines += ["{} {} {} {} {}\n".format(0,"vs_vp_rho",1000.0,2500.0,2100.0)]
+# material_lines += ["{} {} {} {} {}\n".format(0,"vs_vp_rho",1000.0,2500.0,2100.0)]
+material_lines += ["{} {} {} {} {} {} {}\n".format(0,"vs_vp_rho_Q",1000.0,2500.0,2100.0,100,200)]   # Vs, Vp, rho, Q, fmax
 
 nmaterial = len(material_lines)
 

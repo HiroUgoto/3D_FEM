@@ -60,6 +60,19 @@ void Material::set_param() {
     this->rlambda = 2.0*nu/(1.0-2.0*nu) * this->rmu;
     this->rho = rho;
 
+  } else if (this->style == "vs_vp_rho_Q") {
+    double vs = this->param.at(0);
+    double vp = this->param.at(1);
+    double rho = this->param.at(2);
+    double Q = this->param.at(3);
+    double fmax = this->param.at(4);
+
+    this->rmu = rho*vs*vs;
+    this->rlambda = rho*vp*vp - 2.0*this->rmu;
+    this->rho = rho; 
+
+    double wmax = 2.0*M_PI*fmax;
+    this->beta = 3.0 / (2.0*Q*wmax);
   }
 }
 
@@ -90,12 +103,30 @@ EM Material::mk_d(const size_t dof) {
 // ------------------------------------------------------------------- //
 EM Material::mk_visco(const size_t dof) {
     EM D(6,6);
-    double mu = 0.001; // [Pa s]
-
     D = EM::Zero(6,6);
-    D(3,3) = mu;
-    D(4,4) = mu;
-    D(5,5) = mu;
+
+    if (this->style.find("Q") != std::string::npos) {
+      double d0 =  4.0/3.0*this->rmu;
+      double d1 = -2.0/3.0*this->rmu;
+
+      D(0,0) = d0;
+      D(0,1) = d1;
+      D(0,2) = d1;
+
+      D(1,0) = d1;
+      D(1,1) = d0;
+      D(1,2) = d1;
+
+      D(2,0) = d1;
+      D(2,1) = d1;
+      D(2,2) = d0;
+
+      D(3,3) = this->rmu;
+      D(4,4) = this->rmu;
+      D(5,5) = this->rmu;
+
+      D *= this->beta;
+    }
 
     return D;
   }

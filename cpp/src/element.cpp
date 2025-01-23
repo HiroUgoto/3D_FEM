@@ -117,7 +117,11 @@ void Element::mk_local_matrix() {
       EM M(this->ndof,this->ndof);
       M = EM::Zero(this->ndof,this->ndof);
 
+      EM C(this->ndof,this->ndof);
+      C = EM::Zero(this->ndof,this->ndof);
+
       this->De = this->material.mk_d(this->dof);
+      this->Dv = this->material.mk_visco(this->dof);
 
       for (size_t i = 0 ; i < this->ng_all ; i++){
         double detJ;
@@ -131,18 +135,24 @@ void Element::mk_local_matrix() {
 
         B = mk_b(this->dof, this->nnode, dnj);
         K = mk_k(B, this->De);
+        Ce = mk_k(B, this->Dv);
 
         detJ = det * w_list[i];
 
         M += Me * detJ;
         this->K += K * detJ;
+        C += Ce * detJ;
       }
 
       double tr_M = M.trace() / this->dof;
       this->M_diag = M.diagonal() * this->mass/tr_M;
 
-      this->C_diag = EV::Zero(this->ndof);
-      this->C_off_diag = EM::Zero(this->ndof,this->ndof);
+      this->C_diag = C.diagonal();
+      this->C_off_diag = this->C_diag.asDiagonal();
+      this->C_off_diag = C - (this->C_off_diag);
+
+      // this->C_diag = EV::Zero(this->ndof);
+      // this->C_off_diag = EM::Zero(this->ndof,this->ndof);
 
       delete estyle_p;
 

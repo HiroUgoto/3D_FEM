@@ -43,7 +43,7 @@ tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
 input_tim,input_disp = np.loadtxt("input/input_wave.txt",skiprows=1,unpack=True)
 
 input_fp = 100
-fp = 4
+fp = 10
 
 scaling = input_fp/fp
 scaled_tim = input_tim*scaling
@@ -55,7 +55,7 @@ wave_vel = np.diff(wave_disp)/dt
 wave_acc = np.diff(wave_vel)/dt
 
 # plt.figure()
-# plt.plot(tim,wave_disp)
+# plt.plot(tim[:-1],wave_vel)
 # plt.show()
 # exit()
 
