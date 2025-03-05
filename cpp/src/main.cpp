@@ -37,39 +37,39 @@ int main() {
   // wave_acc = input_wave::ricker(tim,fp,1.0/fp,1.0);
 
   // ---- Read input wave //
-  auto [tim,wave_acc,dt] = input_wave::input_acc_file("input/scaled_input_acc.txt");
-  size_t ntim = tim.size();
+  // auto [tim,wave_acc,dt] = input_wave::input_acc_file("input/scaled_input_acc.txt");
+  // size_t ntim = tim.size();
 
-  double polarity = 45;  // [deg] N[XX]E
-  EV wave_accx(ntim);  
-  EV wave_accy(ntim); 
+  // double polarity = 45;  // [deg] N[XX]E
+  // EV wave_accx(ntim);  
+  // EV wave_accy(ntim); 
 
-  double polarity_rad = polarity * M_PI/180.0;
-  for (size_t it = 0 ; it < ntim ; it++) {
-    wave_accx[it] = wave_acc[it] * std::cos(polarity_rad); 
-    wave_accy[it] = wave_acc[it] * std::sin(polarity_rad); 
-  }
+  // double polarity_rad = polarity * M_PI/180.0;
+  // for (size_t it = 0 ; it < ntim ; it++) {
+  //   wave_accx[it] = wave_acc[it] * std::cos(polarity_rad); 
+  //   wave_accy[it] = wave_acc[it] * std::sin(polarity_rad); 
+  // }
 
-  std::ofstream fa(output_dir + "input.acc");
-  std::ofstream fv(output_dir + "input.vel");
-  double velx = 0.0;
-  double vely = 0.0;
-  for (size_t it = 0 ; it < ntim ; it++) {
-    fa << tim(it) ;
-    fa << " " << wave_accx[it] ;
-    fa << " " << wave_accy[it] ;
-    fa << "\n";
+  // std::ofstream fa(output_dir + "input.acc");
+  // std::ofstream fv(output_dir + "input.vel");
+  // double velx = 0.0;
+  // double vely = 0.0;
+  // for (size_t it = 0 ; it < ntim ; it++) {
+  //   fa << tim(it) ;
+  //   fa << " " << wave_accx[it] ;
+  //   fa << " " << wave_accy[it] ;
+  //   fa << "\n";
 
-    velx += wave_accx[it]*dt;
-    vely += wave_accy[it]*dt;
-    fv << tim(it) ;
-    fv << " " << velx ;
-    fv << " " << vely ;
-    fv << "\n";
-  }
-  fa.close();
-  fv.close();
-  // exit(1);
+  //   velx += wave_accx[it]*dt;
+  //   vely += wave_accy[it]*dt;
+  //   fv << tim(it) ;
+  //   fv << " " << velx ;
+  //   fv << " " << vely ;
+  //   fv << "\n";
+  // }
+  // fa.close();
+  // fv.close();
+  // // exit(1);
 
   // ----- Define EQ source ----- //
   // size_t fsamp = 100;
@@ -82,26 +82,35 @@ int main() {
   // EV slip_rate(ntim);
   // slip_rate = input_wave::ricker(tim,fp,1.0/fp,1.0);
 
+  auto [tim,input_stf,dt] = input_wave::input_acc_file("input/scaled_input_STF.txt");
+  size_t ntim = tim.size();
 
-  // double strike = 270.0;
-  // double dip = 30.0;
-  // double rake = 90.0;
+  double strike = 0.0;
+  double dip = 45.0;
+  double rake = 90.0;
 
   // double length = 1000.0;
   // double width = 1000.0;
-  // double sx = 2500.0;
-  // double sy = 2500.0;
-  // double sz = 2500.0;
+  double sx = 0.0;
+  double sy = 250.0;
+  double sz = 250.0;
+  double mw = 4.5;
 
-  // auto sources = set_source(fem.elements,strike,dip,rake,length,width,sx,sy,sz,2,2);
+  double rmu = 1000*1000*2100;
+  double m0 = pow(10, 1.5*mw+9.1);
 
-  // std::ofstream f0(output_dir + "slip_rate.dat");
-  // for (size_t it = 0 ; it < ntim ; it++) {
-  //   f0 << tim(it) ;
-  //   f0 << " " << slip_rate(it) ;
-  //   f0 << "\n";
-  // }
-  // f0.close();
+  double length = sqrt(m0/rmu);
+  double width = length;
+
+  auto sources = set_source(fem.elements,strike,dip,rake,length,width,sx,sy,sz,1,1);
+
+  std::ofstream f0(output_dir + "input_stf.dat");
+  for (size_t it = 0 ; it < ntim ; it++) {
+    f0 << tim(it) ;
+    f0 << " " << input_stf(it) ;
+    f0 << "\n";
+  }
+  f0.close();
   // exit(1);
 
   // ----- Prepare time solver ----- //
@@ -116,17 +125,15 @@ int main() {
   EM output_dispz(ntim,fem.output_nnode);
 
   // ----- time iteration ----- //
-  EV vel0(3);
-  vel0[0] = 0.0; vel0[1] = 0.0; vel0[2] = 0.0; 
-  // double slip0 = 0.0;
+  // EV vel0(3);
+  // vel0[0] = 0.0; vel0[1] = 0.0; vel0[2] = 0.0; 
 
   for (size_t it = 0 ; it < ntim ; it++) {
-    vel0[0] += wave_accx[it]*dt;
-    vel0[1] += wave_accy[it]*dt;
-    fem.update_time_input(vel0);
+    // vel0[0] += wave_accx[it]*dt;
+    // vel0[1] += wave_accy[it]*dt;
+    // fem.update_time_input(vel0);
 
-    // slip0 += slip_rate[it]*dt;
-    // fem.update_time_source(sources,slip0);
+    fem.update_time_source(sources,input_stf[it]);
 
     for (size_t i = 0 ; i < fem.output_nnode ; i++) {
       Node* node_p = fem.output_nodes_p[i];
