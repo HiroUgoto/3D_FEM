@@ -19,14 +19,14 @@ scaled_tim = input_tim*scaling
 fd = interpolate.interp1d(scaled_tim,input_disp,kind="cubic",fill_value="extrapolate")
 wave_disp = fd(tim)
 
-wave_vel = np.diff(wave_disp)/dt
-wave_acc = np.diff(wave_vel)/dt
+# wave_vel = np.diff(wave_disp)/dt
+# wave_acc = np.diff(wave_vel)/dt
 
 plt.figure()
 plt.plot(tim,wave_disp)
 plt.show()
 
 with open("scaled_input_STF.txt","w") as f:
-    f.write("{}\n".format(len(wave_acc)))
-    for i in range(len(wave_acc)):
-        f.write("{} {}\n".format(tim[i],wave_acc[i]))
+    f.write("{}\n".format(len(wave_disp)))
+    for i in range(len(wave_disp)):
+        f.write("{} {}\n".format(tim[i],wave_disp[i]))
