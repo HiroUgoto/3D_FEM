@@ -1,13 +1,13 @@
 import numpy as np
 import os
 
-area_x = 5000.0
-area_y = 5000.0
-area_z = 5000.0
+area_x = 500.0
+area_y = 1000.0
+area_z = 1000.0
 
-nx = 10
-ny = 10
-nz = 10
+nx = 20
+ny = 40
+nz = 40
 dof = 3
 
 xg = np.linspace(0,area_x,nx+1,endpoint=True)
@@ -99,17 +99,14 @@ nelem = ielem       #number of elements
 
 ### Set material ###
 material_lines = []
-material_lines += ["{} {} {} {} {}\n".format(0,"vs_vp_rho",3464.0,6000.0,2450.0)]
+material_lines += ["{} {} {} {} {}\n".format(0,"vs_vp_rho",1000.0,2500.0,2100.0)]
 
 nmaterial = len(material_lines)
 
 ### Set output ###
 output_node_lines = []
 output_node_lines += ["{}\n".format(node[len(xg)//2,len(yg)//2,0])]
-# for i in range(len(xg)):
-#     j = len(zg)//2
-#     k = 0
-#     output_node_lines += ["{}\n".format(node[i,j,k])]
+output_node_lines += ["{}\n".format(node[len(xg)//2,len(yg)-1,0])]
 
 output_element_lines = []
 # for i in range(0,nelem-nx-len(zg)):

@@ -312,8 +312,6 @@ class Fem():
     def update_time_source(self,sources,slip0):
         for node in self.nodes:
             node.dynamic_force = np.zeros(self.dof,dtype=np.float64)
-
-        for node in self.nodes:
             self._update_time_node_init(node)
 
         for source in sources:
