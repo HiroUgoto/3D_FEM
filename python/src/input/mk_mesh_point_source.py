@@ -43,7 +43,7 @@ for k in range(nz):
 
             param_line = "{} {} {} ".format(ielem,style,im)
             style_line = "{} {} {} {} {} {} {} {}".format(node[i,j,k],node[i+1,j,k],node[i+1,j+1,k],node[i,j+1,k],
-                                                             node[i,j,k+1],node[i+1,j,k+1],node[i+1,j+1,k+1],node[i,j+1,k+1])
+                                                            node[i,j,k+1],node[i+1,j,k+1],node[i+1,j+1,k+1],node[i,j+1,k+1])
             element_lines += [param_line + style_line + "\n"]
             ielem += 1
 

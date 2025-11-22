@@ -43,7 +43,22 @@ class Gauss_Points:
 class Solid_3d_8Node:
     def __init__(self):
         self.dim = 3
-        self.gauss = np.polynomial.legendre.leggauss(3)
+        self.ng = 3
+        self.xi,self.w = np.polynomial.legendre.leggauss(self.ng)
+
+        self.center = np.zeros(3)
+        self.ng_all = self.ng * self.ng * self.ng
+        self.n_list = []
+        self.dn_list = []
+        self.w_list = []
+
+        for xi,wx in zip(self.xi,self.w):
+            for eta,wy in zip(self.xi,self.w):
+                for zeta,wz in zip(self.xi,self.w):
+                    self.n_list.append(self.shape_function_n(xi,eta,zeta))
+                    self.dn_list.append(self.shape_function_dn(xi,eta,zeta))
+                    self.w_list.append(wx*wy*wz)
+        self.dn_center = self.shape_function_dn(self.center[0],self.center[1],self.center[2])
 
     def init_dn(self,n):
         return np.zeros([n,n,8,3])
@@ -103,7 +118,21 @@ class Solid_3d_8Node:
 class Solid_2d_4Node:
     def __init__(self):
         self.dim = 2
-        self.gauss = np.polynomial.legendre.leggauss(3)
+        self.ng = 3
+        self.xi,self.w = np.polynomial.legendre.leggauss(self.ng)
+
+        self.center = np.zeros(2)
+        self.ng_all = self.ng * self.ng 
+        self.n_list = []
+        self.dn_list = []
+        self.w_list = []
+
+        for xi,wx in zip(self.xi,self.w):
+            for zeta,wz in zip(self.xi,self.w):
+                self.n_list.append(self.shape_function_n(xi,zeta))
+                self.dn_list.append(self.shape_function_dn(xi,zeta))
+                self.w_list.append(wx*wz)
+        self.dn_center = self.shape_function_dn(self.center[0],self.center[1])
 
     def init_dn(self,n):
         return np.zeros([n,n,4,2])
@@ -137,7 +166,21 @@ class Solid_2d_4Node:
 class Solid_2d_8Node:
     def __init__(self):
         self.dim = 2
-        self.gauss = np.polynomial.legendre.leggauss(5)
+        self.ng = 5
+        self.xi,self.w = np.polynomial.legendre.leggauss(self.ng)
+
+        self.center = np.zeros(2)
+        self.ng_all = self.ng * self.ng 
+        self.n_list = []
+        self.dn_list = []
+        self.w_list = []
+
+        for xi,wx in zip(self.xi,self.w):
+            for zeta,wz in zip(self.xi,self.w):
+                self.n_list.append(self.shape_function_n(xi,zeta))
+                self.dn_list.append(self.shape_function_dn(xi,zeta))
+                self.w_list.append(wx*wz)
+        self.dn_center = self.shape_function_dn(self.center[0],self.center[1])
 
     def init_dn(self,n):
         return np.zeros([n,n,8,2])
@@ -188,7 +231,21 @@ class Solid_2d_8Node:
 class Solid_2d_9Node:
     def __init__(self):
         self.dim = 2
-        self.gauss = np.polynomial.legendre.leggauss(5)
+        self.ng = 5
+        self.xi,self.w = np.polynomial.legendre.leggauss(self.ng)
+
+        self.center = np.zeros(2)
+        self.ng_all = self.ng * self.ng 
+        self.n_list = []
+        self.dn_list = []
+        self.w_list = []
+
+        for xi,wx in zip(self.xi,self.w):
+            for zeta,wz in zip(self.xi,self.w):
+                self.n_list.append(self.shape_function_n(xi,zeta))
+                self.dn_list.append(self.shape_function_dn(xi,zeta))
+                self.w_list.append(wx*wz)
+        self.dn_center = self.shape_function_dn(self.center[0],self.center[1])
 
     def init_dn(self,n):
         return np.zeros([n,n,9,2])
@@ -244,7 +301,20 @@ class Solid_2d_9Node:
 class Line_1d_2Node:
     def __init__(self):
         self.dim = 1
-        self.gauss = np.polynomial.legendre.leggauss(3)
+        self.ng = 3
+        self.xi,self.w = np.polynomial.legendre.leggauss(self.ng)
+
+        self.center = np.zeros(1)
+        self.ng_all = self.ng
+        self.n_list = []
+        self.dn_list = []
+        self.w_list = []
+
+        for xi,wx in zip(self.xi,self.w):
+            self.n_list.append(self.shape_function_n(xi))
+            self.dn_list.append(self.shape_function_dn(xi))
+            self.w_list.append(wx)
+        self.dn_center = self.shape_function_dn(self.center[0])
 
     def init_dn(self,n):
         return np.zeros([n,2])
@@ -267,7 +337,20 @@ class Line_1d_2Node:
 class Line_1d_3Node:
     def __init__(self):
         self.dim = 1
-        self.gauss = np.polynomial.legendre.leggauss(5)
+        self.ng = 5
+        self.xi,self.w = np.polynomial.legendre.leggauss(self.ng)
+
+        self.center = np.zeros(1)
+        self.ng_all = self.ng
+        self.n_list = []
+        self.dn_list = []
+        self.w_list = []
+
+        for xi,wx in zip(self.xi,self.w):
+            self.n_list.append(self.shape_function_n(xi))
+            self.dn_list.append(self.shape_function_dn(xi))
+            self.w_list.append(wx)
+        self.dn_center = self.shape_function_dn(self.center[0])
 
     def init_dn(self,n):
         return np.zeros([n,3])

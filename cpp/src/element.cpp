@@ -99,9 +99,6 @@ void Element::mk_local_matrix_init(const size_t dof){
       delete estyle_p;
 
     } else if (this->dim == 2) {
-      this->C_diag = EV::Zero(this->ndof);
-      this->C_off_diag = EM::Zero(this->ndof,this->ndof);
-
       this->imp = this->material.mk_imp(this->dof);
     }
   }
@@ -150,9 +147,6 @@ void Element::mk_local_matrix() {
       this->C_diag = C.diagonal();
       this->C_off_diag = this->C_diag.asDiagonal();
       this->C_off_diag = C - (this->C_off_diag);
-
-      // this->C_diag = EV::Zero(this->ndof);
-      // this->C_off_diag = EM::Zero(this->ndof,this->ndof);
 
       delete estyle_p;
 

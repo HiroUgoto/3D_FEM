@@ -1,6 +1,4 @@
 import numpy as np
-import scipy.optimize
-import sys
 
 import element_style
 
@@ -22,9 +20,6 @@ class Element:
 
         self.estyle = element_style.set_style(style)
         self.dim = self.estyle.dim
-
-        self.xi,self.w = self.estyle.gauss      #gauss積分点の座標,重み
-        self.ng = len(self.xi)      #積分点数
 
     # =========================================================
     def set_nodes(self,nodes):
@@ -70,29 +65,14 @@ class Element:
         self.force = np.zeros(self.ndof,dtype=np.float64)
 
         if self.dim == 3:
-            self.gauss_points = []
             V = 0.0
-            for xi,wx in zip(self.xi,self.w):
-                for eta,wy in zip(self.xi,self.w):
-                    for zeta,wz in zip(self.xi,self.w):
-                        gp = element_style.Gauss_Points(wx*wy*wz,xi,eta,zeta)
-                        self.gauss_points += [gp]
-
-                        dn = self.estyle.shape_function_dn(xi,eta,zeta)
-                        det,_ = mk_jacobi(self.xnT,dn)
-                        detJ = wx*wy*wz*det
-                        V += detJ
-
+            for i in range(self.estyle.ng_all):
+                det,_ = mk_jacobi(self.xnT,self.estyle.dn_list[i])
+                V += det * self.estyle.w_list[i]
             self.mass = self.rho*V
 
         elif self.dim == 2:
-            self.gauss_points = []
             self.imp = self.material.mk_imp(self.dof)
-
-            for eta,wy in zip(self.xi,self.w):
-                for xi,wx in zip(self.xi,self.w):
-                    gp = element_style.Gauss_Points(wx*wy,xi,eta)
-                    self.gauss_points += [gp]
 
         # elif self.dim == 0 and "slip" in self.style:
         #     self.R = self.material.R
@@ -108,19 +88,17 @@ class Element:
             self.De = self.material.mk_d(self.dof)
             self.Dv = self.material.mk_visco(self.dof)
 
-            for gp in self.gauss_points:
-                n = self.estyle.shape_function_n(gp.xi,gp.eta,gp.zeta)
-                dn = self.estyle.shape_function_dn(gp.xi,gp.eta,gp.zeta)
-                det,dnj = mk_dnj(self.xnT,dn)
+            for i in range(self.estyle.ng_all):
+                det,dnj = mk_dnj(self.xnT,self.estyle.dn_list[i])
 
-                N = mk_n(self.dof,self.nnode,n)
+                N = mk_n(self.dof,self.nnode,self.estyle.n_list[i])
                 M = mk_m(N)
 
                 B = mk_b(self.dof,self.nnode,dnj)
                 K = mk_k(B,self.De)
                 C = mk_k(B,self.Dv)
 
-                detJ = gp.w*det
+                detJ = det * self.estyle.w_list[i]
                 self.M += M*detJ
                 self.K += K*detJ
                 self.C += C*detJ
@@ -138,15 +116,13 @@ class Element:
             if "input" or "visco" in self.style:
                 self.C = np.zeros([self.ndof,self.ndof], dtype=np.float64)
 
-                for gp in self.gauss_points:
-                    n = self.estyle.shape_function_n(gp.xi,gp.eta)
-                    dn = self.estyle.shape_function_dn(gp.xi,gp.eta)
+                for i in range(self.estyle.ng_all):
+                    det,q = mk_q(self.dof,self.xnT,self.estyle.dn_list[i])
 
-                    det,q = mk_q(self.dof,self.xnT,dn)
-                    N = mk_n(self.dof,self.nnode,n)
+                    N = mk_n(self.dof,self.nnode,self.estyle.n_list[i])
                     NqN = mk_nqn(N,q,self.imp)
 
-                    detJ = gp.w*det
+                    detJ = det * self.estyle.w_list[i]
                     self.C += NqN*detJ
 
                 self.C_diag = np.diag(self.C)
@@ -157,14 +133,12 @@ class Element:
         if self.dim == 3:
             self.force = np.zeros(self.ndof,dtype=np.float64)
             V = 0.0
-            for gp in self.gauss_points:
-                n = self.estyle.shape_function_n(gp.xi,gp.eta,gp.zeta)
-                dn = self.estyle.shape_function_dn(gp.xi,gp.eta,gp.zeta)
-                det,_ = mk_jacobi(self.xnT,dn)
+            for i in range(self.estyle.ng_all):
+                det,_ = mk_jacobi(self.xnT,self.estyle.dn_list[i])
+                N = mk_n(self.dof,self.nnode,self.estyle.n_list[i])
 
-                N = mk_n(self.dof,self.nnode,n)
+                detJ = det * self.estyle.w_list[i]
 
-                detJ = gp.w*det
                 V += detJ
                 self.force += N[2,:]*detJ * self.gravity
 
@@ -195,18 +169,7 @@ class Element:
             i0 = self.dof*i
             self.nodes[i].force[:] += f[i0:i0+self.dof]
 
-    def mk_bodyforce(self,acc0):
-        if self.dim == 2:
-            self.force = np.zeros(self.ndof,dtype=np.float64)
-            V = 0.0
-            for gp in self.gauss_points:
-                det,_ = mk_jacobi(self.xnT,gp.dn)
-                detJ = gp.w*det
-                V += detJ
-                self.force += (gp.N[0,:]*acc0[0] + gp.N[1,:]*acc0[1])*detJ
-
-            self.force = self.force * self.mass/V
-
+    # ---------------------------------------------------------
     def mk_source(self,source,slip0):
         if self.dim == 3:
             dn = self.estyle.shape_function_dn(source.xi,source.eta,source.zeta)
@@ -215,38 +178,16 @@ class Element:
             moment = self.material.rmu * source.strain_tensor * slip0
             self.force = BT @ moment
 
-    # --------------------------------------------------------
-    def mk_B_stress(self):
-        if self.dim == 1:
-            self.mk_ku()
-
-        elif self.dim == 2:
-            force = np.zeros(self.ndof,dtype=np.float64)
-
-            for gp in self.gauss_points:
-                det,dnj = mk_dnj(self.xnT,gp.dn)
-                BT = mk_b_T(self.dof,self.nnode,dnj)
-                stress = Hencky_stress(self.dof,self.nnode,self.De,dnj,self.u)
-
-                detJ = gp.w*det
-                force += BT @ stress * detJ
-
-            for i in range(self.nnode):
-                i0 = self.dof*i
-                self.nodes[i].force[:] += force[i0:i0+self.dof]
-
     # ---------------------------------------------------------
     def calc_stress(self):
-        dn = self.estyle.shape_function_dn(0.0,0.0,0.0)
-        _,dnj = mk_dnj(self.xnT,dn)
+        _,dnj = mk_dnj(self.xnT,self.estyle.dn_center)
         B = mk_b(self.dof,self.nnode,dnj)
         self.strain = B @ np.hstack(self.u)
         self.stress = self.De @ self.strain
 
-
     # ---------------------------------------------------------
     def check_inside(self,x):
-        xi = np.zeros(3)
+        xi = self.estyle.center
         for itr in range(20):
             n = self.estyle.shape_function_n(xi[0],xi[1],xi[2])
             dn = self.estyle.shape_function_dn(xi[0],xi[1],xi[2])
@@ -260,6 +201,7 @@ class Element:
 
             xi -= r
 
+        ######## 要修正 ##########
         if (-1.0 <= xi[0] < 1.0) and (-1.0 <= xi[1] < 1.0) and (-1.0 <= xi[2] < 1.0):
             is_inside = True
         else:
@@ -333,7 +275,7 @@ def mk_dnu(nnode,dnj,u):
 # ---------------------------------------------------------
 def mk_dnj(xnT,dn):
     det,jacobi_inv = mk_inv_jacobi(xnT,dn)
-    return det, np.matmul(dn,jacobi_inv)
+    return det, dn@jacobi_inv
 
 def mk_inv_jacobi(xnT,dn):
     det,jacobi = mk_jacobi(xnT,dn)
