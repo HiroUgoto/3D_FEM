@@ -13,6 +13,14 @@ def plot_element(ax,nodes,fc):
 
     ax.add_collection3d(art3d.Poly3DCollection(poly,ec="k",fc=fc,alpha=0.2))
 
+def plot_tetra_element(ax,nodes,fc):
+    poly = [[nodes[0].xyz,nodes[1].xyz,nodes[2].xyz],
+            [nodes[0].xyz,nodes[1].xyz,nodes[3].xyz],
+            [nodes[0].xyz,nodes[2].xyz,nodes[3].xyz],
+            [nodes[1].xyz,nodes[2].xyz,nodes[3].xyz]]
+
+    ax.add_collection3d(art3d.Poly3DCollection(poly,ec="k",fc=fc,alpha=0.2))
+
 def plot_element_disp(ax,nodes,amp,fc):
     poly = [[nodes[0].xyz+nodes[0].u*amp,nodes[1].xyz+nodes[1].u*amp,nodes[2].xyz+nodes[2].u*amp,nodes[3].xyz+nodes[3].u*amp],
             [nodes[4].xyz+nodes[4].u*amp,nodes[5].xyz+nodes[5].u*amp,nodes[6].xyz+nodes[6].u*amp,nodes[7].xyz+nodes[7].u*amp],
@@ -24,7 +32,7 @@ def plot_element_disp(ax,nodes,amp,fc):
     ax.add_collection3d(art3d.Poly3DCollection(poly,ec="k",fc=fc,alpha=0.2))
 
 #--------------------------------------------------------#
-def plot_mesh(fem):
+def plot_mesh(fem,fmt="cube"):
     pc = ["gray","yellow","green","pink"]
 
     fig = plt.figure(figsize=(10,8))
@@ -46,7 +54,11 @@ def plot_mesh(fem):
     for element in fem.elements:
         if element.dim == 3:
             ic = element.material_id % len(pc)
-            plot_element(ax,element.nodes,fc=pc[ic])
+
+            if fmt == "cube":
+                plot_element(ax,element.nodes,fc=pc[ic])
+            elif fmt == "tetra":
+                plot_tetra_element(ax,element.nodes,fc=pc[ic])
 
     for node in fem.nodes:
         ax.scatter(node.xyz[0],node.xyz[1],node.xyz[2],color="k")

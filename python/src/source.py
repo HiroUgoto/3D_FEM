@@ -27,10 +27,10 @@ def set_source(elements,strike,dip,rake,length,width,sx,sy,sz,nl=1,nw=1):
                     is_inside,xi = element.check_inside(x)
                     if is_inside:
                         source = Source(id,strike,dip,rake,dl,dw,element.id,xi[0],xi[1],xi[2])
+                        # source.print()
                         source_list += [source]
                         id += 1
                         break
-
 
     return source_list
 
@@ -51,7 +51,7 @@ class Source:
 
     def print(self):
         print(self.id,":",self.dip,",",self.width)
-        print("    ",self.element_id,",",(self.xi,self.zeta))
+        print("    ",self.element_id,",",(self.xi,self.eta,self.zeta))
 
     def set_strain_tensor(self):
         self.strain_tensor = np.zeros(6,dtype=np.float64)

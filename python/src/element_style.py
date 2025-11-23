@@ -61,7 +61,7 @@ class Solid_3d_10Node:
             self.dn_list.append(self.shape_function_dn(xi[0],xi[1],xi[2]))
             self.w_list.append(w)
         self.dn_center = self.shape_function_dn(self.center[0],self.center[1],self.center[2])
-
+        
     def init_dn(self,n):
         return np.zeros([n,n,10,3])
 
@@ -131,6 +131,8 @@ class Solid_3d_10Node:
         dn[9,0] = 4.0*l3
         dn[9,1] = 0.0
         dn[9,2] = 4.0*l1
+
+        return dn
 
 # ---------------------------------------------------------------------- #
 class Solid_3d_8Node:

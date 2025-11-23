@@ -72,4 +72,4 @@ def tetra_gauss(n):
     else:
         raise ValueError(f"Unsupported number of points n={n}. Available: 1, 4, 5, 11")
 
-    return xi[0:3], w
+    return xi[:,0:3], w

@@ -21,18 +21,24 @@ output_dir = "result/"
 ## --- FEM Set up --- ##
 fem.set_init()
 fem.set_output(outputs)
-# plot_model.plot_mesh(fem)
+# plot_model.plot_mesh(fem,fmt="tetra")
 # exit()
 
+###############################
 ## --- Define plane wave --- ##
-# fsamp = 100
+###############################
+# fsamp = 1200
 
-# fp = 0.5
-# duration = 6.0
+# fp = 2
+# duration = 3.0
 
 # tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
 # wave_acc = input_wave.ricker(tim,fp,tp=1.0/fp,amp=1.0)
 # ntim = len(tim)
+
+# polarity = 45    # [deg] N[XX]E
+# wave_accx = wave_acc * np.cos(np.deg2rad(polarity))
+# wave_accy = wave_acc * np.sin(np.deg2rad(polarity))
 
 # --- Read input wave --- #
 # fsamp = 1000
@@ -71,31 +77,30 @@ fem.set_output(outputs)
 # plt.show()
 # exit()
 
-## --- Define EQ source --- ##
-# fsamp = 100
+###############################
+## --- Define plane wave --- ##
+###############################
+fsamp = 1000
 
-# fp = 0.5
-# duration = 6
+fp = 2.0
+duration = 2.5
 
-# tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
-# slip_rate = input_wave.ricker(tim,fp,tp=1.0/fp,amp=1.0)
-# ntim = len(tim)
-
-tim,input_stf = np.loadtxt("input/scaled_input_STF.txt",skiprows=1,unpack=True)
-dt = tim[1] - tim[0]
+tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
+input_stf = input_wave.ricker(tim,fp,tp=1.5/fp,amp=1.0)
 ntim = len(tim)
+
+# tim,input_stf = np.loadtxt("input/scaled_input_STF.txt",skiprows=1,unpack=True)
+# dt = tim[1] - tim[0]
+# ntim = len(tim)
 
 strike = 0.0   # degree
 dip = 45.0      # degree
 rake = 90.0     # degree
 
-# length = 1000.0     # m
-# width = 1000.0      # m
-
-sx = 0.0
+sx = 250.0
 sy = 250.0
 sz = 250.0
-mw = 4.5
+mw = 3.0
 
 rmu = 1000*1000*2100
 m0 = 10**(1.5*mw+9.1)
@@ -104,8 +109,8 @@ width = length
 
 sources = source.set_source(fem.elements,strike,dip,rake,length,width,sx,sy,sz,1,1)
 
-output_line = np.vstack([tim,input_stf]).T
-np.savetxt(output_dir+"input_stf.dat",output_line)
+# output_line = np.vstack([tim,input_stf]).T
+# np.savetxt(output_dir+"input_stf.dat",output_line)
 
 # plt.figure()
 # plt.plot(tim,input_stf)
@@ -143,7 +148,7 @@ for it in range(len(tim)):
 
     if it%20 == 0:
         # plot_model.plot_mesh_update(ax,fem,20.)
-        print(it,"t=",it*dt,output_velx[it,0])
+        print(it,"t=",it*dt,output_vely[it,0])
 
 elapsed_time = time.time() - start
 print ("elapsed_time: {0}".format(elapsed_time) + "[sec]")
@@ -184,5 +189,6 @@ np.savetxt(output_dir+"output_z.disp",output_line)
 
 ## Output result ##
 plt.figure()
+# plt.plot(tim,input_velx*2,c='gray')
 plt.plot(tim,output_velx[:,0],c='k')
 plt.show()

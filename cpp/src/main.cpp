@@ -72,18 +72,18 @@ int main() {
   // // exit(1);
 
   // ----- Define EQ source ----- //
-  // size_t fsamp = 100;
+  size_t fsamp = 1000;
 
-  // double fp = 0.5;
-  // double duration = 6.0;
+  double fp = 2.0;
+  double duration = 2.5;
 
-  // auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
-  // size_t ntim = tim.size();
-  // EV slip_rate(ntim);
-  // slip_rate = input_wave::ricker(tim,fp,1.0/fp,1.0);
-
-  auto [tim,input_stf,dt] = input_wave::input_acc_file("input/scaled_input_STF.txt");
+  auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
   size_t ntim = tim.size();
+  EV input_stf(ntim);
+  input_stf = input_wave::ricker(tim,fp,1.5/fp,1.0);
+
+  // auto [tim,input_stf,dt] = input_wave::input_acc_file("input/scaled_input_STF.txt");
+  // size_t ntim = tim.size();
 
   double strike = 0.0;
   double dip = 45.0;
@@ -91,10 +91,10 @@ int main() {
 
   // double length = 1000.0;
   // double width = 1000.0;
-  double sx = 0.0;
+  double sx = 250.0;
   double sy = 250.0;
   double sz = 250.0;
-  double mw = 4.5;
+  double mw = 3.0;
 
   double rmu = 1000*1000*2100;
   double m0 = pow(10, 1.5*mw+9.1);
@@ -147,7 +147,7 @@ int main() {
 
     if (it%40 == 0) {
       std::cout << it << " t= " << it*dt << " ";
-      std::cout << output_velx(it,0) << "\n";
+      std::cout << output_vely(it,0) << "\n";
     }
   }
 
