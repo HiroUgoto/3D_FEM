@@ -202,11 +202,6 @@ class Element:
             xi -= r
 
         is_inside = self.estyle.is_inside(xi)
-        # if (-1.0 <= xi[0] < 1.0) and (-1.0 <= xi[1] < 1.0) and (-1.0 <= xi[2] < 1.0):
-        #     is_inside = True
-        # else:
-        #     is_inside = False
-
 
         return is_inside,xi
 

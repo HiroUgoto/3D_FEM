@@ -1,9 +1,13 @@
 from functools import lru_cache
 import numpy as np
 
+import gauss_quadrature
+
 def set_style(style):
     if style == "3d8solid":
         return Solid_3d_8Node()
+    elif style == "3d10solid":
+        return Solid_3d_10Node()
     elif style == "2d4solid":
         return Solid_2d_4Node()
     elif style == "2d8solid":
@@ -40,6 +44,95 @@ class Gauss_Points:
         self.zeta = zeta
 
 # =================== Element style classes ============================ #
+class Solid_3d_10Node:
+    def __init__(self):
+        self.dim = 3
+        self.ng = 11
+        self.xi,self.w = gauss_quadrature.tetra_gauss(self.ng)
+
+        self.center = np.array([1/4,1/4,1/4])
+        self.ng_all = self.ng 
+        self.n_list = []
+        self.dn_list = []
+        self.w_list = []
+
+        for xi,w in zip(self.xi,self.w):
+            self.n_list.append(self.shape_function_n(xi[0],xi[1],xi[2]))
+            self.dn_list.append(self.shape_function_dn(xi[0],xi[1],xi[2]))
+            self.w_list.append(w)
+        self.dn_center = self.shape_function_dn(self.center[0],self.center[1],self.center[2])
+
+    def init_dn(self,n):
+        return np.zeros([n,n,10,3])
+
+    def is_inside(self,xi):
+        return (0.0 <= xi[0]) and (0.0 <= xi[1]) and (0.0 <= xi[2]) \
+            and (xi[0] + xi[1] + xi[2] <= 1.0)
+
+    @lru_cache()
+    def shape_function_n(self,xi,eta,zeta):
+        n = np.zeros(10)
+        l1,l2,l3 = xi,eta,zeta
+        l0 = 1.0 - l1 - l2 - l3
+        n[0] = l0 * (2.0*l0 - 1.0) 
+        n[1] = l1 * (2.0*l1 - 1.0) 
+        n[2] = l2 * (2.0*l2 - 1.0) 
+        n[3] = l3 * (2.0*l3 - 1.0) 
+
+        n[4] = 4.0*l0*l1
+        n[5] = 4.0*l1*l2
+        n[6] = 4.0*l0*l2
+        n[7] = 4.0*l0*l3
+        n[8] = 4.0*l2*l3
+        n[9] = 4.0*l1*l3
+        return n
+    
+    @lru_cache()
+    def shape_function_dn(style,xi,eta,zeta):
+        dn = np.zeros([10,3])
+        l1,l2,l3 = xi,eta,zeta
+        l0 = 1.0 - l1 - l2 - l3
+        dn[0,0] = 1.0 - 4.0*l0
+        dn[0,1] = 1.0 - 4.0*l0
+        dn[0,2] = 1.0 - 4.0*l0
+
+        dn[1,0] = 4.0*l1 - 1.0
+        dn[1,1] = 0.0
+        dn[1,2] = 0.0
+
+        dn[2,0] = 0.0
+        dn[2,1] = 4.0*l2 - 1.0
+        dn[2,2] = 0.0
+
+        dn[3,0] = 0.0
+        dn[3,1] = 0.0
+        dn[3,2] = 4.0*l3 - 1.0
+
+        dn[4,0] =  4.0*(l0 - l1)
+        dn[4,1] = -4.0*l1 
+        dn[4,2] = -4.0*l1
+
+        dn[5,0] = 4.0*l2
+        dn[5,1] = 4.0*l1
+        dn[5,2] = 0.0
+
+        dn[6,0] = -4.0*l2
+        dn[6,1] =  4.0*(l0 - l2)
+        dn[6,2] = -4.0*l2
+
+        dn[7,0] = -4.0*l3
+        dn[7,1] = -4.0*l3
+        dn[7,2] =  4.0*(l0 - l3)
+
+        dn[8,0] = 0.0
+        dn[8,1] = 4.0*l3
+        dn[8,2] = 4.0*l2
+
+        dn[9,0] = 4.0*l3
+        dn[9,1] = 0.0
+        dn[9,2] = 4.0*l1
+
+# ---------------------------------------------------------------------- #
 class Solid_3d_8Node:
     def __init__(self):
         self.dim = 3
@@ -64,10 +157,7 @@ class Solid_3d_8Node:
         return np.zeros([n,n,8,3])
 
     def is_inside(self,xi):
-        if (-1.0 <= xi[0] < 1.0) and (-1.0 <= xi[1] < 1.0) and (-1.0 <= xi[2] < 1.0):
-            return True
-        else:
-            return False
+        return (-1.0 <= xi[0] < 1.0) and (-1.0 <= xi[1] < 1.0) and (-1.0 <= xi[2] < 1.0)
 
     @lru_cache()
     def shape_function_n(self,xi,eta,zeta):
@@ -144,10 +234,7 @@ class Solid_2d_4Node:
         return np.zeros([n,n,4,2])
 
     def is_inside(self,xi):
-        if (-1.0 <= xi[0] < 1.0) and (-1.0 <= xi[1] < 1.0):
-            return True
-        else:
-            return False
+        return (-1.0 <= xi[0] < 1.0) and (-1.0 <= xi[1] < 1.0)
 
     @lru_cache()
     def shape_function_n(self,xi,zeta):
@@ -198,10 +285,7 @@ class Solid_2d_8Node:
         return np.zeros([n,n,8,2])
 
     def is_inside(self,xi):
-        if (-1.0 <= xi[0] < 1.0) and (-1.0 <= xi[1] < 1.0):
-            return True
-        else:
-            return False
+        return (-1.0 <= xi[0] < 1.0) and (-1.0 <= xi[1] < 1.0)
 
     @lru_cache()
     def shape_function_n(self,xi,zeta):
@@ -269,10 +353,7 @@ class Solid_2d_9Node:
         return np.zeros([n,n,9,2])
 
     def is_inside(self,xi):
-        if (-1.0 <= xi[0] < 1.0) and (-1.0 <= xi[1] < 1.0):
-            return True
-        else:
-            return False
+        return (-1.0 <= xi[0] < 1.0) and (-1.0 <= xi[1] < 1.0)
 
     @lru_cache()
     def shape_function_n(self,xi,zeta):
@@ -344,10 +425,7 @@ class Line_1d_2Node:
         return np.zeros([n,2])
 
     def is_inside(self,xi):
-        if (-1.0 <= xi[0] < 1.0):
-            return True
-        else:
-            return False
+        return (-1.0 <= xi[0] < 1.0)
 
     @lru_cache()
     def shape_function_n(self,xi,zeta=0.0):
@@ -386,10 +464,7 @@ class Line_1d_3Node:
         return np.zeros([n,3])
 
     def is_inside(self,xi):
-        if (-1.0 <= xi[0] < 1.0):
-            return True
-        else:
-            return False
+        return (-1.0 <= xi[0] < 1.0)
 
     @lru_cache()
     def shape_function_n(self,xi,zeta=0.0):
