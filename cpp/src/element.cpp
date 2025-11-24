@@ -366,9 +366,7 @@ std::tuple<bool, EV3>
       xi -= r;
     }
 
-    if ( (-1.0 <= xi[0]) && (xi[0] < 1.0) &&
-         (-1.0 <= xi[1]) && (xi[1] < 1.0) &&
-         (-1.0 <= xi[2]) && (xi[2] < 1.0) ) {
+    if ( estyle_p->is_inside(xi) ) {
       is_inside = true;
     }
 

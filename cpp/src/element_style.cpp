@@ -3,6 +3,7 @@
 #include "element_style.h"
 
 using EV = Eigen::VectorXd ;
+using EV3 = Eigen::Vector3d ;
 using EM = Eigen::MatrixXd ;
 
 
@@ -12,6 +13,8 @@ ElementStyle* set_element_style(const std::string style) {
 
   if (style == "3d8solid") {
     es_p = new Solid_3d_8Node();
+  } else if (style == "3d10solid") {
+    es_p = new Solid_3d_10Node();
   } else if (style == "2d4solid") {
     es_p = new Solid_2d_4Node();
   } else if (style == "2d9solid") {
@@ -66,11 +69,51 @@ void set_gauss_points (const size_t n, EV& xi, EV& w) {
   }
 }
 
+void set_tetra_gauss_points (const size_t n, EM& xi, EV& w) {
+  if (n == 11){
+    xi = EM::Zero(11,3);
+    w  = EV::Zero(11);
 
+    double sqrt5_14 = sqrt(5.0/14.0);
+    double a = (1.0 + sqrt5_14)/4.0; 
+    double b = (1.0 - sqrt5_14)/4.0;
+
+    // Index 0
+    xi.row(0) << 1.0/4.0, 1.0/4.0, 1.0/4.0;
+    w(0) = -74.0 / 5625.0;
+
+    // Index 1-4 (Type 2)
+    double val_11 = 11.0 / 14.0;
+    double val_1 = 1.0 / 14.0;
+    
+    xi.row(1) << val_11, val_1, val_1;
+    xi.row(2) << val_1, val_11, val_1;
+    xi.row(3) << val_1, val_1, val_11;
+    xi.row(4) << val_1, val_1, val_1;
+    
+    const double w2 = 343.0 / 45000.0;
+    w.segment<4>(1).setConstant(w2); 
+    
+    // --- Index 5-10 (Type 3) ---
+    xi.row(5) << a, a, b;
+    xi.row(6) << a, b, a;
+    xi.row(7) << a, b, b;
+    xi.row(8) << b, a, a;
+    xi.row(9) << b, a, b;
+    xi.row(10) << b, b, a;
+    
+    double w3 = 56.0 / 2250.0;
+    w.segment<6>(5).setConstant(w3); 
+  }
+}
 
 // ------- Virtual class (ElementStyle) ----------------- //
 ElementStyle::ElementStyle () {}
 ElementStyle::~ElementStyle () {}
+
+bool ElementStyle::is_inside (EV3& xi) {
+  return false;
+}
 
 EV ElementStyle::shape_function_n (double xi, double eta, double zeta) {
   EV n;
@@ -83,6 +126,111 @@ EM ElementStyle::shape_function_dn (double xi, double eta, double zeta) {
 }
 
 // ------- Actual element style class ------------------- //
+// ----------------------------------------------------- //
+Solid_3d_10Node::Solid_3d_10Node () {
+  this->dim = 3;
+  this->ng = 11;
+
+  EM xi;
+  set_tetra_gauss_points(this->ng, xi, this->w);
+
+  this->center = EV::Zero(3);
+  this->center << 1.0/4.0, 1.0/4.0, 1.0/4.0;
+
+  this->ng_all = this->ng;
+  this->n_list.resize(this->ng_all);
+  this->dn_list.resize(this->ng_all);
+  this->w_list.resize(this->ng_all);
+
+  size_t id = 0;
+  for (size_t i=0 ; i<this->ng_all ; i++) {
+    n_list[id] = this->shape_function_n(xi(i,0),xi(i,1),xi(i,2));
+    dn_list[id] = this->shape_function_dn(xi(i,0),xi(i,1),xi(i,2));
+    w_list[id] = w(i);
+    id++;
+  }
+  this->dn_center = this->shape_function_dn(this->center(0),this->center(1),this->center(2));
+}
+
+Solid_3d_10Node::~Solid_3d_10Node () {}
+
+bool Solid_3d_10Node::is_inside (EV3& xi) {
+  bool non_negative = (xi.array() >= 0.0).all();
+  bool sum_condition = (xi.sum() <= 1.0);
+
+  return non_negative && sum_condition;
+}
+
+EV Solid_3d_10Node::shape_function_n (double xi, double eta, double zeta) {
+    EV n = EV::Zero(10);
+    double l1 = xi;
+    double l2 = eta;
+    double l3 = zeta;
+    double l0 = 1.0 - l1 - l2 - l3;
+
+    n(0) = l0*(2.0*l0 - 1.0); 
+    n(1) = l1*(2.0*l1 - 1.0); 
+    n(2) = l2*(2.0*l2 - 1.0); 
+    n(3) = l3*(2.0*l3 - 1.0); 
+
+    n(4) = 4.0*l0*l1; 
+    n(5) = 4.0*l1*l2; 
+    n(6) = 4.0*l0*l2; 
+    n(7) = 4.0*l0*l3; 
+    n(8) = 4.0*l2*l3;
+    n(9) = 4.0*l1*l3; 
+    return n;
+  }
+
+EM Solid_3d_10Node::shape_function_dn (double xi, double eta, double zeta) {
+    EM dn = EM::Zero(10,3);
+    double l1 = xi;
+    double l2 = eta;
+    double l3 = zeta;
+    double l0 = 1.0 - l1 - l2 - l3;
+    
+    dn(0,0) = 1.0 - 4.0*l0;
+    dn(0,1) = 1.0 - 4.0*l0;
+    dn(0,2) = 1.0 - 4.0*l0;
+
+    dn(1,0) = 4.0*l1 - 1.0;
+    dn(1,1) = 0.0;
+    dn(1,2) = 0.0;
+
+    dn(2,0) = 0.0;
+    dn(2,1) = 4.0*l2 - 1.0;
+    dn(2,2) = 0.0;
+
+    dn(3,0) = 0.0;
+    dn(3,1) = 0.0;
+    dn(3,2) = 4.0*l3 - 1.0;
+
+    dn(4,0) =  4.0*(l0 - l1);
+    dn(4,1) = -4.0*l1;
+    dn(4,2) = -4.0*l1;
+
+    dn(5,0) = 4.0*l2;
+    dn(5,1) = 4.0*l1;
+    dn(5,2) = 0.0;
+
+    dn(6,0) = -4.0*l2;
+    dn(6,1) =  4.0*(l0 - l2);
+    dn(6,2) = -4.0*l2;
+
+    dn(7,0) = -4.0*l3;
+    dn(7,1) = -4.0*l3;
+    dn(7,2) =  4.0*(l0 - l3);
+
+    dn(8,0) = 0.0;
+    dn(8,1) = 4.0*l3;
+    dn(8,2) = 4.0*l2;
+
+    dn(9,0) = 4.0*l3;
+    dn(9,1) = 0.0;
+    dn(9,2) = 4.0*l1;
+    return dn;
+  }
+
 // ----------------------------------------------------- //
 Solid_3d_8Node::Solid_3d_8Node () {
   this->dim = 3;
@@ -110,6 +258,16 @@ Solid_3d_8Node::Solid_3d_8Node () {
 }
 
 Solid_3d_8Node::~Solid_3d_8Node () {}
+
+bool Solid_3d_8Node::is_inside (EV3& xi) {
+  const double lower_limit = -1.0;
+  const double upper_limit =  1.0;
+
+  bool lower_check = (xi.array() >= lower_limit).all();
+  bool upper_check = (xi.array() < upper_limit).all();
+
+  return lower_check && upper_check;
+}
 
 EV Solid_3d_8Node::shape_function_n (double xi, double eta, double zeta) {
     EV n = EV::Zero(8);
@@ -188,6 +346,16 @@ Solid_2d_4Node::Solid_2d_4Node () {
 
 Solid_2d_4Node::~Solid_2d_4Node () {}
 
+bool Solid_2d_4Node::is_inside (EV3& xi) {
+  const double lower_limit = -1.0;
+  const double upper_limit =  1.0;
+
+  bool lower_check = (xi.array() >= lower_limit).all();
+  bool upper_check = (xi.array() < upper_limit).all();
+
+  return lower_check && upper_check;
+}
+
 EV Solid_2d_4Node::shape_function_n (double xi, double eta, double zeta) {
     EV n = EV::Zero(4);
     n(0) = (1.0 - xi)*(1.0 - eta) / 4.0;
@@ -239,6 +407,16 @@ Solid_2d_8Node::Solid_2d_8Node () {
 }
 
 Solid_2d_8Node::~Solid_2d_8Node () {}
+
+bool Solid_2d_8Node::is_inside (EV3& xi) {
+  const double lower_limit = -1.0;
+  const double upper_limit =  1.0;
+
+  bool lower_check = (xi.array() >= lower_limit).all();
+  bool upper_check = (xi.array() < upper_limit).all();
+
+  return lower_check && upper_check;
+}
 
 EV Solid_2d_8Node::shape_function_n (double xi, double eta, double zeta) {
     EV n = EV::Zero(8);
@@ -307,6 +485,16 @@ Solid_2d_9Node::Solid_2d_9Node () {
 }
 
 Solid_2d_9Node::~Solid_2d_9Node () {}
+
+bool Solid_2d_9Node::is_inside (EV3& xi) {
+  const double lower_limit = -1.0;
+  const double upper_limit =  1.0;
+
+  bool lower_check = (xi.array() >= lower_limit).all();
+  bool upper_check = (xi.array() < upper_limit).all();
+
+  return lower_check && upper_check;
+}
 
 EV Solid_2d_9Node::shape_function_n (double xi, double eta, double zeta) {
     EV n = EV::Zero(9);
@@ -379,6 +567,16 @@ Line_1d_2Node::Line_1d_2Node () {
 
 Line_1d_2Node::~Line_1d_2Node () {}
 
+bool Line_1d_2Node::is_inside (EV3& xi) {
+  const double lower_limit = -1.0;
+  const double upper_limit =  1.0;
+
+  bool lower_check = (xi.array() >= lower_limit).all();
+  bool upper_check = (xi.array() < upper_limit).all();
+
+  return lower_check && upper_check;
+}
+
 EV Line_1d_2Node::shape_function_n (double xi, double eta, double zeta) {
     EV n = EV::Zero(2);
     n(0) = (1.0 - xi) / 2.0;
@@ -416,6 +614,16 @@ Line_1d_3Node::Line_1d_3Node () {
 }
 
 Line_1d_3Node::~Line_1d_3Node () {}
+
+bool Line_1d_3Node::is_inside (EV3& xi) {
+  const double lower_limit = -1.0;
+  const double upper_limit =  1.0;
+
+  bool lower_check = (xi.array() >= lower_limit).all();
+  bool upper_check = (xi.array() < upper_limit).all();
+
+  return lower_check && upper_check;
+}
 
 EV Line_1d_3Node::shape_function_n (double xi, double eta, double zeta) {
     EV n = EV::Zero(3);
