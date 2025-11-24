@@ -237,6 +237,7 @@ Solid_3d_8Node::Solid_3d_8Node () {
   this->ng = 3;
   set_gauss_points(this->ng, this->xi, this->w);
 
+  this->center = EV::Zero(3);
   this->ng_all = this->ng * this->ng * this->ng;
   this->n_list.resize(this->ng_all);
   this->dn_list.resize(this->ng_all);
@@ -326,6 +327,7 @@ Solid_2d_4Node::Solid_2d_4Node () {
   this->ng = 3;
   set_gauss_points(this->ng, this->xi, this->w);
 
+  this->center = EV::Zero(3);
   this->ng_all = this->ng * this->ng;
   this->n_list.resize(this->ng_all);
   this->dn_list.resize(this->ng_all);
@@ -388,6 +390,7 @@ Solid_2d_8Node::Solid_2d_8Node () {
   this->ng = 5;
   set_gauss_points(this->ng, this->xi, this->w);
 
+  this->center = EV::Zero(3);
   this->ng_all = this->ng * this->ng;
   this->n_list.resize(this->ng_all);
   this->dn_list.resize(this->ng_all);
@@ -466,6 +469,7 @@ Solid_2d_9Node::Solid_2d_9Node () {
   this->ng = 5;
   set_gauss_points(this->ng, this->xi, this->w);
 
+  this->center = EV::Zero(3);
   this->ng_all = this->ng * this->ng;
   this->n_list.resize(this->ng_all);
   this->dn_list.resize(this->ng_all);
@@ -549,6 +553,7 @@ Line_1d_2Node::Line_1d_2Node () {
   this->ng = 3;
   set_gauss_points(this->ng, this->xi, this->w);
 
+  this->center = EV::Zero(3);
   this->ng_all = this->ng;
   this->n_list.resize(this->ng_all);
   this->dn_list.resize(this->ng_all);
@@ -597,6 +602,7 @@ Line_1d_3Node::Line_1d_3Node () {
   this->ng = 5;
   set_gauss_points(this->ng, this->xi, this->w);
 
+  this->center = EV::Zero(3);
   this->ng_all = this->ng;
   this->n_list.resize(this->ng_all);
   this->dn_list.resize(this->ng_all);

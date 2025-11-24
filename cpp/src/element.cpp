@@ -349,9 +349,9 @@ void Element::calc_stress() {
 // ------------------------------------------------------------------- //
 std::tuple<bool, EV3>
   Element::check_inside(const EV3 x) {
-    EV3 xi = EV::Zero(3);
     bool is_inside = false;
     ElementStyle* estyle_p = set_element_style(this->style);
+    EV3 xi = estyle_p->center;
 
     for (size_t itr=0; itr<20; itr++) {
       EV n = estyle_p->shape_function_n(xi[0],xi[1],xi[2]);
