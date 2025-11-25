@@ -13,7 +13,7 @@ class ElementStyle {
     std::vector<EM> dn_list;
     std::vector<double> w_list;
 
-    EV center;
+    EV3 center;
     EM dn_center;
 
     ElementStyle ();

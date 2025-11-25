@@ -70,7 +70,21 @@ void set_gauss_points (const size_t n, EV& xi, EV& w) {
 }
 
 void set_tetra_gauss_points (const size_t n, EM& xi, EV& w) {
-  if (n == 11){
+  if (n == 5) {
+    xi = EM::Zero(5,3);
+    w  = EV::Zero(5);
+    
+    xi.row(0) << 1.0/4.0, 1.0/4.0, 1.0/4.0;
+    xi.row(1) << 1.0/2.0, 1.0/6.0, 1.0/6.0;
+    xi.row(2) << 1.0/6.0, 1.0/2.0, 1.0/6.0;
+    xi.row(3) << 1.0/6.0, 1.0/6.0, 1.0/2.0;
+    xi.row(4) << 1.0/6.0, 1.0/6.0, 1.0/6.0;
+
+    w(0) = -4.0/30.0;
+    double w2 = 9.0/120.0;
+    w.segment<4>(1).setConstant(w2); 
+  
+  } else if (n == 11) {
     xi = EM::Zero(11,3);
     w  = EV::Zero(11);
 
@@ -134,7 +148,7 @@ Solid_3d_10Node::Solid_3d_10Node () {
   EM xi;
   set_tetra_gauss_points(this->ng, xi, this->w);
 
-  this->center = EV::Zero(3);
+  this->center = EV3::Zero();
   this->center << 1.0/4.0, 1.0/4.0, 1.0/4.0;
 
   this->ng_all = this->ng;
@@ -155,10 +169,7 @@ Solid_3d_10Node::Solid_3d_10Node () {
 Solid_3d_10Node::~Solid_3d_10Node () {}
 
 bool Solid_3d_10Node::is_inside (EV3& xi) {
-  bool non_negative = (xi.array() >= 0.0).all();
-  bool sum_condition = (xi.sum() <= 1.0);
-
-  return non_negative && sum_condition;
+  return (xi.array() >= 0.0).all() && (xi.sum() <= 1.0);
 }
 
 EV Solid_3d_10Node::shape_function_n (double xi, double eta, double zeta) {
@@ -237,7 +248,7 @@ Solid_3d_8Node::Solid_3d_8Node () {
   this->ng = 3;
   set_gauss_points(this->ng, this->xi, this->w);
 
-  this->center = EV::Zero(3);
+  this->center = EV3::Zero();
   this->ng_all = this->ng * this->ng * this->ng;
   this->n_list.resize(this->ng_all);
   this->dn_list.resize(this->ng_all);
@@ -261,13 +272,7 @@ Solid_3d_8Node::Solid_3d_8Node () {
 Solid_3d_8Node::~Solid_3d_8Node () {}
 
 bool Solid_3d_8Node::is_inside (EV3& xi) {
-  const double lower_limit = -1.0;
-  const double upper_limit =  1.0;
-
-  bool lower_check = (xi.array() >= lower_limit).all();
-  bool upper_check = (xi.array() < upper_limit).all();
-
-  return lower_check && upper_check;
+  return (xi.array() >= -1.0).all() && (xi.array() < 1.0).all();
 }
 
 EV Solid_3d_8Node::shape_function_n (double xi, double eta, double zeta) {
@@ -327,7 +332,7 @@ Solid_2d_4Node::Solid_2d_4Node () {
   this->ng = 3;
   set_gauss_points(this->ng, this->xi, this->w);
 
-  this->center = EV::Zero(3);
+  this->center = EV3::Zero();
   this->ng_all = this->ng * this->ng;
   this->n_list.resize(this->ng_all);
   this->dn_list.resize(this->ng_all);
@@ -349,13 +354,7 @@ Solid_2d_4Node::Solid_2d_4Node () {
 Solid_2d_4Node::~Solid_2d_4Node () {}
 
 bool Solid_2d_4Node::is_inside (EV3& xi) {
-  const double lower_limit = -1.0;
-  const double upper_limit =  1.0;
-
-  bool lower_check = (xi.array() >= lower_limit).all();
-  bool upper_check = (xi.array() < upper_limit).all();
-
-  return lower_check && upper_check;
+  return (xi.array() >= -1.0).all() && (xi.array() < 1.0).all();
 }
 
 EV Solid_2d_4Node::shape_function_n (double xi, double eta, double zeta) {
@@ -390,7 +389,7 @@ Solid_2d_8Node::Solid_2d_8Node () {
   this->ng = 5;
   set_gauss_points(this->ng, this->xi, this->w);
 
-  this->center = EV::Zero(3);
+  this->center = EV3::Zero();
   this->ng_all = this->ng * this->ng;
   this->n_list.resize(this->ng_all);
   this->dn_list.resize(this->ng_all);
@@ -412,13 +411,7 @@ Solid_2d_8Node::Solid_2d_8Node () {
 Solid_2d_8Node::~Solid_2d_8Node () {}
 
 bool Solid_2d_8Node::is_inside (EV3& xi) {
-  const double lower_limit = -1.0;
-  const double upper_limit =  1.0;
-
-  bool lower_check = (xi.array() >= lower_limit).all();
-  bool upper_check = (xi.array() < upper_limit).all();
-
-  return lower_check && upper_check;
+  return (xi.array() >= -1.0).all() && (xi.array() < 1.0).all();
 }
 
 EV Solid_2d_8Node::shape_function_n (double xi, double eta, double zeta) {
@@ -469,7 +462,7 @@ Solid_2d_9Node::Solid_2d_9Node () {
   this->ng = 5;
   set_gauss_points(this->ng, this->xi, this->w);
 
-  this->center = EV::Zero(3);
+  this->center = EV3::Zero();
   this->ng_all = this->ng * this->ng;
   this->n_list.resize(this->ng_all);
   this->dn_list.resize(this->ng_all);
@@ -491,13 +484,7 @@ Solid_2d_9Node::Solid_2d_9Node () {
 Solid_2d_9Node::~Solid_2d_9Node () {}
 
 bool Solid_2d_9Node::is_inside (EV3& xi) {
-  const double lower_limit = -1.0;
-  const double upper_limit =  1.0;
-
-  bool lower_check = (xi.array() >= lower_limit).all();
-  bool upper_check = (xi.array() < upper_limit).all();
-
-  return lower_check && upper_check;
+  return (xi.array() >= -1.0).all() && (xi.array() < 1.0).all();
 }
 
 EV Solid_2d_9Node::shape_function_n (double xi, double eta, double zeta) {
@@ -553,7 +540,7 @@ Line_1d_2Node::Line_1d_2Node () {
   this->ng = 3;
   set_gauss_points(this->ng, this->xi, this->w);
 
-  this->center = EV::Zero(3);
+  this->center = EV3::Zero();
   this->ng_all = this->ng;
   this->n_list.resize(this->ng_all);
   this->dn_list.resize(this->ng_all);
@@ -573,13 +560,7 @@ Line_1d_2Node::Line_1d_2Node () {
 Line_1d_2Node::~Line_1d_2Node () {}
 
 bool Line_1d_2Node::is_inside (EV3& xi) {
-  const double lower_limit = -1.0;
-  const double upper_limit =  1.0;
-
-  bool lower_check = (xi.array() >= lower_limit).all();
-  bool upper_check = (xi.array() < upper_limit).all();
-
-  return lower_check && upper_check;
+  return (xi.array() >= -1.0).all() && (xi.array() < 1.0).all();
 }
 
 EV Line_1d_2Node::shape_function_n (double xi, double eta, double zeta) {
@@ -602,7 +583,7 @@ Line_1d_3Node::Line_1d_3Node () {
   this->ng = 5;
   set_gauss_points(this->ng, this->xi, this->w);
 
-  this->center = EV::Zero(3);
+  this->center = EV3::Zero();
   this->ng_all = this->ng;
   this->n_list.resize(this->ng_all);
   this->dn_list.resize(this->ng_all);
@@ -622,13 +603,7 @@ Line_1d_3Node::Line_1d_3Node () {
 Line_1d_3Node::~Line_1d_3Node () {}
 
 bool Line_1d_3Node::is_inside (EV3& xi) {
-  const double lower_limit = -1.0;
-  const double upper_limit =  1.0;
-
-  bool lower_check = (xi.array() >= lower_limit).all();
-  bool upper_check = (xi.array() < upper_limit).all();
-
-  return lower_check && upper_check;
+  return (xi.array() >= -1.0).all() && (xi.array() < 1.0).all();
 }
 
 EV Line_1d_3Node::shape_function_n (double xi, double eta, double zeta) {

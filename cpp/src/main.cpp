@@ -27,7 +27,6 @@ int main() {
 
   // ----- Define source ----- //
   // size_t fsamp = 100;
-
   // double fp = 0.5;
   // double duration = 6.0;
 
@@ -73,7 +72,6 @@ int main() {
 
   // ----- Define EQ source ----- //
   size_t fsamp = 1000;
-
   double fp = 2.0;
   double duration = 2.5;
 

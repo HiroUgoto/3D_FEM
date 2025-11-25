@@ -3,8 +3,8 @@ import numpy as np
 from scipy import interpolate
 
 # --- Read input wave --- #
-fsamp = 6000
-duration = 1.0
+fsamp = 3000
+duration = 2.0
 
 tim,dt = np.linspace(0,duration,int(fsamp*duration),endpoint=False,retstep=True)
 
