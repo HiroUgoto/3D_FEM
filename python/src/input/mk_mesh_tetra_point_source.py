@@ -1,17 +1,17 @@
 import numpy as np
 import os
 
-area_x = 1200.0
-area_y = 1200.0
-area_z = 1200.0
+area_x = 500.0
+area_y = 1000.0
+area_z = 1000.0
 
-nx = 15
-ny = 15
-nz = 15
+nx = 20
+ny = 40
+nz = 40
 dof = 3
 
-xg = np.linspace(-area_x/2,area_x/2,nx+1,endpoint=True)
-yg = np.linspace(-area_y/2,area_y/2,ny+1,endpoint=True)
+xg = np.linspace(0,area_x,nx+1,endpoint=True)
+yg = np.linspace(0,area_y,ny+1,endpoint=True)
 zg = np.linspace(0,area_z,nz+1,endpoint=True)
 
 
@@ -25,6 +25,10 @@ for k in range(len(zg)):
         for i in range(len(xg)):
             dofx,dofy,dofz = 1,1,1
 
+            # Comment out for 5-Tetrahedra decomposition
+            # if (i % 2 == 1) and (j % 2 == 1) and (k % 2 == 1):
+            #     continue
+
             node[i,j,k] = inode
             node_lines += [ "{} {} {} {} {} {} {}\n".format(inode,xg[i],yg[j],zg[k],dofx,dofy,dofz)]
             inode += 1
@@ -32,47 +36,48 @@ for k in range(len(zg)):
 ### Set element ###
 element_lines = []
 
-# 8-Cubic element 
-v = [[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,0,1],[1,0,1],[1,1,1],[0,1,1]]
-
-ielem = 0
-for k in range(nz):
-    for j in range(ny):
-        for i in range(nx):
-            im = 0
-            style = "3d8solid"
-            param_line = "{} {} {} ".format(ielem,style,im)
-            n_list = [node[i+v[l][0],j+v[l][1],k+v[l][2]] for l in range(8)]
-            style_line = " ".join(map(str, n_list))
-
-            # style_line = "{} {} {} {} {} {} {} {}".format(node[i,j,k],node[i+1,j,k],node[i+1,j+1,k],node[i,j+1,k],
-            #                                                 node[i,j,k+1],node[i+1,j,k+1],node[i+1,j+1,k+1],node[i,j+1,k+1])
-            element_lines += [param_line + style_line + "\n"]
-            ielem += 1
-
 # 6-Tetrahedra decomposition
-# t0 = [[0,0,0],[2,0,0],[2,2,2],[2,0,2],[1,0,0],[2,1,1],[1,1,1],[1,0,1],[2,1,2],[2,0,1]]
-# t1 = [[0,0,0],[0,0,2],[2,0,2],[2,2,2],[0,0,1],[1,0,2],[1,0,1],[1,1,1],[2,1,2],[1,1,2]]
-# t2 = [[0,0,0],[0,0,2],[2,2,2],[0,2,2],[0,0,1],[1,1,2],[1,1,1],[0,1,1],[1,2,2],[0,1,2]]
-# t3 = [[0,0,0],[0,2,0],[0,2,2],[2,2,2],[0,1,0],[0,2,1],[0,1,1],[1,1,1],[1,2,2],[1,2,1]]
-# t4 = [[0,0,0],[0,2,0],[2,2,2],[2,2,0],[0,1,0],[1,2,1],[1,1,1],[1,1,0],[2,2,1],[1,2,0]]
-# t5 = [[0,0,0],[2,0,0],[2,2,0],[2,2,2],[1,0,0],[2,1,0],[1,1,0],[1,1,1],[2,2,1],[2,1,1]]
-# t = [t0, t1, t2, t3, t4, t5]
+t0 = [[0,0,0],[2,0,0],[2,2,2],[2,0,2],[1,0,0],[2,1,1],[1,1,1],[1,0,1],[2,1,2],[2,0,1]]
+t1 = [[0,0,0],[0,0,2],[2,0,2],[2,2,2],[0,0,1],[1,0,2],[1,0,1],[1,1,1],[2,1,2],[1,1,2]]
+t2 = [[0,0,0],[0,0,2],[2,2,2],[0,2,2],[0,0,1],[1,1,2],[1,1,1],[0,1,1],[1,2,2],[0,1,2]]
+t3 = [[0,0,0],[0,2,0],[0,2,2],[2,2,2],[0,1,0],[0,2,1],[0,1,1],[1,1,1],[1,2,2],[1,2,1]]
+t4 = [[0,0,0],[0,2,0],[2,2,2],[2,2,0],[0,1,0],[1,2,1],[1,1,1],[1,1,0],[2,2,1],[1,2,0]]
+t5 = [[0,0,0],[2,0,0],[2,2,0],[2,2,2],[1,0,0],[2,1,0],[1,1,0],[1,1,1],[2,2,1],[2,1,1]]
+t = [t0, t1, t2, t3, t4, t5]
 
-# ielem = 0 
-# for k in range(0,nz,2):
-#     for j in range(0,ny,2):
-#         for i in range(0,nx,2):
+# # 5-Tetrahedra decomposition
+# t0 = [[0,0,0],[2,0,0],[0,2,0],[0,0,2],[1,0,0],[1,1,0],[0,1,0],[0,0,1],[0,1,1],[1,0,1]]
+# t1 = [[2,2,0],[0,2,0],[2,0,0],[2,2,2],[1,2,0],[1,1,0],[2,1,0],[2,2,1],[2,1,1],[1,2,1]]
+# t2 = [[2,0,2],[0,0,2],[2,2,2],[2,0,0],[1,0,2],[1,1,2],[2,1,2],[2,0,1],[2,1,1],[1,0,1]]
+# t3 = [[0,2,2],[2,2,2],[0,0,2],[0,2,0],[1,2,2],[1,1,2],[0,1,2],[0,2,1],[0,1,1],[1,2,1]]
+# t4 = [[2,0,0],[0,2,0],[0,0,2],[2,2,2],[1,1,0],[0,1,1],[1,0,1],[2,1,1],[1,1,2],[1,2,1]]
+# t = [t0,t1,t2,t3,t4]
+
+ielem = 0 
+for k in range(0,nz,2):
+    for j in range(0,ny,2):
+        for i in range(0,nx,2):
+            im = 0
+            style = "3d10solid"
+
+            for it in range(len(t)):
+                param_line = "{} {} {} ".format(ielem,style,im)
+                n_list = [node[i+t[it][l][0],j+t[it][l][1],k+t[it][l][2]] for l in range(10)]
+                style_line = " ".join(map(str, n_list))
+                element_lines += [param_line + style_line + "\n"]
+                ielem += 1
+
+# ielem = 0
+# for k in range(nz):
+#     for j in range(ny):
+#         for i in range(nx):
 #             im = 0
-#             style = "3d10solid"
-
-#             for it in range(len(t)):
-#                 param_line = "{} {} {} ".format(ielem,style,im)
-#                 n_list = [node[i+t[it][l][0],j+t[it][l][1],k+t[it][l][2]] for l in range(10)]
-#                 style_line = " ".join(map(str, n_list))
-#                 element_lines += [param_line + style_line + "\n"]
-#                 ielem += 1
-
+#             style = "3d8solid"
+#             param_line = "{} {} {} ".format(ielem,style,im)
+#             style_line = "{} {} {} {} {} {} {} {}".format(node[i,j,k],node[i+1,j,k],node[i+1,j+1,k],node[i,j+1,k],
+#                                                             node[i,j,k+1],node[i+1,j,k+1],node[i+1,j+1,k+1],node[i,j+1,k+1])
+#             element_lines += [param_line + style_line + "\n"]
+#             ielem += 1
 
 for j in range(ny):
     for i in range(nx):

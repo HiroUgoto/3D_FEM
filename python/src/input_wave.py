@@ -4,6 +4,15 @@ def ricker(tim,fp,tp,amp):
     t1 = ((tim-tp)*np.pi*fp)**2
     return (2*t1-1)*np.exp(-t1)*amp
 
+def diff_gauss(tim,fp,tp,amp):
+    g = gauss(tim,fp,tp,1.0)
+    coeff = -2*(tim-tp)*(np.pi*fp)**2
+    return coeff*g*amp
+
+def gauss(tim,fp,tp,amp):
+    coeff = fp*np.sqrt(np.pi)
+    t1 = ((tim-tp)*np.pi*fp)**2
+    return coeff*np.exp(-t1)*amp
 
 def tapered_sin(tim,fp,taper,duration,amp):
     wave = simple_sin(tim,fp,amp)
