@@ -1,4 +1,5 @@
 import numpy as np
+import os
 import fem
 import node,element,material
 
@@ -44,6 +45,34 @@ def input_mesh(mesh_file):
             materials[imaterial] = material.Material(id,style,param)
 
     return fem.Fem(dof,nodes,elements,materials)
+
+# ------------------------------------------------------------------- #
+def input_pmls(pml_file):
+    pml_elems,pml_config = {},{}
+    if not os.path.exists(pml_file):
+        return pml_elems,pml_config
+    
+    with open(pml_file) as f:
+        lines = f.readlines()
+
+        header = [float(s) for s in lines[0].split()]
+        pml_config = {
+            'nelem':  int(header[0]),
+            'nlayer': int(header[1]),
+            'order':  int(header[2]),
+            'logR':   header[3],
+            'Lx':     header[4],
+            'Ly':     header[5],
+            'Lz':     header[6]
+        }
+
+        for i in range(1,len(lines)):
+            items = lines[i].split()
+            ielem = int(items[0])
+            pml_xyz = np.array([float(s) for s in items[1:4]])
+            pml_elems[ielem] = pml_xyz
+    
+    return pml_elems,pml_config
 
 # ------------------------------------------------------------------- #
 def input_outputs(output_file):

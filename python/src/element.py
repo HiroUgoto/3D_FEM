@@ -34,6 +34,14 @@ class Element:
             self.rho = material.rho
 
     # ---------------------------------------------------------
+    def set_pml(self,pml_xyz,pml_sigma):
+        self.is_pml = True
+        self.pml_xyz = pml_xyz
+        self.pml_sigma = pml_sigma
+
+        self.psi = np.zeros([6,3],dtype=np.float64)
+
+    # ---------------------------------------------------------
     def set_pointer_list(self):
         self.u, self.v = (), ()
         for node in self.nodes:
@@ -177,6 +185,37 @@ class Element:
             BT = mk_b_T(self.dof,self.nnode,dnj)
             moment = self.material.rmu * source.strain_tensor * slip0
             self.force = BT @ moment
+
+    # ---------------------------------------------------------
+    def update_pml(self,dt):
+        det,dnj = mk_dnj(self.xnT,self.estyle.dn_center)
+        B = mk_b(self.dof,self.nnode,dnj)
+        strain = B @ np.hstack(self.u)
+
+        b = np.exp(-self.pml_sigma*dt)
+        a = b - 1.0
+
+        self.psi = b * self.psi + a * strain[:, None]
+
+        sig_psi = self.De @ self.psi
+        V = self.mass/self.rho
+
+        fx = (sig_psi[0, 0] * dnj[:, 0] + 
+              sig_psi[3, 1] * dnj[:, 1] + 
+              sig_psi[5, 2] * dnj[:, 2]) * V
+              
+        fy = (sig_psi[3, 0] * dnj[:, 0] + 
+              sig_psi[1, 1] * dnj[:, 1] + 
+              sig_psi[4, 2] * dnj[:, 2]) * V
+              
+        fz = (sig_psi[5, 0] * dnj[:, 0] + 
+              sig_psi[4, 1] * dnj[:, 1] + 
+              sig_psi[2, 2] * dnj[:, 2]) * V
+
+        for i in range(self.nnode):
+            self.nodes[i].force[0] += fx[i]
+            self.nodes[i].force[1] += fy[i]
+            self.nodes[i].force[2] += fz[i]
 
     # ---------------------------------------------------------
     def calc_stress(self):

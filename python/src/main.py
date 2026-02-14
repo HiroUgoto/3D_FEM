@@ -15,11 +15,13 @@ start = time.time()
 
 ## --- Input FEM Mesh --- ##
 fem = io_data.input_mesh("input/mesh.in")
+pml_elems,pml_config = io_data.input_pmls("input/pml.in")
 outputs = io_data.input_outputs("input/output.in")
 output_dir = "result/"
 
 ## --- FEM Set up --- ##
 fem.set_init()
+fem.set_pml(pml_elems,pml_config)
 fem.set_output(outputs)
 # plot_model.plot_mesh(fem)
 # exit()

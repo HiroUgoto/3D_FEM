@@ -17,6 +17,8 @@ class Fem():
         self.connected_elements = []
         self.slip_joint_node_elements = []
 
+        self.pml_elements = []
+
     # ======================================================================= #
     def set_init(self):
         self._set_mesh()
@@ -85,6 +87,29 @@ class Fem():
                     node.k[i] += element.K_diag[id]
                     node.static_force[i] += element.force[id]
                     id += 1
+
+    # ======================================================================= #
+    def set_pml(self,pml_elems,pml_config):
+        order  = pml_config['order']
+        logR   = pml_config['logR']
+        Lxyz = np.array([pml_config['Lx'], pml_config['Ly'], pml_config['Lz']])
+
+        for ielem, pml_xyz in pml_elems.items():
+            element = self.elements[ielem]
+
+            rmu = element.material.rmu
+            rlambda = element.material.rlambda 
+            rho = element.material.rho 
+            vp = np.sqrt((rlambda+2*rmu)/rho)
+            
+            pml_sigma = np.zeros(3)
+            for i in range(3):
+                if abs(pml_xyz[i]) > 0:
+                    sigma_max = -(order + 1) * vp * logR / (2.0 * Lxyz[i])
+                    pml_sigma[i] = sigma_max * (abs(pml_xyz[i]) / Lxyz[i])**order
+            
+            element.set_pml(pml_xyz,pml_sigma)
+            self.pml_elements += [element]
 
     # ======================================================================= #
     def set_output(self,outputs):
@@ -319,6 +344,9 @@ class Fem():
 
         for element in self.elements:
             element.mk_ku_cv()
+
+        for element in self.pml_elements:
+            element.update_pml(self.dt)
 
         for node in self.free_nodes:
             self._update_time_set_free_nodes(node)

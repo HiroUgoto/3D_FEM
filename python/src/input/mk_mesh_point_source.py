@@ -11,22 +11,25 @@ nz = 15
 dof = 3
 
 # Perfectly Matched Layer
-pml_layers = 5
+pml_nlayer = 5
 pml_order = 2
 pml_logR = -5   # reflection coeff: R = 10^(-5)
 
-pml_area_x = area_x*(1 + 2*pml_layers/nx)
-pml_area_y = area_y*(1 + 2*pml_layers/ny)
-pml_area_z = area_z*(1 +   pml_layers/nz)
+pml_area_x = area_x*(1 + 2*pml_nlayer/nx)
+pml_area_y = area_y*(1 + 2*pml_nlayer/ny)
+pml_area_z = area_z*(1 +   pml_nlayer/nz)
 
-pml_nx = nx + 2*pml_layers
-pml_ny = ny + 2*pml_layers
-pml_nz = nz +   pml_layers
+pml_nx = nx + 2*pml_nlayer
+pml_ny = ny + 2*pml_nlayer
+pml_nz = nz +   pml_nlayer
 
 xg,dx = np.linspace(-pml_area_x/2,pml_area_x/2,pml_nx+1,endpoint=True,retstep=True)
 yg,dy = np.linspace(-pml_area_y/2,pml_area_y/2,pml_ny+1,endpoint=True,retstep=True)
 zg,dz = np.linspace(0,pml_area_z,pml_nz+1,endpoint=True,retstep=True)
 
+pml_Lx = pml_nlayer * dx
+pml_Ly = pml_nlayer * dy
+pml_Lz = pml_nlayer * dz
 
 ### Set node ###
 node = np.empty([len(xg),len(yg),len(zg)],dtype=np.int32)
@@ -63,14 +66,14 @@ for k in range(pml_nz):
             element_lines += [param_line + style_line + "\n"]
 
             px,py,pz = 0,0,0
-            if i < pml_layers:
-                px = (i - pml_layers)*dx
-            elif i >= nx + pml_layers:
-                px = (i - (nx+pml_layers) + 1)*dx
-            if j < pml_layers:
-                py = (j - pml_layers)*dy
-            elif j >= ny + pml_layers:
-                py = (j - (ny+pml_layers) + 1)*dy
+            if i < pml_nlayer:
+                px = (i - pml_nlayer)*dx
+            elif i >= nx + pml_nlayer:
+                px = (i - (nx+pml_nlayer) + 1)*dx
+            if j < pml_nlayer:
+                py = (j - pml_nlayer)*dy
+            elif j >= ny + pml_nlayer:
+                py = (j - (ny+pml_nlayer) + 1)*dy
             if k >= nz:
                 pz = (k - nz + 1)*dz
 
@@ -138,7 +141,7 @@ nmaterial = len(material_lines)
 
 
 ### Set PML ###
-pml_nelem = len(element_lines)
+pml_nelem = len(pml_lines)
 
 ### Set output ###
 output_node_lines = []
@@ -165,5 +168,5 @@ with open("output.in","w") as f:
     f.writelines(output_element_lines)
 
 with open("pml.in","w") as f:
-    f.write("{} {} {} {}\n".format(pml_nelem,pml_layers,pml_order,pml_logR)) 
+    f.write("{} {} {} {} {:.3f} {:.3f} {:.3f}\n".format(pml_nelem,pml_nlayer,pml_order,pml_logR,pml_Lx,pml_Ly,pml_Lz)) 
     f.writelines(pml_lines)
