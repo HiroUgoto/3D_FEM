@@ -15,13 +15,11 @@ start = time.time()
 
 ## --- Input FEM Mesh --- ##
 fem = io_data.input_mesh("input/mesh.in")
-pml_elems,pml_config = io_data.input_pmls("input/pml.in")
 outputs = io_data.input_outputs("input/output.in")
 output_dir = "result/"
 
 ## --- FEM Set up --- ##
 fem.set_init()
-fem.set_pml(pml_elems,pml_config)
 fem.set_output(outputs)
 # plot_model.plot_mesh(fem)
 # exit()
@@ -121,6 +119,11 @@ output_dispz = np.zeros((ntim,fem.output_nnode))
 
 vel0 = np.array([0.0,0.0,0.0])
 
+# --- PML preparation --- #
+pml_elems,pml_config = io_data.input_pmls("input/pml.in")
+fem.set_pml(pml_elems,pml_config,dt)
+
+
 ## --- Time Iteration --- #
 for it in range(len(tim)):
     if input_type == "plane_wave":
@@ -140,7 +143,7 @@ for it in range(len(tim)):
 
     if it%20 == 0:
         # plot_model.plot_mesh_update(ax,fem,20.)
-        print(it,"t=",it*dt,output_vely[it,0])
+        print(it,"t=",it*dt,output_vely[it,1])
 
 elapsed_time = time.time() - start
 print ("elapsed_time: {0}".format(elapsed_time) + "[sec]")
@@ -167,5 +170,5 @@ np.savetxt(output_dir+"output_z.disp",output_line)
 
 ## Output result ##
 plt.figure()
-plt.plot(tim,output_vely[:,0],c='k')
+plt.plot(tim,output_vely[:,1],c='k')
 plt.show()

@@ -5,15 +5,16 @@ area_x = 1200.0
 area_y = 1200.0
 area_z = 1200.0
 
-nx = 15
-ny = 15
-nz = 15
+nx = 16
+ny = 16
+nz = 16
 dof = 3
 
-# Perfectly Matched Layer
+# CFS-PML (Perfectly Matched Layer) parameters #
 pml_nlayer = 5
 pml_order = 2
-pml_logR = -5   # reflection coeff: R = 10^(-5)
+pml_logR = -3   # reflection coeff: R = 10^(-3)
+#
 
 pml_area_x = area_x*(1 + 2*pml_nlayer/nx)
 pml_area_y = area_y*(1 + 2*pml_nlayer/ny)
@@ -83,50 +84,50 @@ for k in range(pml_nz):
             ielem += 1
 
 
-# for j in range(ny):
-#     for i in range(nx):
-#         im = 0
-#         style = "2d4visco"
+for j in range(pml_ny):
+    for i in range(pml_nx):
+        im = 0
+        style = "2d4visco"
 
-#         param_line = "{} {} {} ".format(ielem,style,im)
-#         style_line = "{} {} {} {}".format(node[i,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node[i,j+1,-1])
+        param_line = "{} {} {} ".format(ielem,style,im)
+        style_line = "{} {} {} {}".format(node[i,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node[i,j+1,-1])
 
-#         element_lines += [param_line + style_line + "\n"]
-#         ielem += 1
+        element_lines += [param_line + style_line + "\n"]
+        ielem += 1
 
-# for k in range(nz):
-#     for j in range(ny):
-#         im = 0
-#         style = "2d4visco"
+for k in range(pml_nz):
+    for j in range(pml_ny):
+        im = 0
+        style = "2d4visco"
 
-#         param_line = "{} {} {} ".format(ielem,style,im)
-#         style_line = "{} {} {} {}".format(node[0,j,k],node[0,j,k+1],node[0,j+1,k+1],node[0,j+1,k])
+        param_line = "{} {} {} ".format(ielem,style,im)
+        style_line = "{} {} {} {}".format(node[0,j,k],node[0,j,k+1],node[0,j+1,k+1],node[0,j+1,k])
 
-#         element_lines += [param_line + style_line + "\n"]
-#         ielem += 1
+        element_lines += [param_line + style_line + "\n"]
+        ielem += 1
 
-#         param_line = "{} {} {} ".format(ielem,style,im)
-#         style_line = "{} {} {} {}".format(node[-1,j,k],node[-1,j+1,k],node[-1,j+1,k+1],node[-1,j,k+1])
+        param_line = "{} {} {} ".format(ielem,style,im)
+        style_line = "{} {} {} {}".format(node[-1,j,k],node[-1,j+1,k],node[-1,j+1,k+1],node[-1,j,k+1])
 
-#         element_lines += [param_line + style_line + "\n"]
-#         ielem += 1
+        element_lines += [param_line + style_line + "\n"]
+        ielem += 1
 
-# for k in range(nz):
-#     for i in range(nx):
-#         im = 0
-#         style = "2d4visco"
+for k in range(pml_nz):
+    for i in range(pml_nx):
+        im = 0
+        style = "2d4visco"
 
-#         param_line = "{} {} {} ".format(ielem,style,im)
-#         style_line = "{} {} {} {}".format(node[i,0,k],node[i+1,0,k],node[i+1,0,k+1],node[i,0,k+1])
+        param_line = "{} {} {} ".format(ielem,style,im)
+        style_line = "{} {} {} {}".format(node[i,0,k],node[i+1,0,k],node[i+1,0,k+1],node[i,0,k+1])
 
-#         element_lines += [param_line + style_line + "\n"]
-#         ielem += 1
+        element_lines += [param_line + style_line + "\n"]
+        ielem += 1
 
-#         param_line = "{} {} {} ".format(ielem,style,im)
-#         style_line = "{} {} {} {}".format(node[i,-1,k],node[i,-1,k+1],node[i+1,-1,k+1],node[i+1,-1,k])
+        param_line = "{} {} {} ".format(ielem,style,im)
+        style_line = "{} {} {} {}".format(node[i,-1,k],node[i,-1,k+1],node[i+1,-1,k+1],node[i+1,-1,k])
 
-#         element_lines += [param_line + style_line + "\n"]
-#         ielem += 1
+        element_lines += [param_line + style_line + "\n"]
+        ielem += 1
 
 
 nnode = inode       #number of nodes
@@ -146,7 +147,7 @@ pml_nelem = len(pml_lines)
 ### Set output ###
 output_node_lines = []
 output_node_lines += ["{}\n".format(node[len(xg)//2,len(yg)//2,0])]
-output_node_lines += ["{}\n".format(node[len(xg)//2,len(yg)-1,0])]
+output_node_lines += ["{}\n".format(node[len(xg)//2,len(yg)//2+4,0])]
 
 output_element_lines = []
 # for i in range(0,nelem-nx-len(zg)):

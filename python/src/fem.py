@@ -89,7 +89,7 @@ class Fem():
                     id += 1
 
     # ======================================================================= #
-    def set_pml(self,pml_elems,pml_config):
+    def set_pml(self,pml_elems,pml_config,dt):
         order  = pml_config['order']
         logR   = pml_config['logR']
         Lxyz = np.array([pml_config['Lx'], pml_config['Ly'], pml_config['Lz']])
@@ -102,13 +102,13 @@ class Fem():
             rho = element.material.rho 
             vp = np.sqrt((rlambda+2*rmu)/rho)
             
-            pml_sigma = np.zeros(3)
+            pml_sigma = np.zeros(3,dtype=np.float64)
             for i in range(3):
                 if abs(pml_xyz[i]) > 0:
                     sigma_max = -(order + 1) * vp * logR / (2.0 * Lxyz[i])
                     pml_sigma[i] = sigma_max * (abs(pml_xyz[i]) / Lxyz[i])**order
             
-            element.set_pml(pml_xyz,pml_sigma)
+            element.set_pml(pml_xyz,pml_sigma,dt)
             self.pml_elements += [element]
 
     # ======================================================================= #
