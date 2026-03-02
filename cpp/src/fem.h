@@ -13,6 +13,7 @@ class Fem {
     std::vector<Element*> input_elements_p;
     std::vector<Element*> solid_elements_p;
     std::vector<Element*> visco_elements_p;
+    std::vector<Element*> pml_elements_p;
 
     size_t output_nnode, output_nelem;
     std::vector<Node*> output_nodes_p;
@@ -35,6 +36,7 @@ class Fem {
     void _set_initial_matrix();
 
   public:
+    void set_pml(const std::map<int,EV3> pml_elems, const std::vector<int> pml_config_i, const std::vector<double> pml_config_d, double dt);
     void set_output(std::tuple<std::vector<size_t>, std::vector<size_t>> outputs);
 
     void update_init(const double dt);

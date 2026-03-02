@@ -129,6 +129,37 @@ void Fem::_set_initial_matrix(){
 
 // ------------------------------------------------------------------- //
 // ------------------------------------------------------------------- //
+void Fem::set_pml(const std::map<int,EV3> pml_elems, 
+    const std::vector<int> pml_config_i, const std::vector<double> pml_config_d, 
+    double dt) {
+
+    int order = pml_config_i[2];
+    double logR = pml_config_d[0];
+    EV3 Lxyz(pml_config_d[1], pml_config_d[2], pml_config_d[3]);
+
+    for (const auto& [ielem, pml_xyz] : pml_elems) {
+      Element& element = this->elements[ielem];
+
+      double rmu = element.material.rmu;
+      double rlambda = element.material.rlambda;
+      double rho = element.material.rho;
+      double vp = std::sqrt((rlambda + 2.0 * rmu) / rho);
+      
+      EV3 pml_sigma = EV3::Zero();
+      for (int i = 0; i < 3; ++i) {
+          if (std::abs(pml_xyz[i]) > 0.0) {
+              double sigma_max = -(order + 1.0) * vp * logR / (2.0 * Lxyz[i]);
+              pml_sigma[i] = sigma_max * std::pow(std::abs(pml_xyz[i]) / Lxyz[i], order);
+          }
+      }
+      
+      element.set_pml(pml_xyz, pml_sigma, dt);
+      this->pml_elements_p.push_back(&element);
+    }
+  }
+
+// ------------------------------------------------------------------- //
+// ------------------------------------------------------------------- //
 void Fem::set_output(std::tuple<std::vector<size_t>, std::vector<size_t>> outputs) {
     auto [output_node_list, output_element_list] = outputs;
 
@@ -200,15 +231,15 @@ void Fem::update_time_source(const std::vector<Source> sources, const double sli
 
     this->_update_time_source(sources,slip0);
 
-    // for (auto& element : this->elements) {
-    //   element.mk_ku_cv();
-    // }
-
     for (auto& element_p : this->solid_elements_p) {
       element_p->mk_ku();
     }
     for (auto& element_p : this->visco_elements_p) {
       element_p->mk_ku_cv();
+    }
+
+    for (auto& element_p : this->pml_elements_p) {
+      element_p->update_pml(this->dt);
     }
 
     this->_update_time_set_free_nodes();

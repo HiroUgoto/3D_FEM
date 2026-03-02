@@ -1,19 +1,36 @@
 import numpy as np
 import os
 
-area_x = 500.0
-area_y = 1000.0
-area_z = 1000.0
+area_x = 1200.0 * 2
+area_y = 1200.0 * 2
+area_z = 1200.0 * 2
 
-nx = 20
-ny = 40
-nz = 40
+nx = 16 * 2
+ny = 16 * 2
+nz = 16 * 2
 dof = 3
 
-xg = np.linspace(0,area_x,nx+1,endpoint=True)
-yg = np.linspace(0,area_y,ny+1,endpoint=True)
-zg = np.linspace(0,area_z,nz+1,endpoint=True)
+# CFS-PML (Perfectly Matched Layer) parameters #
+pml_nlayer = 10
+pml_order = 2
+pml_logR = -3   # reflection coeff: R = 10^(-3)
+#
 
+pml_area_x = area_x*(1 + 2*pml_nlayer/nx)
+pml_area_y = area_y*(1 + 2*pml_nlayer/ny)
+pml_area_z = area_z*(1 +   pml_nlayer/nz)
+
+pml_nx = nx + 2*pml_nlayer
+pml_ny = ny + 2*pml_nlayer
+pml_nz = nz +   pml_nlayer
+
+xg,dx = np.linspace(-pml_area_x/2,pml_area_x/2,pml_nx+1,endpoint=True,retstep=True)
+yg,dy = np.linspace(-pml_area_y/2,pml_area_y/2,pml_ny+1,endpoint=True,retstep=True)
+zg,dz = np.linspace(0,pml_area_z,pml_nz+1,endpoint=True,retstep=True)
+
+pml_Lx = pml_nlayer * dx
+pml_Ly = pml_nlayer * dy
+pml_Lz = pml_nlayer * dz
 
 ### Set node ###
 node = np.empty([len(xg),len(yg),len(zg)],dtype=np.int32)
@@ -25,104 +42,92 @@ for k in range(len(zg)):
         for i in range(len(xg)):
             dofx,dofy,dofz = 1,1,1
 
-            # Comment out for 5-Tetrahedra decomposition
-            # if (i % 2 == 1) and (j % 2 == 1) and (k % 2 == 1):
-            #     continue
-
             node[i,j,k] = inode
             node_lines += [ "{} {} {} {} {} {} {}\n".format(inode,xg[i],yg[j],zg[k],dofx,dofy,dofz)]
             inode += 1
 
 ### Set element ###
 element_lines = []
+pml_lines = []
 
-# 6-Tetrahedra decomposition
-t0 = [[0,0,0],[2,0,0],[2,2,2],[2,0,2],[1,0,0],[2,1,1],[1,1,1],[1,0,1],[2,1,2],[2,0,1]]
-t1 = [[0,0,0],[0,0,2],[2,0,2],[2,2,2],[0,0,1],[1,0,2],[1,0,1],[1,1,1],[2,1,2],[1,1,2]]
-t2 = [[0,0,0],[0,0,2],[2,2,2],[0,2,2],[0,0,1],[1,1,2],[1,1,1],[0,1,1],[1,2,2],[0,1,2]]
-t3 = [[0,0,0],[0,2,0],[0,2,2],[2,2,2],[0,1,0],[0,2,1],[0,1,1],[1,1,1],[1,2,2],[1,2,1]]
-t4 = [[0,0,0],[0,2,0],[2,2,2],[2,2,0],[0,1,0],[1,2,1],[1,1,1],[1,1,0],[2,2,1],[1,2,0]]
-t5 = [[0,0,0],[2,0,0],[2,2,0],[2,2,2],[1,0,0],[2,1,0],[1,1,0],[1,1,1],[2,2,1],[2,1,1]]
-t = [t0, t1, t2, t3, t4, t5]
+# 8-Cubic element 
+v = [[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,0,1],[1,0,1],[1,1,1],[0,1,1]]
 
-# # 5-Tetrahedra decomposition
-# t0 = [[0,0,0],[2,0,0],[0,2,0],[0,0,2],[1,0,0],[1,1,0],[0,1,0],[0,0,1],[0,1,1],[1,0,1]]
-# t1 = [[2,2,0],[0,2,0],[2,0,0],[2,2,2],[1,2,0],[1,1,0],[2,1,0],[2,2,1],[2,1,1],[1,2,1]]
-# t2 = [[2,0,2],[0,0,2],[2,2,2],[2,0,0],[1,0,2],[1,1,2],[2,1,2],[2,0,1],[2,1,1],[1,0,1]]
-# t3 = [[0,2,2],[2,2,2],[0,0,2],[0,2,0],[1,2,2],[1,1,2],[0,1,2],[0,2,1],[0,1,1],[1,2,1]]
-# t4 = [[2,0,0],[0,2,0],[0,0,2],[2,2,2],[1,1,0],[0,1,1],[1,0,1],[2,1,1],[1,1,2],[1,2,1]]
-# t = [t0,t1,t2,t3,t4]
-
-ielem = 0 
-for k in range(0,nz,2):
-    for j in range(0,ny,2):
-        for i in range(0,nx,2):
+ielem = 0
+for k in range(pml_nz):
+    for j in range(pml_ny):
+        for i in range(pml_nx):
             im = 0
-            style = "3d10solid"
 
-            for it in range(len(t)):
-                param_line = "{} {} {} ".format(ielem,style,im)
-                n_list = [node[i+t[it][l][0],j+t[it][l][1],k+t[it][l][2]] for l in range(10)]
-                style_line = " ".join(map(str, n_list))
-                element_lines += [param_line + style_line + "\n"]
-                ielem += 1
+            style = "3d8solid"
+            param_line = "{} {} {} ".format(ielem,style,im)
+            n_list = [node[i+v[l][0],j+v[l][1],k+v[l][2]] for l in range(8)]
+            style_line = " ".join(map(str, n_list))
 
-# ielem = 0
-# for k in range(nz):
-#     for j in range(ny):
-#         for i in range(nx):
-#             im = 0
-#             style = "3d8solid"
-#             param_line = "{} {} {} ".format(ielem,style,im)
-#             style_line = "{} {} {} {} {} {} {} {}".format(node[i,j,k],node[i+1,j,k],node[i+1,j+1,k],node[i,j+1,k],
-#                                                             node[i,j,k+1],node[i+1,j,k+1],node[i+1,j+1,k+1],node[i,j+1,k+1])
-#             element_lines += [param_line + style_line + "\n"]
-#             ielem += 1
+            element_lines += [param_line + style_line + "\n"]
 
-for j in range(ny):
-    for i in range(nx):
-        im = 0
-        style = "2d4visco"
+            px,py,pz = 0,0,0
+            if i < pml_nlayer:
+                px = (i - pml_nlayer)*dx
+            elif i >= nx + pml_nlayer:
+                px = (i - (nx+pml_nlayer) + 1)*dx
+            if j < pml_nlayer:
+                py = (j - pml_nlayer)*dy
+            elif j >= ny + pml_nlayer:
+                py = (j - (ny+pml_nlayer) + 1)*dy
+            if k >= nz:
+                pz = (k - nz + 1)*dz
 
-        param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[i,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node[i,j+1,-1])
+            if (px != 0) or (py != 0) or (pz != 0):
+                pml_lines += ["{} {:.6f} {:.6f} {:.6f}\n".format(ielem,px,py,pz)]
 
-        element_lines += [param_line + style_line + "\n"]
-        ielem += 1
+            ielem += 1
 
-for k in range(nz):
-    for j in range(ny):
-        im = 0
-        style = "2d4visco"
 
-        param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[0,j,k],node[0,j,k+1],node[0,j+1,k+1],node[0,j+1,k])
+# for j in range(pml_ny):
+#     for i in range(pml_nx):
+#         im = 0
+#         style = "2d4visco"
 
-        element_lines += [param_line + style_line + "\n"]
-        ielem += 1
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[i,j,-1],node[i+1,j,-1],node[i+1,j+1,-1],node[i,j+1,-1])
 
-        param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[-1,j,k],node[-1,j+1,k],node[-1,j+1,k+1],node[-1,j,k+1])
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
 
-        element_lines += [param_line + style_line + "\n"]
-        ielem += 1
+# for k in range(pml_nz):
+#     for j in range(pml_ny):
+#         im = 0
+#         style = "2d4visco"
 
-for k in range(nz):
-    for i in range(nx):
-        im = 0
-        style = "2d4visco"
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[0,j,k],node[0,j,k+1],node[0,j+1,k+1],node[0,j+1,k])
 
-        param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[i,0,k],node[i+1,0,k],node[i+1,0,k+1],node[i,0,k+1])
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
 
-        element_lines += [param_line + style_line + "\n"]
-        ielem += 1
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[-1,j,k],node[-1,j+1,k],node[-1,j+1,k+1],node[-1,j,k+1])
 
-        param_line = "{} {} {} ".format(ielem,style,im)
-        style_line = "{} {} {} {}".format(node[i,-1,k],node[i,-1,k+1],node[i+1,-1,k+1],node[i+1,-1,k])
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
 
-        element_lines += [param_line + style_line + "\n"]
-        ielem += 1
+# for k in range(pml_nz):
+#     for i in range(pml_nx):
+#         im = 0
+#         style = "2d4visco"
+
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[i,0,k],node[i+1,0,k],node[i+1,0,k+1],node[i,0,k+1])
+
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
+
+#         param_line = "{} {} {} ".format(ielem,style,im)
+#         style_line = "{} {} {} {}".format(node[i,-1,k],node[i,-1,k+1],node[i+1,-1,k+1],node[i+1,-1,k])
+
+#         element_lines += [param_line + style_line + "\n"]
+#         ielem += 1
 
 
 nnode = inode       #number of nodes
@@ -135,10 +140,14 @@ material_lines += ["{} {} {} {} {}\n".format(0,"vs_vp_rho",1000.0,2500.0,2100.0)
 
 nmaterial = len(material_lines)
 
+
+### Set PML ###
+pml_nelem = len(pml_lines)
+
 ### Set output ###
 output_node_lines = []
 output_node_lines += ["{}\n".format(node[len(xg)//2,len(yg)//2,0])]
-output_node_lines += ["{}\n".format(node[len(xg)//2,len(yg)-1,0])]
+output_node_lines += ["{}\n".format(node[len(xg)//2,len(yg)//2+4,0])]
 
 output_element_lines = []
 # for i in range(0,nelem-nx-len(zg)):
@@ -158,3 +167,7 @@ with open("output.in","w") as f:
     f.write("{} {} \n".format(output_nnode,output_nelem))
     f.writelines(output_node_lines)
     f.writelines(output_element_lines)
+
+with open("pml.in","w") as f:
+    f.write("{} {} {} {} {:.3f} {:.3f} {:.3f}\n".format(pml_nelem,pml_nlayer,pml_order,pml_logR,pml_Lx,pml_Ly,pml_Lz)) 
+    f.writelines(pml_lines)

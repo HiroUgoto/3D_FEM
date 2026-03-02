@@ -1,4 +1,5 @@
 using EV = Eigen::VectorXd ;
+using EV3 = Eigen::Vector3d ;
 using EM = Eigen::MatrixXd ;
 using EM2 = Eigen::Matrix2d ;
 using EM3 = Eigen::Matrix3d ;
@@ -27,6 +28,13 @@ class Element {
     EV force;
     EV strain, stress;
 
+    bool is_pml = false;
+    bool pml_is_cor = false;
+    double pml_kappa, pml_alpha, pml_cor_factor; 
+    EV3 pml_xyz, pml_sigma, pml_a, pml_b;
+    EM pml_BD;
+    EM3 pml_psi;
+
     Element (size_t id, std::string style, int material_id, std::vector<size_t> inode);
     void print();
 
@@ -36,7 +44,7 @@ class Element {
   public:
     void set_nodes(std::vector<Node*> nodes_p);
     void set_material(Material* material_p);
-    void set_pointer_list();
+    void set_pml(const EV3 xyz, const EV3 sigma, double dt);
     void set_xn();
 
     void mk_local_matrix_init(const size_t dof);
@@ -54,6 +62,7 @@ class Element {
 
   public:
     void update_inputwave(const EV vel0);
+    void update_pml(const double dt);
     void mk_source(const EM dn, const EV strain_tensor, const double slip0);
     void calc_stress();
     std::tuple<bool, EV3> check_inside(const EV3 x);
@@ -69,6 +78,7 @@ EM mk_k(const EM B, const EM D);
 EM mk_b(const size_t dof, const size_t nnode, const EM dnj);
 EM mk_b_T(const size_t dof, const size_t nnode, const EM dnj);
 
+EM3 mk_dnu(const EM dnj, const EM u);
 std::tuple<double, EM>  mk_dnj(const EM xnT, const EM dn);
 std::tuple<double, EM3> mk_inv_jacobi(const EM xnT, const EM dn);
 std::tuple<double, EM3> mk_jacobi(const EM xnT, const EM dn);

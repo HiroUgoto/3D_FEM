@@ -197,15 +197,6 @@ class Element:
             i0 = self.dof*i
             self.nodes[i].force[:] += f[i0:i0+self.dof]
 
-    # ---------------------------------------------------------
-    def mk_source(self,source,slip0):
-        if self.dim == 3:
-            dn = self.estyle.shape_function_dn(source.xi,source.eta,source.zeta)
-            _,dnj = mk_dnj(self.xnT,dn)
-            BT = mk_b_T(self.dof,self.nnode,dnj)
-            moment = self.material.rmu * source.strain_tensor * slip0
-            self.force = BT @ moment
-
    # ---------------------------------------------------------
     def update_pml(self,dt):
         _,dnj = mk_dnj(self.xnT,self.estyle.dn_center)
@@ -228,6 +219,15 @@ class Element:
         for i in range(self.nnode):
             i0 = self.dof*i
             self.nodes[i].force[:] += f_pml[i0:i0+self.dof]
+
+    # ---------------------------------------------------------
+    def mk_source(self,source,slip0):
+        if self.dim == 3:
+            dn = self.estyle.shape_function_dn(source.xi,source.eta,source.zeta)
+            _,dnj = mk_dnj(self.xnT,dn)
+            BT = mk_b_T(self.dof,self.nnode,dnj)
+            moment = self.material.rmu * source.strain_tensor * slip0
+            self.force = BT @ moment
 
     # ---------------------------------------------------------
     def calc_stress(self):

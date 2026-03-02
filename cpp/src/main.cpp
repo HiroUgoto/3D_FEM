@@ -25,91 +25,108 @@ int main() {
   fem.set_init();
   fem.set_output(outputs);
 
-  // ----- Define source ----- //
-  // size_t fsamp = 100;
-  // double fp = 0.5;
-  // double duration = 6.0;
+  // ----- Input ----- //
+  std::string input_type = "double_couple";
+  // std::string input_type = "plane_wave";
 
-  // auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
-  // size_t ntim = tim.size();
-  // EV wave_acc(ntim);
-  // wave_acc = input_wave::ricker(tim,fp,1.0/fp,1.0);
+  std::string input_time_series = "function";
+  // std::string input_time_series = "datafile";
 
-  // ---- Read input wave //
-  // auto [tim,wave_acc,dt] = input_wave::input_acc_file("input/scaled_input_acc.txt");
-  // size_t ntim = tim.size();
+  // -------------------------- //
+  size_t ntim;
+  double dt;
+  EV tim, input_acc;
+  
+  if (input_time_series == "function") {
+    size_t fsamp = 100;
+    double fp = 1.0;
+    double duration = 5.0;
+  
+    std::tie(tim, dt) = input_wave::linspace(0,duration,(int)(fsamp*duration));
+    ntim = tim.size();
+    // input_acc = input_wave::ricker(tim,fp,1.5/fp,1.0);
+    input_acc = input_wave::diff_gauss(tim,fp,1.5/fp,1.0);
 
-  // double polarity = 45;  // [deg] N[XX]E
-  // EV wave_accx(ntim);  
-  // EV wave_accy(ntim); 
+  } else if (input_time_series == "datafile") {
+    std::string input_wave_file = "input/scaled_input_acc.txt";
 
-  // double polarity_rad = polarity * M_PI/180.0;
-  // for (size_t it = 0 ; it < ntim ; it++) {
-  //   wave_accx[it] = wave_acc[it] * std::cos(polarity_rad); 
-  //   wave_accy[it] = wave_acc[it] * std::sin(polarity_rad); 
-  // }
+    std::tie(tim,input_acc,dt) = input_wave::input_acc_file(input_wave_file);
+    ntim = tim.size();
 
-  // std::ofstream fa(output_dir + "input.acc");
-  // std::ofstream fv(output_dir + "input.vel");
-  // double velx = 0.0;
-  // double vely = 0.0;
-  // for (size_t it = 0 ; it < ntim ; it++) {
-  //   fa << tim(it) ;
-  //   fa << " " << wave_accx[it] ;
-  //   fa << " " << wave_accy[it] ;
-  //   fa << "\n";
+  } 
 
-  //   velx += wave_accx[it]*dt;
-  //   vely += wave_accy[it]*dt;
-  //   fv << tim(it) ;
-  //   fv << " " << velx ;
-  //   fv << " " << vely ;
-  //   fv << "\n";
-  // }
-  // fa.close();
-  // fv.close();
-  // // exit(1);
+  // -------------------------- //
+  EV wave_accx, wave_accy;
+  EV input_slipr, input_stf;
+  std::vector<Source> sources;
 
-  // ----- Define EQ source ----- //
-  size_t fsamp = 1000;
-  double fp = 2.0;
-  double duration = 2.5;
+  if (input_type == "plane_wave") {
+    double polarity = 90;  // [deg] N[XX]E
+    wave_accx = EV::Zero(ntim);  
+    wave_accy = EV::Zero(ntim); 
 
-  auto [tim, dt] = input_wave::linspace(0,duration,(int)(fsamp*duration));
-  size_t ntim = tim.size();
-  EV input_stf(ntim);
-  input_stf = input_wave::ricker(tim,fp,1.5/fp,1.0);
+    double polarity_rad = polarity * M_PI/180.0;
+    for (size_t it = 0 ; it < ntim ; it++) {
+      wave_accx[it] = input_acc[it] * std::cos(polarity_rad); 
+      wave_accy[it] = input_acc[it] * std::sin(polarity_rad); 
+    }
 
-  // auto [tim,input_stf,dt] = input_wave::input_acc_file("input/scaled_input_STF.txt");
-  // size_t ntim = tim.size();
+    // std::ofstream fa(output_dir + "input.acc");
+    // std::ofstream fv(output_dir + "input.vel");
+    // double velx = 0.0;
+    // double vely = 0.0;
+    // for (size_t it = 0 ; it < ntim ; it++) {
+    //   fa << tim(it) ;
+    //   fa << " " << wave_accx[it] ;
+    //   fa << " " << wave_accy[it] ;
+    //   fa << "\n";
 
-  double strike = 0.0;
-  double dip = 45.0;
-  double rake = 90.0;
+    //   velx += wave_accx[it]*dt;
+    //   vely += wave_accy[it]*dt;
+    //   fv << tim(it) ;
+    //   fv << " " << velx ;
+    //   fv << " " << vely ;
+    //   fv << "\n";
+    // }
+    // fa.close();
+    // fv.close();
+    // // exit(1);
 
-  // double length = 1000.0;
-  // double width = 1000.0;
-  double sx = 250.0;
-  double sy = 250.0;
-  double sz = 250.0;
-  double mw = 3.0;
+  } else if (input_type == "double_couple") {
+    double strike = 0.0;
+    double dip = 45.0;
+    double rake = 90.0;
 
-  double rmu = 1000*1000*2100;
-  double m0 = pow(10, 1.5*mw+9.1);
+    double sx = 0.0;
+    double sy = 0.0;
+    double sz = 600.0;
+    double mw = 3.0;
 
-  double length = sqrt(m0/rmu);
-  double width = length;
+    double rmu = 1000*1000*2100;
+    double m0 = pow(10, 1.5*mw+9.1);
 
-  auto sources = set_source(fem.elements,strike,dip,rake,length,width,sx,sy,sz,1,1);
+    double length = sqrt(m0/rmu);
+    double width = length;
 
-  std::ofstream f0(output_dir + "input_stf.dat");
-  for (size_t it = 0 ; it < ntim ; it++) {
-    f0 << tim(it) ;
-    f0 << " " << input_stf(it) ;
-    f0 << "\n";
+    sources = set_source(fem.elements,strike,dip,rake,length,width,sx,sy,sz,1,1);
+
+    input_slipr = EV::Zero(ntim);
+    input_stf   = EV::Zero(ntim);
+    for (size_t it = 1 ; it < ntim ; it++) {
+      input_slipr(it) = input_slipr(it-1) + input_acc(it) * dt;
+      input_stf(it) = input_stf(it-1) + input_slipr(it) * dt;
+    }
+
+    std::ofstream f0(output_dir + "input_stf.dat");
+    for (size_t it = 0 ; it < ntim ; it++) {
+      f0 << tim(it) ;
+      f0 << " " << input_stf(it) ;
+      f0 << "\n";
+    }
+    f0.close();
+    // exit(1);
+
   }
-  f0.close();
-  // exit(1);
 
   // ----- Prepare time solver ----- //
   fem.update_init(dt);
@@ -123,15 +140,23 @@ int main() {
   EM output_dispz(ntim,fem.output_nnode);
 
   // ----- time iteration ----- //
-  // EV vel0(3);
-  // vel0[0] = 0.0; vel0[1] = 0.0; vel0[2] = 0.0; 
+  EV vel0(3);
+  vel0[0] = 0.0; vel0[1] = 0.0; vel0[2] = 0.0; 
 
+  // ----- PML preparation ----- //
+  auto [pml_elems, pml_config_i, pml_config_d] = io_data::input_pmls("input/pml.in");
+  fem.set_pml(pml_elems,pml_config_i,pml_config_d,dt);
+
+  // ----- Time Iteration ----- //
   for (size_t it = 0 ; it < ntim ; it++) {
-    // vel0[0] += wave_accx[it]*dt;
-    // vel0[1] += wave_accy[it]*dt;
-    // fem.update_time_input(vel0);
-
-    fem.update_time_source(sources,input_stf[it]);
+    if (input_type == "plane_wave") {
+      vel0[0] += wave_accx[it]*dt;
+      vel0[1] += wave_accy[it]*dt;
+      fem.update_time_input(vel0);
+  
+    } else if (input_type == "double_couple") {
+      fem.update_time_source(sources,input_stf[it]);
+    }
 
     for (size_t i = 0 ; i < fem.output_nnode ; i++) {
       Node* node_p = fem.output_nodes_p[i];
@@ -145,7 +170,7 @@ int main() {
 
     if (it%40 == 0) {
       std::cout << it << " t= " << it*dt << " ";
-      std::cout << output_vely(it,0) << "\n";
+      std::cout << output_vely(it,1) << "\n";
     }
   }
 

@@ -1,4 +1,5 @@
 #include "all.h"
+#include <filesystem>
 #include <Eigen/Core>
 #include "node.h"
 #include "material.h"
@@ -103,6 +104,43 @@ Fem io_data::input_mesh (const std::string mesh_file) {
     Fem fem(dof,nodes,elements,materials);
     return fem;
   }
+
+// ------------------------------------------------------------------- //
+std::tuple<std::map<int, Eigen::Vector3d>, std::vector<int>, std::vector<double>> 
+  io_data::input_pmls(const std::string pml_file) {
+    int nelem, nlayer, order;
+    double logR, Lx, Ly, Lz;
+    std::string line;
+
+    std::map<int, Eigen::Vector3d> pml_elems;
+    std::vector<int> pml_config_i;    // [nelem, nlayer, order]
+    std::vector<double> pml_config_d; // [logR, Lx, Ly, Lz]
+
+    if (!std::filesystem::exists(pml_file)) {
+        return {pml_elems, pml_config_i, pml_config_d};
+    }
+
+    std::ifstream f(pml_file);
+
+    std::getline(f, line);
+    std::stringstream ss(line);
+    if (ss >> nelem >> nlayer >> order >> logR >> Lx >> Ly >> Lz) {
+          pml_config_i = {nelem, nlayer, order};
+          pml_config_d = {logR, Lx, Ly, Lz};
+    }
+
+    while (std::getline(f, line)) {
+      if (line.empty()) continue;
+      std::stringstream ss(line);
+      int ielem;
+      double x, y, z;
+      if (ss >> ielem >> x >> y >> z) {
+          pml_elems[ielem] = Eigen::Vector3d(x, y, z);
+      }
+    }
+
+    return {pml_elems, pml_config_i, pml_config_d};
+}
 
 // ------------------------------------------------------------------- //
 std::tuple<std::vector<size_t>, std::vector<size_t>>

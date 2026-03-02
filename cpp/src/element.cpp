@@ -63,6 +63,34 @@ void Element::set_material(Material* material_p) {
     }
   }
 
+// ------------------------------------------------------------------- //
+void Element::set_pml(const EV3 xyz, const EV3 sigma, double dt) {
+    this->is_pml = true;
+    this->pml_xyz = xyz;
+    this->pml_sigma = sigma;
+
+    this->pml_kappa = 1.0;        // CFS-PML (classical PML: 1.0) => 1.0
+    this->pml_alpha = 1.0 * M_PI; // CFS-PML (classical PML: 0.0) => f0*pi
+
+    EV3 c0 = (this->pml_sigma / this->pml_kappa).array() + this->pml_alpha;
+    double kappa2 = this->pml_kappa * this->pml_kappa;
+    EV3 denom = (kappa2 * c0).array() + 1e-12;
+    EV3 c1 = this->pml_sigma.array() / denom.array();
+
+    this->pml_b = (-c0 * dt).array().exp();
+    this->pml_a = c1.array() * (this->pml_b.array() - 1.0);
+    this->pml_cor_factor = 1.0 / kappa2 - 1.0;
+    this->pml_is_cor = (this->pml_cor_factor > 1e-12);
+
+    auto [det, dnj] = mk_dnj(this->xnT, this->dn_center);
+    EM B = mk_b(this->dof, this->nnode, dnj);
+    double V = this->mass / this->rho;
+    this->pml_BD = B.transpose() * this->De * (V / this->pml_kappa);
+
+    this->pml_psi = EM3::Zero();
+}
+
+// ------------------------------------------------------------------- //
 void Element::set_xn(){
     this->xnT = EM::Zero(3,this->nnode);
 
@@ -321,17 +349,48 @@ void Element::update_inputwave(const EV vel0) {
   }
 
 // ------------------------------------------------------------------- //
-void Element::mk_source(const EM dn, const EV strain_tensor, const double slip0) {
-  if (this->dim == 3) {
-    EM BT;
-    EV moment(6);
+void Element::update_pml(const double dt) {
+    auto [det, dnj] = mk_dnj(this->xnT, this->dn_center);
 
-    auto [det, dnj] = mk_dnj(this->xnT, dn);
-    BT = mk_b_T(this->dof, this->nnode, dnj);
-    moment = this->material.rmu * strain_tensor * slip0;
-    this->force = BT * moment;
+    EM u_mat = this->mk_u_vstack();
+    EM3 dnu = mk_dnu(dnj, u_mat);
+
+    this->pml_psi = this->pml_psi * this->pml_b.asDiagonal() + dnu * this->pml_a.asDiagonal();
+
+    EV psi(6);
+    psi(0) = this->pml_psi(0,0);
+    psi(1) = this->pml_psi(1,1);
+    psi(2) = this->pml_psi(2,2);
+    psi(3) = this->pml_psi(0,1) + this->pml_psi(1,0);
+    psi(4) = this->pml_psi(1,2) + this->pml_psi(2,1);
+    psi(5) = this->pml_psi(2,0) + this->pml_psi(0,2);
+
+    EV f_pml = this->pml_BD * psi;
+    if (this->pml_is_cor) {
+        EV u_vec = this->mk_u_hstack(); 
+        f_pml += this->pml_cor_factor * this->K * u_vec;
+    }
+
+    for (size_t inode = 0 ; inode < this->nnode ; inode++){
+      size_t i0 = inode*this->dof;
+      for (size_t i = 0 ; i < this->dof ; i++) {
+        this->nodes_p[inode]->force(i) += f_pml(i0+i);
+      }
+    }
   }
-}
+
+// ------------------------------------------------------------------- //
+void Element::mk_source(const EM dn, const EV strain_tensor, const double slip0) {
+    if (this->dim == 3) {
+      EM BT;
+      EV moment(6);
+
+      auto [det, dnj] = mk_dnj(this->xnT, dn);
+      BT = mk_b_T(this->dof, this->nnode, dnj);
+      moment = this->material.rmu * strain_tensor * slip0;
+      this->force = BT * moment;
+    }
+  }
 
 // ------------------------------------------------------------------- //
 void Element::calc_stress() {
@@ -505,6 +564,11 @@ EM mk_b_T(const size_t dof, const size_t nnode, const EM dnj) {
     }
 
     return B;
+  }
+
+// ------------------------------------------------------------------- //
+EM3 mk_dnu(const EM dnj, const EM u) {
+    return u.transpose() * dnj;
   }
 
 // ------------------------------------------------------------------- //
