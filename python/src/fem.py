@@ -508,8 +508,8 @@ def update_pml_chunk(pml_chunk):
 
 def update_free_nodes_chunk(nodes_chunk, inv_dt2, inv_dtdt):
     for node in nodes_chunk:
-        u = np.copy(node.u)
-        node.u[:] = node.mass_inv_mc * (2.0*u - node.um) + node.c_inv_mc * node.um - node.dtdt_inv_mc * node.force
+        node._u_old[:] = node.u[:]
+        node.u[:] = node.mass_inv_mc * (2.0*node._u_old - node.um) + node.c_inv_mc * node.um - node.dtdt_inv_mc * node.force
         node.v[:] = (node.u - node.um) * inv_dt2
-        node.a[:] = (node.u - 2.0*u + node.um) * inv_dtdt
-        node.um = u
+        node.a[:] = (node.u - 2.0*node._u_old + node.um) * inv_dtdt
+        node.um[:] = node._u_old[:]

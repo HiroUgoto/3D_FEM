@@ -27,3 +27,5 @@ class Node:
         self._up = np.zeros(self.dof,dtype=np.float64)
         self._ur = np.zeros(self.dof,dtype=np.float64)
         self._uy = np.zeros(self.dof,dtype=np.float64)
+
+        self._u_old = np.zeros(self.dof,dtype=np.float64)
