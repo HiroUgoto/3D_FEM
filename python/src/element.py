@@ -24,6 +24,11 @@ class Element:
     # =========================================================
     def set_nodes(self,nodes):
         self.nodes = nodes
+        self.nnode = len(nodes)
+
+        dof = self.nodes[0].dof 
+        self._u_vec = np.zeros(self.nnode * dof, dtype=np.float64)
+        self._v_vec = np.zeros(self.nnode * dof, dtype=np.float64)
 
     def set_material(self,material):
         if material is None:
@@ -57,9 +62,11 @@ class Element:
         _,dnj = mk_dnj(self.xnT,self.estyle.dn_center)
         B = mk_b(self.dof,self.nnode,dnj)
         V = self.mass / self.rho
-        self.pml_BD = B.T @ self.De * V / self.pml_kappa
 
+        self.pml_dnj = dnj
+        self.pml_BD = B.T @ self.De * V / self.pml_kappa
         self.pml_psi = np.zeros([3,3],dtype=np.float64)
+        self._psi_vec = np.zeros(6, dtype=np.float64)
 
     # ---------------------------------------------------------
     def set_pointer_list(self):
@@ -199,17 +206,42 @@ class Element:
 
     # ---------------------------------------------------------
     def calc_ku_cv(self):
-        f = self.K @ np.hstack(self.u) + self.C_off_diag @ np.hstack(self.v)
+        self.mk_uv_hstack()
+        f = self.K @ self._u_vec + self.C_off_diag @ self._v_vec
         return f
 
     # ---------------------------------------------------------
-    def update_pml(self,dt):
-        _,dnj = mk_dnj(self.xnT,self.estyle.dn_center)
-        dnu = mk_dnu(self.nnode,dnj,self.u)
+    def update_pml(self):
+        self.mk_u_hstack()
+        u_mt = self._u_vec.reshape(self.nnode, self.dof)
+        dnu = u_mt.T @ self.pml_dnj
 
         self.pml_psi = self.pml_psi*self.pml_b + dnu*self.pml_a
 
-        psi = np.empty(6,dtype=np.float64)
+        psi = self._psi_vec
+        psi[0] = self.pml_psi[0,0]
+        psi[1] = self.pml_psi[1,1]
+        psi[2] = self.pml_psi[2,2]
+        psi[3] = self.pml_psi[0,1] + self.pml_psi[1,0]
+        psi[4] = self.pml_psi[1,2] + self.pml_psi[2,1]
+        psi[5] = self.pml_psi[2,0] + self.pml_psi[0,2]
+
+        f_pml = self.pml_BD @ psi
+        
+        if self.pml_is_cor:
+            f_pml += self.pml_cor_factor * self.K @ self._u_vec
+        
+        for i in range(self.nnode):
+            i0 = self.dof*i
+            self.nodes[i].force[:] += f_pml[i0:i0+self.dof]
+
+    def calc_pml(self):
+        self.mk_u_hstack()
+        u_mt = self._u_vec.reshape(self.nnode, self.dof)
+        dnu = u_mt.T @ self.pml_dnj
+        self.pml_psi = self.pml_psi*self.pml_b + dnu*self.pml_a
+
+        psi = self._psi_vec
         psi[0] = self.pml_psi[0,0]
         psi[1] = self.pml_psi[1,1]
         psi[2] = self.pml_psi[2,2]
@@ -219,11 +251,23 @@ class Element:
 
         f_pml = self.pml_BD @ psi
         if self.pml_is_cor:
-            f_pml += self.pml_cor_factor * self.K @ np.hstack(self.u)
+            f_pml += self.pml_cor_factor * self.K @ self._u_vec
         
+        return f_pml
+
+    # ---------------------------------------------------------
+    def mk_u_hstack(self):
+        dof = self.nodes[0].dof
         for i in range(self.nnode):
-            i0 = self.dof*i
-            self.nodes[i].force[:] += f_pml[i0:i0+self.dof]
+            i0 = i * dof
+            self._u_vec[i0:i0+dof] = self.nodes[i].u[:]
+            
+    def mk_uv_hstack(self):
+        dof = self.nodes[0].dof
+        for i in range(self.nnode):
+            i0 = i * dof
+            self._u_vec[i0:i0+dof] = self.nodes[i].u[:]
+            self._v_vec[i0:i0+dof] = self.nodes[i].v[:]
 
     # ---------------------------------------------------------
     def mk_source(self,source,slip0):

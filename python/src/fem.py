@@ -1,6 +1,6 @@
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
-import os,itertools
+import os,time,itertools
 
 class Fem():
     def __init__(self,dof,nodes,elements,materials):
@@ -92,7 +92,7 @@ class Fem():
                     id += 1
 
     # ---------------------------------------
-    def _prepare_thread_chunks(self, n_threads):
+    def _prepare_thread_chunks(self,n_threads):
         if n_threads is None:
             self.n_threads = os.cpu_count()
         else:
@@ -136,6 +136,19 @@ class Fem():
             
             element.set_pml(pml_xyz,pml_sigma,dt)
             self.pml_elements += [element]
+
+        self._prepare_pml_thread_chunks()
+
+    def _prepare_pml_thread_chunks(self):
+        n_pml_elements = len(self.pml_elements)
+        if n_pml_elements > 0:
+            pml_chunk_size = (n_pml_elements // self.n_threads) + 1
+            self.pml_element_chunks = [
+                self.pml_elements[i : i + pml_chunk_size]
+                for i in range(0, n_pml_elements, pml_chunk_size)
+            ]
+        else:
+            self.pml_element_chunks = []
 
     # ======================================================================= #
     def set_output(self,outputs):
@@ -362,45 +375,23 @@ class Fem():
     # ======================================================================= #
     def update_time_source(self,sources,slip0):
         for node in self.nodes:
-            node.dynamic_force = np.zeros(self.dof,dtype=np.float64)
+            node.dynamic_force.fill(0.0)
             self._update_time_node_init(node)
 
         for source in sources:
             self._update_time_source(source,slip0)
 
-        # ---------------------------------------
-        # original
         # for element in self.elements:
         #     element.mk_ku_cv()
-        #
+        self._update_elements_parallel()
 
-        with ThreadPoolExecutor(max_workers=self.n_threads) as executor:
-            results = list(executor.map(update_elements_chunk, self.element_chunks))
+        # for element in self.pml_elements:
+        #     element.update_pml()
+        self._update_pml_parallel()
 
-        element_forces = list(itertools.chain.from_iterable(results))
-
-        for i, element in enumerate(self.elements):
-            f = element_forces[i]
-            for j in range(element.nnode):
-                i0 = self.dof*j
-                element.nodes[j].force[:] += f[i0:i0+self.dof]
-        # ---------------------------------------
-
-        for element in self.pml_elements:
-            element.update_pml(self.dt)
-
-        # ---------------------------------------
-        # original
         # for node in self.free_nodes:
         #     self._update_time_set_free_nodes(node)
-
-        with ThreadPoolExecutor(max_workers=self.n_threads) as executor:
-            executor.map(
-                lambda chunk: update_free_nodes_chunk(chunk, self.inv_dt2, self.inv_dtdt),
-                self.free_node_chunks
-            )
-
-        # ---------------------------------------
+        self._update_time_set_free_nodes_parallel()
 
         for node in self.fixed_nodes:
             self._update_time_set_fixed_nodes(node)
@@ -411,10 +402,9 @@ class Fem():
         for element in self.output_elements:
             element.calc_stress()
 
-
     # ---------------------------------------
     def _update_time_node_init(self,node):
-        node.force = -node.dynamic_force.copy()
+        node.force[:] = -node.dynamic_force[:]
 
     def _update_time_input_wave(self,element,vel0):
         cv = element.C @ np.tile(vel0,element.nnode)
@@ -470,6 +460,36 @@ class Fem():
         element.nodes[0].u[:] =  element.R.T @ slip
         element.nodes[1].u[:] = -element.R.T @ slip
 
+    # ---------------------------------------
+    def _update_elements_parallel(self):
+        with ThreadPoolExecutor(max_workers=self.n_threads) as executor:
+            results = list(executor.map(update_elements_chunk, self.element_chunks))
+
+        element_forces_iter = itertools.chain.from_iterable(results)
+        for element, f in zip(self.elements, element_forces_iter):
+            for i in range(element.nnode):
+                i0 = self.dof*i
+                element.nodes[i].force[:] += f[i0:i0+self.dof]
+
+    def _update_pml_parallel(self):
+        if len(self.pml_elements) == 0:
+            return
+        
+        with ThreadPoolExecutor(max_workers=self.n_threads) as executor:
+                pml_results = list(executor.map(update_pml_chunk, self.pml_element_chunks))
+
+        pml_forces_iter = itertools.chain.from_iterable(pml_results)
+        for element, f_pml in zip(self.pml_elements, pml_forces_iter):
+            for i in range(element.nnode):
+                i0 = self.dof * i
+                element.nodes[i].force[:] += f_pml[i0:i0+self.dof]
+
+    def _update_time_set_free_nodes_parallel(self):
+        with ThreadPoolExecutor(max_workers=self.n_threads) as executor:
+            executor.map(
+                lambda chunk: update_free_nodes_chunk(chunk, self.inv_dt2, self.inv_dtdt),
+                self.free_node_chunks
+            )
 
     # ======================================================================= #
     def print_all(self):
@@ -482,6 +502,9 @@ class Fem():
 ### Outside the FEM class ###
 def update_elements_chunk(elements_chunk):
     return [element.calc_ku_cv() for element in elements_chunk]
+
+def update_pml_chunk(pml_chunk):
+    return [element.calc_pml() for element in pml_chunk]
 
 def update_free_nodes_chunk(nodes_chunk, inv_dt2, inv_dtdt):
     for node in nodes_chunk:

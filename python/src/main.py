@@ -1,5 +1,9 @@
 import os
-# os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+os.environ["NUMEXPR_NUM_THREADS"] = "1"
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -23,7 +27,7 @@ outputs = io_data.input_outputs("input/output.in")
 output_dir = "result/"
 
 ## --- FEM Set up --- ##
-fem.set_init(n_threads=8)
+fem.set_init(n_threads=4)
 fem.set_output(outputs)
 # plot_model.plot_mesh(fem)
 # exit()
