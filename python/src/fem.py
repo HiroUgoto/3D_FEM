@@ -1,5 +1,6 @@
 import numpy as np
-from concurrent import futures
+from concurrent.futures import ThreadPoolExecutor
+import os,itertools
 
 class Fem():
     def __init__(self,dof,nodes,elements,materials):
@@ -20,10 +21,12 @@ class Fem():
         self.pml_elements = []
 
     # ======================================================================= #
-    def set_init(self):
+    def set_init(self,n_threads=None):
         self._set_mesh()
         self._set_initial_condition()
         self._set_initial_matrix()
+
+        self._prepare_thread_chunks(n_threads)
 
     # ---------------------------------------
     def _set_mesh(self):
@@ -87,6 +90,29 @@ class Fem():
                     node.k[i] += element.K_diag[id]
                     node.static_force[i] += element.force[id]
                     id += 1
+
+    # ---------------------------------------
+    def _prepare_thread_chunks(self, n_threads):
+        if n_threads is None:
+            self.n_threads = os.cpu_count()
+        else:
+            self.n_threads = n_threads
+
+        elem_chunk_size = (self.nelem // self.n_threads) + 1        
+        self.element_chunks = [
+            self.elements[i : i + elem_chunk_size] 
+            for i in range(0, self.nelem, elem_chunk_size)
+        ]
+
+        n_free_nodes = len(self.free_nodes)
+        if n_free_nodes > 0:
+            node_chunk_size = (n_free_nodes // self.n_threads) + 1
+            self.free_node_chunks = [
+                self.free_nodes[i : i + node_chunk_size]
+                for i in range(0, n_free_nodes, node_chunk_size)
+            ]
+        else:
+            self.free_node_chunks = []
 
     # ======================================================================= #
     def set_pml(self,pml_elems,pml_config,dt):
@@ -342,14 +368,40 @@ class Fem():
         for source in sources:
             self._update_time_source(source,slip0)
 
-        for element in self.elements:
-            element.mk_ku_cv()
+        # ---------------------------------------
+        # original
+        # for element in self.elements:
+        #     element.mk_ku_cv()
+        #
+
+        with ThreadPoolExecutor(max_workers=self.n_threads) as executor:
+            results = list(executor.map(update_elements_chunk, self.element_chunks))
+
+        element_forces = list(itertools.chain.from_iterable(results))
+
+        for i, element in enumerate(self.elements):
+            f = element_forces[i]
+            for j in range(element.nnode):
+                i0 = self.dof*j
+                element.nodes[j].force[:] += f[i0:i0+self.dof]
+        # ---------------------------------------
 
         for element in self.pml_elements:
             element.update_pml(self.dt)
 
-        for node in self.free_nodes:
-            self._update_time_set_free_nodes(node)
+        # ---------------------------------------
+        # original
+        # for node in self.free_nodes:
+        #     self._update_time_set_free_nodes(node)
+
+        with ThreadPoolExecutor(max_workers=self.n_threads) as executor:
+            executor.map(
+                lambda chunk: update_free_nodes_chunk(chunk, self.inv_dt2, self.inv_dtdt),
+                self.free_node_chunks
+            )
+
+        # ---------------------------------------
+
         for node in self.fixed_nodes:
             self._update_time_set_fixed_nodes(node)
 
@@ -425,3 +477,16 @@ class Fem():
             node.print()
         for element in self.elements:
             element.print()
+
+
+### Outside the FEM class ###
+def update_elements_chunk(elements_chunk):
+    return [element.calc_ku_cv() for element in elements_chunk]
+
+def update_free_nodes_chunk(nodes_chunk, inv_dt2, inv_dtdt):
+    for node in nodes_chunk:
+        u = np.copy(node.u)
+        node.u[:] = node.mass_inv_mc * (2.0*u - node.um) + node.c_inv_mc * node.um - node.dtdt_inv_mc * node.force
+        node.v[:] = (node.u - node.um) * inv_dt2
+        node.a[:] = (node.u - 2.0*u + node.um) * inv_dtdt
+        node.um = u

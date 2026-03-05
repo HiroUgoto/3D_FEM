@@ -197,7 +197,12 @@ class Element:
             i0 = self.dof*i
             self.nodes[i].force[:] += f[i0:i0+self.dof]
 
-   # ---------------------------------------------------------
+    # ---------------------------------------------------------
+    def calc_ku_cv(self):
+        f = self.K @ np.hstack(self.u) + self.C_off_diag @ np.hstack(self.v)
+        return f
+
+    # ---------------------------------------------------------
     def update_pml(self,dt):
         _,dnj = mk_dnj(self.xnT,self.estyle.dn_center)
         dnu = mk_dnu(self.nnode,dnj,self.u)

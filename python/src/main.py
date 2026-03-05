@@ -1,5 +1,9 @@
-import matplotlib.pyplot as plt
+import os
+# os.environ["OMP_NUM_THREADS"] = "1"
+
 import numpy as np
+import matplotlib.pyplot as plt
+
 import time
 
 import io_data
@@ -19,7 +23,7 @@ outputs = io_data.input_outputs("input/output.in")
 output_dir = "result/"
 
 ## --- FEM Set up --- ##
-fem.set_init()
+fem.set_init(n_threads=8)
 fem.set_output(outputs)
 # plot_model.plot_mesh(fem)
 # exit()
