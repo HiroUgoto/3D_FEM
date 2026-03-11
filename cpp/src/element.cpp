@@ -249,6 +249,7 @@ void Element::mk_ku() {
     for (size_t inode = 0 ; inode < this->nnode ; inode++){
       size_t i0 = inode*this->dof;
       for (size_t i = 0 ; i < this->dof ; i++) {
+        #pragma omp atomic
         this->nodes_p[inode]->force(i) += ku(i0+i);
       }
     }
@@ -263,6 +264,7 @@ void Element::mk_cv() {
     for (size_t inode = 0 ; inode < this->nnode ; inode++){
       size_t i0 = inode*this->dof;
       for (size_t i = 0 ; i < this->dof ; i++) {
+        #pragma omp atomic
         this->nodes_p[inode]->force(i) += cv(i0+i);
       }
     }
@@ -280,11 +282,11 @@ void Element::mk_ku_cv() {
     for (size_t inode = 0 ; inode < this->nnode ; inode++){
       size_t i0 = inode*this->dof;
       for (size_t i = 0 ; i < this->dof ; i++) {
+        #pragma omp atomic
         this->nodes_p[inode]->force(i) += ku(i0+i) + cv(i0+i);
       }
     }
   }
-
 
 // ------------------------------------------------------------------- //
 EV Element::mk_u_hstack() {
@@ -324,7 +326,6 @@ EM Element::mk_u_vstack() {
     }
     return u;
   }
-
 
 // ------------------------------------------------------------------- //
 void Element::update_inputwave(const EV vel0) {
@@ -374,6 +375,7 @@ void Element::update_pml(const double dt) {
     for (size_t inode = 0 ; inode < this->nnode ; inode++){
       size_t i0 = inode*this->dof;
       for (size_t i = 0 ; i < this->dof ; i++) {
+        #pragma omp atomic
         this->nodes_p[inode]->force(i) += f_pml(i0+i);
       }
     }

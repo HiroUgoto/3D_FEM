@@ -35,6 +35,7 @@ class Element {
     EM pml_BD;
     EM3 pml_psi;
 
+  public:
     Element (size_t id, std::string style, int material_id, std::vector<size_t> inode);
     void print();
 

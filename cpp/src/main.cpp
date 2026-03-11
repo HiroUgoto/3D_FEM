@@ -1,5 +1,6 @@
 #include "all.h"
 #include <Eigen/Core>
+#include <chrono>
 #include "node.h"
 #include "material.h"
 #include "element_style.h"
@@ -13,8 +14,7 @@ using EV = Eigen::VectorXd ;
 using EM = Eigen::MatrixXd ;
 
 int main() {
-
-  clock_t start = clock();
+  auto start_setup = std::chrono::high_resolution_clock::now();
 
   // ----- Input FEM Mesh ----- //
   Fem fem = io_data::input_mesh("input/mesh.in");
@@ -147,7 +147,11 @@ int main() {
   auto [pml_elems, pml_config_i, pml_config_d] = io_data::input_pmls("input/pml.in");
   fem.set_pml(pml_elems,pml_config_i,pml_config_d,dt);
 
+  auto end_setup = std::chrono::high_resolution_clock::now();
+
   // ----- Time Iteration ----- //
+  auto start_loop = std::chrono::high_resolution_clock::now();
+
   for (size_t it = 0 ; it < ntim ; it++) {
     if (input_type == "plane_wave") {
       vel0[0] += wave_accx[it]*dt;
@@ -174,8 +178,17 @@ int main() {
     }
   }
 
-  clock_t end = clock();
-  std::cout << "elapsed_time: " << (double)(end - start) / CLOCKS_PER_SEC << "[sec]\n";
+  auto end_loop = std::chrono::high_resolution_clock::now();
+
+  std::cout << "--- Profiling Results ---\n";
+  std::cout << "Setup Time   : " << std::chrono::duration<double>(end_setup - start_setup).count() << " [sec]\n";
+  std::cout << "Main Loop    : " << std::chrono::duration<double>(end_loop - start_loop).count() << " [sec]\n";
+  // std::cout << "  |- Init    : " << fem.time_init << " [sec]\n";
+  // std::cout << "  |- Source  : " << fem.time_source << " [sec]\n";
+  // std::cout << "  |- Element : " << fem.time_element << " [sec]\n";
+  // std::cout << "  |- PML     : " << fem.time_pml << " [sec]\n";
+  // std::cout << "  |- Node    : " << fem.time_node << " [sec]\n";
+
 
   // --- Write output file --- //
   std::ofstream fvx(output_dir + "output_x.vel");

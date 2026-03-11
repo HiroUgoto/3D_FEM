@@ -23,6 +23,16 @@ class Fem {
     double dt, inv_dt2, inv_dtdt;
 
   public:
+    double time_calc = 0.0;
+    double time_assemble = 0.0;
+
+    double time_init = 0.0;
+    double time_source = 0.0;
+    double time_element = 0.0;
+    double time_pml = 0.0;
+    double time_node = 0.0;
+
+  public:
     Fem (size_t dof, std::vector<Node> nodes,
                   std::vector<Element> elements,
                   std::vector<Material> materials);
@@ -47,6 +57,8 @@ class Fem {
 
   private:
     void _update_time_source(const std::vector<Source> sources, const double slip0);
+    void _update_time_node_init();
+    void _update_time_element();
     void _update_time_set_free_nodes();
     void _update_time_set_fixed_nodes();
     void _update_time_set_connected_elements();

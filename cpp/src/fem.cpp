@@ -113,17 +113,6 @@ void Fem::_set_initial_matrix(){
           id++;
         }
       }
-
-      // if (element.style.find("input") != std::string::npos ||
-      //     element.style.find("visco") != std::string::npos) {
-      //   size_t id = 0;
-      //   for (size_t inode = 0 ; inode < element.nnode ; inode++) {
-      //     for (size_t i = 0 ; i < this->dof ; i++) {
-      //       element.nodes_p[inode]->c[i] += element.C_diag[id];
-      //       id++;
-      //     }
-      //   }
-      // }
     }
   }
 
@@ -225,21 +214,15 @@ void Fem::update_time_input(const EV vel0) {
 
 // ------------------------------------------------------------------- //
 void Fem::update_time_source(const std::vector<Source> sources, const double slip0) {
-    for (auto& node : this->nodes) {
-      node.force = EV::Zero(this->dof);
-    }
+    this->_update_time_node_init();
 
     this->_update_time_source(sources,slip0);
 
-    for (auto& element_p : this->solid_elements_p) {
-      element_p->mk_ku();
-    }
-    for (auto& element_p : this->visco_elements_p) {
-      element_p->mk_ku_cv();
-    }
+    this->_update_time_element();
 
-    for (auto& element_p : this->pml_elements_p) {
-      element_p->update_pml(this->dt);
+    #pragma omp parallel for
+    for (size_t i = 0; i < this->pml_elements_p.size(); i++) {
+      this->pml_elements_p[i]->update_pml(this->dt);
     }
 
     this->_update_time_set_free_nodes();
@@ -268,8 +251,28 @@ void Fem::_update_time_source(const std::vector<Source> sources, const double sl
 
 // ------------------------------------------------------------------- //
 // ------------------------------------------------------------------- //
+void Fem::_update_time_node_init() {
+    #pragma omp parallel for
+    for (size_t i = 0; i < this->nodes.size(); i++) {
+      this->nodes[i].force = EV3::Zero(this->nodes[i].dof);
+    }
+  }
+
+void Fem::_update_time_element() {
+    #pragma omp parallel for
+    for (size_t i = 0; i < this->solid_elements_p.size(); i++) {
+      this->solid_elements_p[i]->mk_ku();
+    }
+
+    for (size_t i = 0; i < this->visco_elements_p.size(); i++) {
+      this->visco_elements_p[i]->mk_ku_cv();
+    }
+  }
+
 void Fem::_update_time_set_free_nodes() {
-    for (auto& node_p : this->free_nodes_p) {
+    #pragma omp parallel for
+    for (size_t k = 0; k < this->free_nodes_p.size(); k++) {
+      auto& node_p = this->free_nodes_p[k];
       EV u = node_p->u;
       for (size_t i = 0 ; i < node_p->dof ; i++) {
         double inv_mc = 1.0 / (node_p->mass[i] + 0.5*this->dt*node_p->c[i]);
@@ -287,7 +290,9 @@ void Fem::_update_time_set_free_nodes() {
   }
 
 void Fem::_update_time_set_fixed_nodes() {
-    for (auto& node_p : this->fixed_nodes_p) {
+    #pragma omp parallel for
+    for (size_t k = 0; k < this->fixed_nodes_p.size(); k++) {
+      auto& node_p = this->fixed_nodes_p[k];
       EV u = node_p->u;
       for (size_t i = 0 ; i < node_p->dof ; i++) {
         if (node_p->freedom[i] == 0) {
@@ -308,7 +313,8 @@ void Fem::_update_time_set_fixed_nodes() {
   }
 
 void Fem::_update_time_set_connected_elements() {
-    for (auto& element_p : this->connected_elements_p) {
+    for (size_t k = 0; k < this->connected_elements_p.size(); k++) {
+      auto& element_p = this->connected_elements_p[k];
       EV u = EV::Zero(element_p->dof);
       for (size_t inode = 0 ; inode < element_p->nnode ; inode++) {
         u += element_p->nodes_p[inode]->u;

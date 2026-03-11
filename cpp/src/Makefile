@@ -1,13 +1,21 @@
 TARGET_EXEC = FEM
-CXX = g++
 
 #------------------------------------------------
+# 【macOS】
+CXX = g++-15
+# 【Linux】
+# CXX = g++
+
+#------------------------------------------------
+# 【macOS】
 EIGEN_INCLUDE_PATH = /opt/homebrew/include/eigen3
+
+# 【Linux】
 # EIGEN_INCLUDE_PATH = /usr/local/include/eigen3
 # EIGEN_INCLUDE_PATH = /usr/include/eigen3
 
 #------------------------------------------------
-CXXFLAGS = -std=c++17 -Wall --pedantic-errors -O2
+CXXFLAGS = -std=c++17 -Wall --pedantic-errors -O3 -fopenmp -march=native
 CPPFLAGS = -I$(EIGEN_INCLUDE_PATH)
 
 #------------------------------------------------
@@ -18,7 +26,7 @@ OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(SRCS:%=$(BUILD_DIR)/%.d)
 
 $(TARGET_EXEC): $(OBJS) all.h.gch
-	$(CXX) $(CXXFLAGS) -include all.h $(OBJS) -o $@
+	$(CXX) $(CXXFLAGS) -include all.h $(OBJS) -o $@ $(LDFLAGS)
 
 -include $(DEPS)
 
