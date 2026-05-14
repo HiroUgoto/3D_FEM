@@ -1,12 +1,12 @@
 import numpy as np
 import os
 
-area_x = 1200.0
-area_y = 1200.0
+area_x = 2400.0
+area_y = 2400.0
 area_z = 1200.0
 
-nx = 16
-ny = 16
+nx = 32
+ny = 32
 nz = 16
 dof = 3
 

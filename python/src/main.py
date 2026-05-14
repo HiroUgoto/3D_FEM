@@ -114,7 +114,7 @@ else:
 
 
 ## --- Prepare time solver --- ##
-# ax = plot_model.plot_mesh_update_init()
+fig,axs,config = plot_model.plot_multislice_update_init(fem, targets={'x':0, 'y':0, 'z':0})
 fem.update_init(dt)
 
 output_velx = np.zeros((ntim,fem.output_nnode))
@@ -149,14 +149,16 @@ for it in range(len(tim)):
     output_dispy[it,:] = [node.u[1] for node in fem.output_nodes]
     output_dispz[it,:] = [node.u[2] for node in fem.output_nodes]
 
-    if it%20 == 0:
-        # plot_model.plot_mesh_update(ax,fem,20.)
+    if it%10 == 0:
+        # plot_model.plot_multislice_update(fig, axs, fem, config, comp='norm') 
+        plot_model.plot_multislice_update(fig, axs, fem, config, comp='y') 
         print(it,"t=",it*dt,output_vely[it,1])
 
 elapsed_time = time.time() - start
 print ("elapsed_time: {0}".format(elapsed_time) + "[sec]")
 
-# plot_model.plot_mesh_update(ax,fem,10.,fin=True)
+# plot_model.plot_multislice_update(fig, axs, fem, config, comp="norm", fin=True)
+plot_model.plot_multislice_update(fig, axs, fem, config, comp="y", fin=True)
 
 ## --- Write output file --- ##
 output_line = np.vstack([tim,output_velx.T]).T
